@@ -1,5 +1,5 @@
 import React from "react";
-import Switch from "./Switch";
+import Switch from "../form/Switch";
 
 interface SwitchFieldProps {
   /** Title or main label displayed above the description */
