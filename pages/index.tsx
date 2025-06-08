@@ -12,7 +12,8 @@ const Home: React.FC = () => {
   return (
     <Layout orientation={settings.layout} bar={<ControlPanel sizes={sizes} />}>
       <div className="">
-        <div className="mx-auto px-1 md:px-10">
+        <div className="mx-auto">
+          {/* <div className="mx-auto px-1 md:px-10"> */}
           <FontPreviewList
             sizes={sizes}
             selectedSize={settings.selectedSize}
@@ -29,7 +30,7 @@ const Home: React.FC = () => {
             letterSpacingPercent={settings.letterSpacingPercent}
           />
 
-          <div className="space-y-4 my-8 max-w-1900 hidden lg:block">
+          <div className="space-y-4 my-8 max-w-1900 hidden lg:block px-1 md:px-10">
             <GraphCanvas
               sizes={sizes}
               selectedSize={settings.selectedSize}

@@ -116,6 +116,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         ref={refs.setReference}
         onMouseEnter={show}
         onMouseLeave={hide}
+        onClick={hide}
         onFocus={show}
         onBlur={hide}
         className="inline-block"

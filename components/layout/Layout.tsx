@@ -67,7 +67,7 @@ const Layout: React.FC<LayoutProps> = ({
         </aside>
       )}
 
-      <main className="flex-1 overflow-auto md:p-6 ">{children}</main>
+      <main className="flex-1 overflow-auto md:py-2 ">{children}</main>
     </div>
   );
 };

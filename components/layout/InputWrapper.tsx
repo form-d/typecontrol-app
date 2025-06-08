@@ -27,7 +27,6 @@ const InputWrapper: React.FC<InputWrapperProps> = ({
   const minLabelWidthClass = labelWidthClass
     ? "@min-[540px]:" + labelWidthClass
     : "@min-[540px]:w-1/4";
-
   // const isLeft = true;
 
   return (

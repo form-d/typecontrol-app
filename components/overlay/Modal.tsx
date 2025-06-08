@@ -51,7 +51,7 @@ export const Modal: React.FC = () => {
   const backdropBase =
     "fixed inset-0 bg-black/50 flex items-center justify-center z-50 transition-opacity duration-300";
   const panelBase =
-    "max-w-xl bg-white p-4 rounded-lg min-w-[300px] ease-in-out transition-all duration-300 delay-150";
+    "max-w-xl bg-white p-4 m-4 rounded-lg min-w-[300px] ease-in-out transition-all duration-300 delay-150";
   const opacityClass = fadeState === "in" ? "opacity-100" : "opacity-0";
   const motionClass = fadeState === "in" ? "mb-0" : "-mb-10";
 
