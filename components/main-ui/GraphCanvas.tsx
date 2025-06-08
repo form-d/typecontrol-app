@@ -12,6 +12,42 @@ const MIN_LABEL_GAP = 50; // Minimum gap between labels in px
 const MAX_STEPS = 20;
 const MIN_STEPS = 2;
 
+// --- Nice ticks helpers ---
+function niceNum(value: number, round: boolean): number {
+  const exponent = Math.floor(Math.log10(value));
+  const fraction = value / Math.pow(10, exponent);
+  let niceFraction;
+  if (round) {
+    if (fraction < 1.5) niceFraction = 1;
+    else if (fraction < 3) niceFraction = 2;
+    else if (fraction < 7) niceFraction = 5;
+    else niceFraction = 10;
+  } else {
+    if (fraction <= 1) niceFraction = 1;
+    else if (fraction <= 2) niceFraction = 2;
+    else if (fraction <= 5) niceFraction = 5;
+    else niceFraction = 10;
+  }
+  return niceFraction * Math.pow(10, exponent);
+}
+
+function getNiceTicks(
+  min: number,
+  max: number,
+  maxTicks: number = 10
+): number[] {
+  const range = niceNum(max - min, false);
+  const step = niceNum(range / (maxTicks - 1), true);
+  const niceMin = Math.floor(min / step) * step;
+  const niceMax = Math.ceil(max / step) * step;
+  const ticks = [];
+  for (let v = niceMin; v <= niceMax + 0.5 * step; v += step) {
+    ticks.push(Number(v.toFixed(10)));
+  }
+  return ticks;
+}
+
+// --- Component ---
 const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   const { t, settings } = useGlobalState();
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -42,12 +78,6 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   // Fallback for SSR or very fast initial render
   const effectiveWidth = width > 0 ? width : 400;
 
-  // Dynamic steps calculation
-  const autoSteps = Math.max(
-    MIN_STEPS,
-    Math.min(MAX_STEPS, Math.floor(effectiveWidth / MIN_LABEL_GAP))
-  );
-
   // Calculation logic
   const minSize = Math.min(...sizes);
   const maxSize = Math.max(...sizes);
@@ -73,8 +103,12 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
     pathD += ` L ${px} ${y}`;
   }
 
-  const labelStep = (maxSize - minSize) / autoSteps;
-  const pixelStep = effectiveWidth / autoSteps;
+  // Get nice ticks for the axis labels
+  const maxTicks = Math.max(
+    MIN_STEPS,
+    Math.min(MAX_STEPS, Math.floor(effectiveWidth / MIN_LABEL_GAP))
+  );
+  const ticks = getNiceTicks(minSize, maxSize, maxTicks);
 
   return (
     <div ref={containerRef} id="svgcanvas" className="w-full">
@@ -124,11 +158,9 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
           strokeWidth={2}
         />
 
-        {/* X axis tick labels (dynamic steps) */}
-        {[...Array(autoSteps + 1)].map((_, i) => {
-          const size = Math.round(minSize + labelStep * i);
-          let x = i * pixelStep + 5;
-          if (i === autoSteps) x -= 40;
+        {/* X axis tick labels (nice numbers) */}
+        {ticks.map((tick, i) => {
+          const x = sizeToX(tick);
           return (
             <text
               key={i}
@@ -137,8 +169,11 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
               fontSize={12}
               fill="#333"
               style={{ pointerEvents: "none", userSelect: "none" }}
+              textAnchor={
+                i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"
+              }
             >
-              {size}px
+              {tick}
             </text>
           );
         })}
