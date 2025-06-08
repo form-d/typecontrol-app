@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../../context/GlobalStateContext";
 
 interface GraphCanvasProps {
@@ -7,21 +7,50 @@ interface GraphCanvasProps {
   bezier: (diff: number) => number;
 }
 
-const WIDTH = 1900;
-const HEIGHT = 200;
+const HEIGHT = 200; // Fixed height in px
+const DEBOUNCE_MS = 100;
 
 const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   const { t, settings } = useGlobalState();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [width, setWidth] = useState(0);
 
-  // Calculate min, max and scaling factors
+  // Resize handler with debounce
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | null = null;
+
+    const handleResize = () => {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        if (containerRef.current) {
+          setWidth(containerRef.current.offsetWidth);
+        }
+      }, DEBOUNCE_MS);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Initial width set
+    if (containerRef.current) {
+      setWidth(containerRef.current.offsetWidth);
+    }
+
+    return () => {
+      if (timeout) clearTimeout(timeout);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Fallback for width (avoid rendering with 0 width)
+  const effectiveWidth = width > 0 ? width : 400;
+
+  // The rest of the logic is unchanged except using effectiveWidth instead of WIDTH
   const minSize = Math.min(...sizes);
   const maxSize = Math.max(...sizes);
 
-  // Functions for mapping size to X, and px to size
   const sizeToX = (size: number) =>
-    ((size - minSize) / (maxSize - minSize)) * WIDTH;
+    ((size - minSize) / (maxSize - minSize)) * effectiveWidth;
 
-  // Determine scaling for the bezier curve
   const diffHigh = maxSize - selectedSize;
   const diffLow = minSize - selectedSize;
   const spacingHigh = Math.abs(bezier(diffHigh));
@@ -30,35 +59,35 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   const maxAllowed = HEIGHT / 2;
   const scale = rawPeak > 0 ? maxAllowed / rawPeak : 1;
 
-  // Generate the path for the bezier graph
   const step = 1;
   let pathD = `M 0 ${HEIGHT / 2}`;
-  for (let px = 0; px <= WIDTH; px += step) {
-    const size = minSize + ((maxSize - minSize) * px) / WIDTH;
+  for (let px = 0; px <= effectiveWidth; px += step) {
+    const size = minSize + ((maxSize - minSize) * px) / effectiveWidth;
     const diff = size - selectedSize;
     const spacing = bezier(diff) * scale;
     const y = HEIGHT / 2 - (spacing * settings.bezierStrength) / 100;
     pathD += ` L ${px} ${y}`;
   }
 
-  // Tick labels for the X axis
   const steps = 10;
   const labelStep = (maxSize - minSize) / steps;
-  const pixelStep = WIDTH / steps;
+  const pixelStep = effectiveWidth / steps;
 
   return (
-    <div id="svgcanvas" className="w-full">
+    <div ref={containerRef} id="svgcanvas" className="w-full">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width={WIDTH}
+        width="100%"
         height={HEIGHT}
+        viewBox={`0 0 ${effectiveWidth} ${HEIGHT}`}
         className="w-full max-w-full border"
+        style={{ display: "block" }}
       >
         {/* Horizontal mid-line */}
         <line
           x1={0}
           y1={HEIGHT / 2}
-          x2={WIDTH}
+          x2={effectiveWidth}
           y2={HEIGHT / 2}
           stroke="#ccc"
           strokeWidth={1}
@@ -121,7 +150,7 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
         <text x={10} y={HEIGHT - 20} fontSize={12} fill="#333">
           {t("spacingDown")}
         </text>
-        <text x={WIDTH - 80} y={24} fontSize={12} fill="#333">
+        <text x={effectiveWidth - 80} y={24} fontSize={12} fill="#333">
           {t("fontSizeLabel")}
         </text>
 
