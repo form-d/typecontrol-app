@@ -7,23 +7,24 @@ interface GraphCanvasProps {
   bezier: (diff: number) => number;
 }
 
-const HEIGHT = 200; // Fixed height in px
+const HEIGHT = 200; // Fixed SVG height
+const MIN_LABEL_GAP = 50; // Minimum gap between labels in px
+const MAX_STEPS = 20;
+const MIN_STEPS = 2;
 
 const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   const { t, settings } = useGlobalState();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
 
-  // Use ResizeObserver to track container width
+  // Responsive: Observe container width with ResizeObserver
   useEffect(() => {
     const elem = containerRef.current;
     if (!elem) return;
 
-    // Handler for ResizeObserver
     const handleResize = (entries: ResizeObserverEntry[]) => {
       for (let entry of entries) {
-        const newWidth = entry.contentRect.width;
-        setWidth(newWidth);
+        setWidth(entry.contentRect.width);
       }
     };
 
@@ -38,10 +39,16 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
     };
   }, []);
 
-  // Fallback width if not yet measured
+  // Fallback for SSR or very fast initial render
   const effectiveWidth = width > 0 ? width : 400;
 
-  // Calculation logic (same as before)
+  // Dynamic steps calculation
+  const autoSteps = Math.max(
+    MIN_STEPS,
+    Math.min(MAX_STEPS, Math.floor(effectiveWidth / MIN_LABEL_GAP))
+  );
+
+  // Calculation logic
   const minSize = Math.min(...sizes);
   const maxSize = Math.max(...sizes);
   const sizeToX = (size: number) =>
@@ -55,6 +62,7 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   const maxAllowed = HEIGHT / 2;
   const scale = rawPeak > 0 ? maxAllowed / rawPeak : 1;
 
+  // Bezier path
   const step = 1;
   let pathD = `M 0 ${HEIGHT / 2}`;
   for (let px = 0; px <= effectiveWidth; px += step) {
@@ -65,9 +73,8 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
     pathD += ` L ${px} ${y}`;
   }
 
-  const steps = 10;
-  const labelStep = (maxSize - minSize) / steps;
-  const pixelStep = effectiveWidth / steps;
+  const labelStep = (maxSize - minSize) / autoSteps;
+  const pixelStep = effectiveWidth / autoSteps;
 
   return (
     <div ref={containerRef} id="svgcanvas" className="w-full">
@@ -117,11 +124,11 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
           strokeWidth={2}
         />
 
-        {/* X axis tick labels */}
-        {[...Array(steps + 1)].map((_, i) => {
+        {/* X axis tick labels (dynamic steps) */}
+        {[...Array(autoSteps + 1)].map((_, i) => {
           const size = Math.round(minSize + labelStep * i);
           let x = i * pixelStep + 5;
-          if (i === steps) x -= 40;
+          if (i === autoSteps) x -= 40;
           return (
             <text
               key={i}
