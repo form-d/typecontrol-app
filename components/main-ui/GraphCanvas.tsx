@@ -8,46 +8,42 @@ interface GraphCanvasProps {
 }
 
 const HEIGHT = 200; // Fixed height in px
-const DEBOUNCE_MS = 100;
 
 const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   const { t, settings } = useGlobalState();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
 
-  // Resize handler with debounce
+  // Use ResizeObserver to track container width
   useEffect(() => {
-    let timeout: NodeJS.Timeout | null = null;
+    const elem = containerRef.current;
+    if (!elem) return;
 
-    const handleResize = () => {
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        if (containerRef.current) {
-          setWidth(containerRef.current.offsetWidth);
-        }
-      }, DEBOUNCE_MS);
+    // Handler for ResizeObserver
+    const handleResize = (entries: ResizeObserverEntry[]) => {
+      for (let entry of entries) {
+        const newWidth = entry.contentRect.width;
+        setWidth(newWidth);
+      }
     };
 
-    window.addEventListener("resize", handleResize);
+    const observer = new ResizeObserver(handleResize);
+    observer.observe(elem);
 
-    // Initial width set
-    if (containerRef.current) {
-      setWidth(containerRef.current.offsetWidth);
-    }
+    // Set initial width
+    setWidth(elem.offsetWidth);
 
     return () => {
-      if (timeout) clearTimeout(timeout);
-      window.removeEventListener("resize", handleResize);
+      observer.disconnect();
     };
   }, []);
 
-  // Fallback for width (avoid rendering with 0 width)
+  // Fallback width if not yet measured
   const effectiveWidth = width > 0 ? width : 400;
 
-  // The rest of the logic is unchanged except using effectiveWidth instead of WIDTH
+  // Calculation logic (same as before)
   const minSize = Math.min(...sizes);
   const maxSize = Math.max(...sizes);
-
   const sizeToX = (size: number) =>
     ((size - minSize) / (maxSize - minSize)) * effectiveWidth;
 
@@ -80,7 +76,7 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
         width="100%"
         height={HEIGHT}
         viewBox={`0 0 ${effectiveWidth} ${HEIGHT}`}
-        className="w-full max-w-full border"
+        className="w-full max-w-full border rounded-lg border-gray-200"
         style={{ display: "block" }}
       >
         {/* Horizontal mid-line */}
