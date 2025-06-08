@@ -35,6 +35,25 @@ const CustomSlider = ({
 
   const percent = ((value - min) / (max - min)) * 100;
 
+  // Utility to get clientX from Mouse or Touch event
+  function getClientX(
+    e: MouseEvent | TouchEvent | React.MouseEvent | React.TouchEvent
+  ): number {
+    // Touch events (move/start)
+    if ("touches" in e && e.touches.length > 0) {
+      return e.touches[0].clientX;
+    }
+    // Touch end (changedTouches)
+    if ("changedTouches" in e && (e as TouchEvent).changedTouches.length > 0) {
+      return (e as TouchEvent).changedTouches[0].clientX;
+    }
+    // Mouse events
+    if ("clientX" in e) {
+      return (e as MouseEvent | React.MouseEvent).clientX;
+    }
+    return 0;
+  }
+
   const updateValue = (clientX: number) => {
     if (!trackRef.current || disabled) return;
     const { left, width } = trackRef.current.getBoundingClientRect();
@@ -45,29 +64,52 @@ const CustomSlider = ({
     onChange(parseFloat(newValue.toFixed(5)));
   };
 
+  // --- Mouse handlers ---
   const handleMouseDown = (e: React.MouseEvent) => {
     if (disabled) return;
     setDragging(true);
     updateValue(e.clientX);
   };
-
   const handleMouseMove = (e: MouseEvent) => {
     if (dragging) updateValue(e.clientX);
   };
-
   const handleMouseUp = () => setDragging(false);
 
+  // --- Touch handlers ---
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (disabled) return;
+    setDragging(true);
+    updateValue(e.touches[0].clientX);
+  };
+  const handleTouchMove = (e: TouchEvent) => {
+    if (dragging && e.touches.length > 0) {
+      updateValue(e.touches[0].clientX);
+    }
+  };
+  const handleTouchEnd = () => setDragging(false);
+
+  // Attach event listeners for dragging
   useEffect(() => {
     if (dragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
+
+      // NEW: Touch events
+      window.addEventListener("touchmove", handleTouchMove);
+      window.addEventListener("touchend", handleTouchEnd);
     } else {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
     }
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
   }, [dragging]);
 
@@ -89,6 +131,7 @@ const CustomSlider = ({
                 disabled ? "bg-gray-200" : "bg-black/10 cursor-pointer"
               }`}
               onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStart} // <-- ADDED
             >
               <div
                 className={`absolute top-0 left-0 h-1 rounded-full ${
@@ -101,10 +144,10 @@ const CustomSlider = ({
                   disabled
                     ? "bg-gray-100 border-gray-400"
                     : "bg-white border-purple-500 cursor-grab"
-                }`}
+                } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-8 before:h-8 before:bg-transparent before:rounded-full`}
+                // className="relative before:content-[''] before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-8 before:h-8 before:bg-purple-200/40 before:rounded-full before:pointer-events-none"
                 style={{
                   left: `${percent}%`,
-                  // transform: "translate(-50%, -50%)",
                 }}
               />
             </div>
