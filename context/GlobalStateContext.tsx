@@ -59,6 +59,7 @@ export type UISettings = {
   weight: number;
   currentViewMode: string;
   layout: "top" | "left";
+  maxLetterSize: number;
 };
 
 export type GlobalState = {
@@ -236,6 +237,7 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
     weight: 700,
     currentViewMode: "google",
     layout: "top",
+    maxLetterSize: 300,
   };
   const [settings, setSettings] = usePersistedState<UISettings>(
     "ui-settings",
@@ -248,16 +250,19 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
       return settings.customSizes
         .split(",")
         .map((n) => parseFloat(n.trim()))
-        .filter((n) => !isNaN(n));
+        .filter(
+          (n) => !isNaN(n) && n < settings.maxLetterSize // Only sizes smaller than maxLetterSize
+        );
     }
     return Array.from({ length: 12 }, (_, i) =>
       Math.round(settings.baseSize * Math.pow(settings.ratio, i))
-    );
+    ).filter((n) => n < settings.maxLetterSize); // Only sizes smaller than maxLetterSize
   }, [
     settings.useCustom,
     settings.customSizes,
     settings.baseSize,
     settings.ratio,
+    settings.maxLetterSize, // Add this as a dependency since you use it
   ]);
 
   // 2) Memoize your bezier so it always sees the latest settings

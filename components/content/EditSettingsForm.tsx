@@ -10,14 +10,6 @@ import Button from "../elements/Button";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 
 export const EditSettingsForm: React.FC = () => {
-  // const { user, draftUser, setDraftUser } = useGlobalState();
-  // useEffect(() => {
-  //   setDraftUser(user);
-  // }, [user, setDraftUser]);
-  const [customSizes, setCustomSizes] = useState(
-    "12,14,16,18,21,24,30,36,48,60,72,128"
-  );
-  const [enabled, setEnabled] = useState<boolean>(false);
   const {
     languages,
     language,
@@ -44,9 +36,9 @@ export const EditSettingsForm: React.FC = () => {
 
   return (
     <>
-      <p className="text-xs text-gray-700">
+      {/* <p className="text-xs text-gray-700">
         Hier kannst du beliebige Einstellungen oder Inhalte einfügen.
-      </p>
+      </p> */}
       <Divider />
       <ControlBlock
         title="Interface Language:"
@@ -70,8 +62,9 @@ export const EditSettingsForm: React.FC = () => {
         control={
           <TextInputWithLabel
             label=""
-            value="300"
-            onChange={setCustomSizes}
+            value={String(settings.maxLetterSize)}
+            // onChange={(v) => updateSetting("maxLetterSize")(Number(v))}
+            onChange={(v) => updateSetting("maxLetterSize")(Number(v))}
             selectOnFocus
             size={5}
             className="text-right"
@@ -90,8 +83,7 @@ export const EditSettingsForm: React.FC = () => {
         }
       />
       <Divider />
-      <Divider />
-      <ControlBlock
+      {/* <ControlBlock
         title="Line Wrapping"
         description="This limits the examples to one line only. No wrapping."
         control={
@@ -101,7 +93,7 @@ export const EditSettingsForm: React.FC = () => {
           />
         }
       />
-      <Divider />
+      <Divider /> */}
       {hasSeenTour && (
         <>
           <ControlBlock

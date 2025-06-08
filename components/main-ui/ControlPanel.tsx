@@ -310,7 +310,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
             onChange={(v) => updateSetting("useCustom")(v)}
           />
           <div className="w-full h-full flex items-end justify-end">
-            <Tooltip content="Edit your profile" placement="top">
+            <Tooltip content="Customize your preferences" placement="top">
               <IconOnlyButton
                 id="profile-btn"
                 ariaLabel="Settings"
