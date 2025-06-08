@@ -32,6 +32,8 @@ const CustomSlider = ({
 }: CustomSliderProps): React.ReactElement => {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [intent, setIntent] = useState<null | "horizontal" | "vertical">(null);
+  const startPos = useRef<{ x: number; y: number } | null>(null);
 
   const percent = ((value - min) / (max - min)) * 100;
 
@@ -78,14 +80,42 @@ const CustomSlider = ({
   // --- Touch handlers ---
   const handleTouchStart = (e: React.TouchEvent) => {
     if (disabled) return;
+    const touch = e.touches[0];
+    setIntent(null);
+    startPos.current = { x: touch.clientX, y: touch.clientY };
     setDragging(true);
-    updateValue(e.touches[0].clientX);
   };
+
+  // const handleTouchMove = (e: TouchEvent) => {
+  //   if (dragging && e.touches.length > 0) {
+  //     updateValue(e.touches[0].clientX);
+  //   }
+  // };
+
   const handleTouchMove = (e: TouchEvent) => {
-    if (dragging && e.touches.length > 0) {
-      updateValue(e.touches[0].clientX);
+    if (!dragging || !startPos.current || e.touches.length === 0) return;
+    const touch = e.touches[0];
+    const dx = Math.abs(touch.clientX - startPos.current.x);
+    const dy = Math.abs(touch.clientY - startPos.current.y);
+
+    if (intent === null) {
+      if (dx > 8 || dy > 8) {
+        if (dx > dy) {
+          setIntent("horizontal");
+          updateValue(touch.clientX);
+          // e.preventDefault(); // Prevent scroll
+        } else {
+          setIntent("vertical");
+          // Allow native scroll, so no preventDefault
+        }
+      }
+    } else if (intent === "horizontal") {
+      updateValue(touch.clientX);
+      e.preventDefault(); // Prevent scroll
     }
+    // If vertical, do nothing
   };
+
   const handleTouchEnd = () => setDragging(false);
 
   // Attach event listeners for dragging
@@ -129,7 +159,7 @@ const CustomSlider = ({
               ref={trackRef}
               className={`relative h-1 rounded-full ${
                 disabled ? "bg-gray-200" : "bg-black/10 cursor-pointer"
-              } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-full before:h-5 before:bg-transparent before:rounded-full`}
+              } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-full before:h-6 before:bg-transparent before:rounded-full`}
               onMouseDown={handleMouseDown}
               onTouchStart={handleTouchStart} // <-- ADDED
             >
@@ -144,7 +174,7 @@ const CustomSlider = ({
                   disabled
                     ? "bg-gray-100 border-gray-400"
                     : "bg-white border-purple-500 cursor-grab"
-                } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-9 before:h-9 before:bg-transparent before:rounded-full`}
+                } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-10 before:h-10 before:bg-transparent before:rounded-full`}
                 // className="relative before:content-[''] before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-8 before:h-8 before:bg-purple-200/40 before:rounded-full before:pointer-events-none"
                 style={{
                   left: `${percent}%`,
@@ -158,6 +188,7 @@ const CustomSlider = ({
                 disabled ? "text-gray-400" : "text-black"
               }`}
             >
+              {/* {String(intent)} */}
               {value.toFixed(precision)}
               {unit || ""}
             </div>
