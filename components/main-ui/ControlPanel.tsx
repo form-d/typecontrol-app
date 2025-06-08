@@ -184,7 +184,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
               />
             </svg>
             <IconOnlyButton
-              id="profile-btn"
+              id="info-btn"
               ariaLabel="Settings"
               variant="subtle"
               size="small"
@@ -315,9 +315,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
                 id="profile-btn"
                 ariaLabel="Settings"
                 variant="text"
-                icon={
-                  <Icon size="md" iconClass="ti ti-adjustments-horizontal" />
-                }
+                icon={<Icon size="md" iconClass="ti ti-settings" />}
                 onClick={() => editPreferences()}
               />
             </Tooltip>

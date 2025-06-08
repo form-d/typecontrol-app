@@ -98,13 +98,13 @@ const TextInputWithDropdown: React.FC<Props> = ({
                 flex-none px-1.5 py-1.5 border-y border-r border-gray-300 
                 rounded-e-lg h-8 focus-visible:border-purple-500 focus-visible:ring-2 
                 focus:outline-hidden hover:bg-gray-100
-                disabled:border-gray-200 disabled:bg-gray-50 disabled:text-purple-300
+                disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-400
                 text-purple-500
               `}
               onClick={onClick}
               disabled={buttonIsDisabled}
             >
-              <div className="pointer-events-none px-0 text-purple-500">
+              <div className="pointer-events-none px-0">
                 <i className="ti ti-fold-down h-4 w-4 fill-current"></i>
               </div>
             </button>
