@@ -76,7 +76,7 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   }, []);
 
   // Fallback for SSR or very fast initial render
-  const effectiveWidth = width > 0 ? width : 400;
+  const effectiveWidth = width > 0 ? width : 0;
 
   // Calculation logic
   const minSize = Math.min(...sizes);
@@ -130,10 +130,11 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
           strokeWidth={1}
         />
         {/* Left vertical line */}
-        <line x1={0} y1={0} x2={0} y2={HEIGHT} stroke="#ccc" strokeWidth={1} />
+        {/* <line x1={0} y1={0} x2={0} y2={HEIGHT} stroke="#ccc" strokeWidth={1} /> */}
 
         {/* Gray lines for each target size */}
         {sizes.map((sizeValue, idx) => {
+          if (idx === sizes.length - 1) return null; // Skip last element
           const px = sizeToX(sizeValue);
           return (
             <line
@@ -144,6 +145,7 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
               y2={HEIGHT}
               stroke="#dddd"
               strokeWidth={1}
+              strokeDasharray="4 4" // Makes the line dashed
             />
           );
         })}
@@ -154,7 +156,8 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
           y1={0}
           x2={sizeToX(selectedSize)}
           y2={HEIGHT}
-          stroke="#00dd00"
+          // stroke="#00dd00"
+          stroke="#9333ea"
           strokeWidth={2}
         />
 
@@ -193,7 +196,8 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
         </text>
 
         {/* The Bezier curve */}
-        <path d={pathD} stroke="#9333ea" strokeWidth={2} fill="none" />
+        <path d={pathD} stroke="#00ddcc" strokeWidth={2} fill="none" />
+        {/* <path d={pathD} stroke="#9333ea" strokeWidth={2} fill="none" /> */}
       </svg>
     </div>
   );
