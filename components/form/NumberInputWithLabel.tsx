@@ -85,7 +85,7 @@ const NumberInputWithLabel = ({
           onMouseDown={() => startHolding(handleDecrease)}
           onMouseUp={stopHolding}
           onMouseLeave={stopHolding}
-          className="bg-gray-100/30 text-gray-900 dark:bg-gray-700 hover:bg-gray-200 border border-gray-300 rounded-s-lg px-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-500 disabled:bg-gray-50"
+          className="bg-white text-gray-900 dark:bg-gray-700 hover:bg-gray-200 border border-gray-300 rounded-s-lg px-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
           disabled={disabled}
         >
           <svg
@@ -108,7 +108,7 @@ const NumberInputWithLabel = ({
           ref={inputRef}
           id={inputId}
           type="number"
-          className="appearance-none bg-white border border-x-0 border-gray-300 h-8 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:pointer-events-none"
+          className="appearance-none bg-white border border-x-0 border-gray-300 h-8 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-400 disabled:pointer-events-none"
           // block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded leading-tight focus:outline-hidden focus:shadow-outline
           value={value}
           step={step}
@@ -131,7 +131,7 @@ const NumberInputWithLabel = ({
           onMouseDown={() => startHolding(handleIncrease)}
           onMouseUp={stopHolding}
           onMouseLeave={stopHolding}
-          className="bg-gray-100/30 text-gray-900 hover:bg-gray-200 border border-gray-300 rounded-e-lg px-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-500 disabled:bg-gray-50"
+          className="bg-white text-gray-900 hover:bg-gray-200 border border-gray-300 rounded-e-lg px-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
           disabled={disabled}
         >
           <svg
