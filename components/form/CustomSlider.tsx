@@ -129,7 +129,7 @@ const CustomSlider = ({
               ref={trackRef}
               className={`relative h-1 rounded-full ${
                 disabled ? "bg-gray-200" : "bg-black/10 cursor-pointer"
-              }`}
+              } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-full before:h-5 before:bg-transparent before:rounded-full`}
               onMouseDown={handleMouseDown}
               onTouchStart={handleTouchStart} // <-- ADDED
             >
@@ -144,7 +144,7 @@ const CustomSlider = ({
                   disabled
                     ? "bg-gray-100 border-gray-400"
                     : "bg-white border-purple-500 cursor-grab"
-                } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-8 before:h-8 before:bg-transparent before:rounded-full`}
+                } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-9 before:h-9 before:bg-transparent before:rounded-full`}
                 // className="relative before:content-[''] before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-8 before:h-8 before:bg-purple-200/40 before:rounded-full before:pointer-events-none"
                 style={{
                   left: `${percent}%`,
