@@ -62,6 +62,11 @@ const Tooltip: React.FC<TooltipProps> = ({
   const [open, setOpen] = useState(false);
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
+  // This utility returns true if the device is touch-capable
+  const isTouchDevice =
+    typeof window !== "undefined" &&
+    ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
   const floatingContext = useFloating({
     placement,
     middleware: [
@@ -84,6 +89,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   // show/hide handlers
   const show = () => {
+    if (isTouchDevice) return;
     if (timeoutId) window.clearTimeout(timeoutId);
     const id = window.setTimeout(() => setOpen(true), delay);
     setTimeoutId(id);
@@ -117,7 +123,11 @@ const Tooltip: React.FC<TooltipProps> = ({
         onMouseEnter={show}
         onMouseLeave={hide}
         onClick={hide}
-        onFocus={show}
+        onFocus={() => {
+          if (!isTouchDevice) {
+            show();
+          }
+        }}
         onBlur={hide}
         className="inline-block"
       >
