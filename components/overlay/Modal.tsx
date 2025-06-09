@@ -49,11 +49,11 @@ export const Modal: React.FC = () => {
   if (!isRendered) return null;
 
   const backdropBase =
-    "fixed inset-0 bg-black/50 flex items-center justify-center z-50 transition-opacity duration-300";
+    "fixed flex items-center justify-center inset-0 bg-black/50 z-50 transition-opacity duration-300";
   const panelBase =
-    "max-w-xl bg-white p-4 m-4 rounded-lg min-w-[300px] ease-in-out transition-all duration-300 delay-150";
+    "flex flex-col max-w-xl bg-white p-4 m-4 rounded-lg min-w-[300px] max-h-[calc(100vh-2rem)] ease-in-out transition-all duration-300 delay-150";
   const opacityClass = fadeState === "in" ? "opacity-100" : "opacity-0";
-  const motionClass = fadeState === "in" ? "mb-0" : "-mb-10";
+  const motionClass = fadeState === "in" ? "mb-4" : "-mb-10";
 
   return (
     <div
@@ -88,10 +88,10 @@ export const Modal: React.FC = () => {
         )}
 
         {/* Content */}
-        <div>{content}</div>
+        <div className="overflow-y-auto">{content}</div>
 
         {/* Footer actions */}
-        <div className="mt-4 flex justify-end space-x-2">
+        <div className="mt-4 flex justify-end gap-2">
           {primaryButton && (
             <Button
               variant="primary"
