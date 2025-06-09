@@ -26,6 +26,7 @@ const FontManager: React.FC = () => {
       onClick: () => {
         setView("google");
         updateSetting("currentViewMode")("google");
+        updateSetting("selectedFont")("Roboto");
       },
       active: view === "google",
     },

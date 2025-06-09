@@ -137,7 +137,7 @@ const RemoteFontLoader: React.FC<RemoteFontLoaderProps> = ({
         block
         layout="left"
       />
-      <div className="flex justify-end">
+      <div className="flex justify-start">
         <Button
           onClick={loadRemote}
           disabled={disabled || !url.trim()}

@@ -1,6 +1,7 @@
 import React from "react";
 import { useGlobalState } from "../../context/GlobalStateContext";
 import Divider from "../elements/Divider";
+import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 
 type Props = {
   sizes: number[];
@@ -18,6 +19,11 @@ const FontPreviewList: React.FC<Props> = ({
   letterSpacingPercent,
 }) => {
   const { settings } = useGlobalState();
+  const updateSetting = useSettingUpdater(); // one call for _all_ keys
+
+  if (!sizes.includes(selectedSize)) {
+    updateSetting("selectedSize")(sizes[0]);
+  }
   return (
     <div className="px-1 md:px-10 overflow-x-scroll">
       <div className="inline-flex flex-col justify-stretch">
