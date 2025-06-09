@@ -36,7 +36,7 @@ const ControlBlock: React.FC<ControlBlockProps> = ({
           <span className="mt-0.5 text-xs text-gray-500">{description}</span>
         )}
       </div>
-      <div>{control}</div>
+      <div className="self-start">{control}</div>
     </div>
   );
 };
