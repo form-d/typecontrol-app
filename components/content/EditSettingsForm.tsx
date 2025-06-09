@@ -94,7 +94,7 @@ export const EditSettingsForm: React.FC = () => {
         }
       />
       <Divider /> */}
-      {hasSeenTour && (
+      {/* {hasSeenTour && (
         <>
           <ControlBlock
             title="Guide Tour"
@@ -111,7 +111,7 @@ export const EditSettingsForm: React.FC = () => {
           />
           <Divider />
         </>
-      )}
+      )} */}
     </>
   );
 };
