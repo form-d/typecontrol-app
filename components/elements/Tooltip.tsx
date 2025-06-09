@@ -123,11 +123,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         onMouseEnter={show}
         onMouseLeave={hide}
         onClick={hide}
-        onFocus={() => {
-          if (!isTouchDevice) {
-            show();
-          }
-        }}
+        onFocus={show}
         onBlur={hide}
         className="inline-block"
       >

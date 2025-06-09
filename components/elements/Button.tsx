@@ -40,7 +40,7 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  small: "text-sm py-1 px-3 h-8",
+  small: "text-sm py-1.5 px-3 min-h-8",
   standard: "text-base py-2 px-4",
   large: "text-lg py-3 px-6",
 };
@@ -80,7 +80,7 @@ const Button: React.FC<ButtonProps> = ({
   // const isDisabled = disabled;
   const isDisabled = disabled || isLoading;
   const baseClasses =
-    "inline-flex items-center font-medium rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2";
+    "inline-flex items-center font-medium leading-none rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2";
   const vClasses = variantClasses[variant];
   const sClasses = sizeClasses[size];
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";

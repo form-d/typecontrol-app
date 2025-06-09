@@ -29,7 +29,7 @@ const ControlBlock: React.FC<ControlBlockProps> = ({
   className = "",
 }): React.ReactElement => {
   return (
-    <div className={`flex items-center justify-between ${className}`}>
+    <div className={`flex items-center justify-between gap-4 ${className}`}>
       <div className="flex flex-col">
         <span className="text-sm font-medium text-gray-900">{title}</span>
         {description && (
