@@ -3,6 +3,7 @@ import { useGlobalState } from "../../context/GlobalStateContext";
 import DropdownMenu, { MenuItem } from "../overlay/DropdownMenu";
 import IconOnlyButton from "./IconOnlyButton";
 import Icon from "./Icon";
+import Button from "./Button";
 
 interface TableExporterProps {
   /**
@@ -81,13 +82,13 @@ const TableExporter: React.FC<TableExporterProps> = ({ children }) => {
 
   const items: MenuItem[] = [
     {
-      label: "Copy HTML",
+      label: "Copy table HTML",
       onClick: () => {
         copyAsHTML();
       },
     },
     {
-      label: "Export CSV",
+      label: "Export table CSV",
       onClick: () => {
         exportAsCSV();
       },
@@ -102,12 +103,14 @@ const TableExporter: React.FC<TableExporterProps> = ({ children }) => {
           placement="top"
           enabled={true}
           trigger={
-            <IconOnlyButton
-              id="fontMode-btn"
-              ariaLabel="Settings"
+            <Button
+              id="tableExport-btn"
               variant="tertiary"
-              icon={<Icon size="md" iconClass="ti ti-dots" />}
-            />
+              size="small"
+              startIcon={<Icon size="md" iconClass="ti ti-table-export" />}
+            >
+              Export
+            </Button>
           }
           items={items}
         />

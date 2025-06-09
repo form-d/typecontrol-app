@@ -29,6 +29,7 @@ interface ButtonProps {
   isLoading?: boolean;
   /** Loading text */
   loadingText?: string;
+  id?: string;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -76,6 +77,7 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   isLoading = false,
   loadingText = "Loading...",
+  id,
 }) => {
   // const isDisabled = disabled;
   const isDisabled = disabled || isLoading;
@@ -88,6 +90,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      id={id}
       type="button"
       onClick={onClick}
       disabled={isDisabled}
