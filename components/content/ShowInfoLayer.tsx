@@ -13,7 +13,7 @@ export const ShowInfoLayer: React.FC = () => {
       </p>
       <p className="text-sm text-gray-700 mt-4 mb-4">
         It all started with the fact that I wanted to define the letter spacing
-        for the font size tokens for a design system in such a way that the
+        for the font size tokens for a design system in such a way, that the
         larger the font size, the smaller the letter spacing. To achieve
         visually uniform spacing. In other words: a non-linear letter spacing.
         This means that a definition with percent and pixel value doesn't help
