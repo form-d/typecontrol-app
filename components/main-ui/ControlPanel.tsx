@@ -3,20 +3,14 @@ import { useGlobalState } from "../../context/GlobalStateContext";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 
 import CustomSlider from "../form/CustomSlider";
-import TextInputWithLabel from "../form/TextInputWithLabel";
 import CheckboxWithLabel from "../form/CheckboxWithLabel";
 import SelectWithLabel from "../form/SelectWithLabel";
 import NumberInputWithLabel from "../form/NumberInputWithLabel";
-import logo from "../assets/typeControl.svg";
 import IconOnlyButton from "../elements/IconOnlyButton";
 import Icon from "../elements/Icon";
 import { EditSettingsForm } from "../content/EditSettingsForm";
-import { categorizedFonts } from "../../data/googleFonts";
 import TextInputWithDropdown from "../form/TextInputWithDropdown";
-import LocalLocalLocalFontSelect from "../font-manager/LocalFontSelect";
-import RemoteFontLoader from "../font-manager/RemoteFontLoader";
 import FontManager from "../font-manager/FontManager";
-import { TourStep } from "../overlay/GuidedTour";
 import { getDefaultTourSteps } from "../../context/tourSteps";
 import TextInputWithButton from "../form/TextInputWithButton";
 import Tooltip from "../elements/Tooltip";
@@ -102,16 +96,16 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
   ];
 
   // Handler to copy generated sizes into customSizes setting
-  const handleCopySizes = () => {
-    const sizesString = sizes.join(",");
-    // alert(sizesString);
-    // updateSetting("customSizes")("10,15,20,25,30,35,40,45,50");
-    updateSetting("customSizes")(sizesString);
-    setTimeout(() => {
-      updateSetting("useCustom")(true);
-      // alert(settings.customSizes);
-    }, 5000);
-  };
+  // const handleCopySizes = () => {
+  //   const sizesString = sizes.join(",");
+  //   // alert(sizesString);
+  //   // updateSetting("customSizes")("10,15,20,25,30,35,40,45,50");
+  //   updateSetting("customSizes")(sizesString);
+  //   setTimeout(() => {
+  //     updateSetting("useCustom")(true);
+  //     // alert(settings.customSizes);
+  //   }, 5000);
+  // };
 
   return (
     <div
