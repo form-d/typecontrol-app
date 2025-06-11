@@ -52,6 +52,7 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   const { t, settings } = useGlobalState();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
+  const [shouldRender, setShouldRender] = useState(false);
 
   // Responsive: Observe container width with ResizeObserver
   useEffect(() => {
@@ -62,6 +63,15 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
       for (let entry of entries) {
         setWidth(entry.contentRect.width);
       }
+
+      if (elem.parentElement) {
+        const style = window.getComputedStyle(elem.parentElement);
+        if (style.display !== "none") {
+          setShouldRender(true);
+        } else {
+          setShouldRender(false);
+        }
+      }
     };
 
     const observer = new ResizeObserver(handleResize);
@@ -70,10 +80,21 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
     // Set initial width
     setWidth(elem.offsetWidth);
 
+    // Check of element is visible
+    if (elem.parentElement) {
+      const style = window.getComputedStyle(elem.parentElement);
+      console.log("style.display :>> ", style.display);
+      if (style.display !== "none") {
+        setShouldRender(true);
+      }
+    }
+
     return () => {
       observer.disconnect();
     };
   }, []);
+
+  // if (!sizes || !selectedSize) return null;
 
   // Fallback for SSR or very fast initial render
   const effectiveWidth = width > 0 ? width : 0;
@@ -111,94 +132,101 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   const ticks = getNiceTicks(minSize, maxSize, maxTicks);
 
   return (
-    <div ref={containerRef} id="svgcanvas" className="w-full">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="100%"
-        height={HEIGHT}
-        viewBox={`0 0 ${effectiveWidth} ${HEIGHT}`}
-        className="w-full max-w-full border rounded-lg border-gray-200"
-        style={{ display: "block" }}
-      >
-        {/* Horizontal mid-line */}
-        <line
-          x1={0}
-          y1={HEIGHT / 2}
-          x2={effectiveWidth}
-          y2={HEIGHT / 2}
-          stroke="#ccc"
-          strokeWidth={1}
-        />
-        {/* Left vertical line */}
-        {/* <line x1={0} y1={0} x2={0} y2={HEIGHT} stroke="#ccc" strokeWidth={1} /> */}
+    <div
+      ref={containerRef}
+      id="svgcanvas"
+      className="w-full"
+      style={{ height: HEIGHT }}
+    >
+      {shouldRender && sizes.length > 0 && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="100%"
+          height={HEIGHT}
+          viewBox={`0 0 ${effectiveWidth} ${HEIGHT}`}
+          className="w-full max-w-full border rounded-lg border-gray-200"
+          style={{ display: "block" }}
+        >
+          {/* Horizontal mid-line */}
+          <line
+            x1={0}
+            y1={HEIGHT / 2}
+            x2={effectiveWidth}
+            y2={HEIGHT / 2}
+            stroke="#ccc"
+            strokeWidth={1}
+          />
+          {/* Left vertical line */}
+          {/* <line x1={0} y1={0} x2={0} y2={HEIGHT} stroke="#ccc" strokeWidth={1} /> */}
 
-        {/* Gray lines for each target size */}
-        {sizes.map((sizeValue, idx) => {
-          if (idx === sizes.length - 1) return null; // Skip last element
-          const px = sizeToX(sizeValue);
-          return (
-            <line
-              key={idx}
-              x1={px}
-              y1={0}
-              x2={px}
-              y2={HEIGHT}
-              stroke="#dddd"
-              strokeWidth={1}
-              strokeDasharray="4 4" // Makes the line dashed
-            />
-          );
-        })}
+          {/* Gray lines for each target size */}
+          {sizes.map((sizeValue, idx) => {
+            if (idx === sizes.length - 1) return null; // Skip last element
+            const px = sizeToX(sizeValue);
+            return (
+              <line
+                key={idx}
+                x1={px}
+                y1={0}
+                x2={px}
+                y2={HEIGHT}
+                stroke="#dddd"
+                strokeWidth={1}
+                strokeDasharray="4 4" // Makes the line dashed
+              />
+            );
+          })}
 
-        {/* Selected X line */}
-        <line
-          x1={sizeToX(selectedSize)}
-          y1={0}
-          x2={sizeToX(selectedSize)}
-          y2={HEIGHT}
-          // stroke="#00dd00"
-          stroke="#9333ea"
-          strokeWidth={2}
-        />
+          {/* Selected X line */}
+          <line
+            x1={sizeToX(selectedSize)}
+            y1={0}
+            x2={sizeToX(selectedSize)}
+            y2={HEIGHT}
+            // stroke="#00dd00"
+            stroke="#9333ea"
+            strokeWidth={2}
+          />
 
-        {/* X axis tick labels (nice numbers) */}
-        {ticks.map((tick, i) => {
-          const x = sizeToX(tick);
-          return (
-            <text
-              key={i}
-              x={x}
-              y={HEIGHT - 5}
-              fontSize={12}
-              fill="#333"
-              style={{ pointerEvents: "none", userSelect: "none" }}
-              textAnchor={
-                i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"
-              }
-            >
-              {tick}
-            </text>
-          );
-        })}
+          {/* X axis tick labels (nice numbers) */}
+          {ticks.map((tick, i) => {
+            const x = sizeToX(tick);
+            return (
+              <text
+                key={i}
+                x={x}
+                y={HEIGHT - 5}
+                fontSize={12}
+                fill="#333"
+                style={{ pointerEvents: "none", userSelect: "none" }}
+                textAnchor={
+                  i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"
+                }
+              >
+                {tick}
+              </text>
+            );
+          })}
 
-        {/* Labels */}
-        <text x={2} y={HEIGHT / 2 - 4} fontSize={12} fill="#333">
-          0
-        </text>
-        <text x={10} y={20} fontSize={12} fill="#333">
-          {t("spacingUp")}
-        </text>
-        <text x={10} y={HEIGHT - 20} fontSize={12} fill="#333">
-          {t("spacingDown")}
-        </text>
-        <text x={effectiveWidth - 80} y={24} fontSize={12} fill="#333">
-          {t("fontSizeLabel")}
-        </text>
+          {/* Labels */}
+          <text x={2} y={HEIGHT / 2 - 4} fontSize={12} fill="#333">
+            0
+          </text>
+          <text x={10} y={20} fontSize={12} fill="#333">
+            {t("spacingUp")}
+          </text>
+          <text x={10} y={HEIGHT - 20} fontSize={12} fill="#333">
+            {t("spacingDown")}
+          </text>
+          <text x={effectiveWidth - 80} y={24} fontSize={12} fill="#333">
+            {t("fontSizeLabel")}
+          </text>
 
-        {/* The Bezier curve */}
-        <path d={pathD} stroke="#00ddcc" strokeWidth={2} fill="none" />
-        {/* <path d={pathD} stroke="#9333ea" strokeWidth={2} fill="none" /> */}
-      </svg>
+          {/* The Bezier curve */}
+          <path d={pathD} stroke="#00ddcc" strokeWidth={2} fill="none" />
+          {/* <path d={pathD} stroke="#9333ea" strokeWidth={2} fill="none" /> */}
+        </svg>
+      )}
     </div>
   );
 };

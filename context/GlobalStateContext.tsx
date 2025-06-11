@@ -74,11 +74,11 @@ export type GlobalState = {
   snackbarConfig: SnackbarConfig;
   showSnackbar: (cfg: SnackbarConfig) => void;
 
-  // user
-  user: User;
-  draftUser: User;
-  setDraftUser: (u: User) => void;
-  updateUser: () => void;
+  // // user
+  // user: User;
+  // draftUser: User;
+  // setDraftUser: (u: User) => void;
+  // updateUser: () => void;
 
   // i18n
   languages: string[];
@@ -115,25 +115,25 @@ const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
 export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  // user persistence
-  const defaultUser: User = {
-    id: "u123",
-    name: "Jane Doe",
-    email: "jane.doe@example.com",
-  };
-  const [user, setUser] = usePersistedState<User>("user", defaultUser);
-  const [draftUser, setDraftUser] = useState<User>(user);
+  // // user persistence
+  // const defaultUser: User = {
+  //   id: "u123",
+  //   name: "Jane Doe",
+  //   email: "jane.doe@example.com",
+  // };
+  // const [user, setUser] = usePersistedState<User>("user", defaultUser);
+  // const [draftUser, setDraftUser] = useState<User>(user);
 
-  // Keep a ref to the latest draftUser so updateUser never closes over a stale value
-  const draftRef = useRef<User>(draftUser);
-  useEffect(() => {
-    draftRef.current = draftUser;
-  }, [draftUser]);
+  // // Keep a ref to the latest draftUser so updateUser never closes over a stale value
+  // const draftRef = useRef<User>(draftUser);
+  // useEffect(() => {
+  //   draftRef.current = draftUser;
+  // }, [draftUser]);
 
-  // Now updateUser can be stable (no deps on draftUser) yet always set the latest draft
-  const updateUser = useCallback(() => {
-    setUser(draftRef.current);
-  }, [setUser]);
+  // // Now updateUser can be stable (no deps on draftUser) yet always set the latest draft
+  // const updateUser = useCallback(() => {
+  //   setUser(draftRef.current);
+  // }, [setUser]);
 
   // modal
   const [isModalOpen, setModalOpen] = useState(false);
@@ -323,10 +323,10 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
         snackbarConfig,
         showSnackbar,
         // user
-        user,
-        draftUser,
-        setDraftUser,
-        updateUser,
+        // user,
+        // draftUser,
+        // setDraftUser,
+        // updateUser,
         // i18n
         languages,
         language,

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useGlobalState } from "../../context/GlobalStateContext";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 
@@ -21,16 +21,7 @@ interface ControlPanelProps {
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
-  const {
-    closeModal,
-    openModal,
-    updateUser,
-    showSnackbar,
-    t,
-    settings,
-    setSettings,
-    openTour,
-  } = useGlobalState();
+  const { openModal, t, settings, setSettings, openTour } = useGlobalState();
 
   const updateSetting = useSettingUpdater(); // one call for _all_ keys
 
@@ -192,6 +183,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
             label={t("baseSize")}
             value={settings.baseSize}
             onChange={(v) => updateSetting("baseSize")(v)}
+            // onChange={(v) => setSettings({ ...settings, baseSize: v })}
             hold
             accelerateHold
             selectOnFocus
@@ -221,6 +213,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
           <CheckboxWithLabel
             label={t("baseSpacingPercentToggle")}
             checked={settings.letterSpacingPercent}
+            // onChange={(v) =>
+            //   setSettings({ ...settings, letterSpacingPercent: v })
+            // }
             onChange={(v) => updateSetting("letterSpacingPercent")(v)}
           />
         </div>
