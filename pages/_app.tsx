@@ -6,7 +6,9 @@ import { useEffect, useState } from "react";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [hydrated, setHydrated] = useState(false);
-  // After SSR, React attaches event handlers and “activates” the page on the client. This process is called hydration
+  // After SSR, React attaches event handlers and “activates” the page on the client.
+  // This process is called hydration
+  // Hydration expects the client-rendered HTML to match what the server sent
   useEffect(() => setHydrated(true), []);
 
   if (!hydrated) {
