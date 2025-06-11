@@ -6,7 +6,6 @@ import SelectWithLabel from "../form/SelectWithLabel";
 import TextInputWithLabel from "../form/TextInputWithLabel";
 import Switch from "../form/Switch";
 import { getDefaultTourSteps } from "../../context/tourSteps";
-import Button from "../elements/Button";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 
 export const EditSettingsForm: React.FC = () => {
@@ -34,6 +33,14 @@ export const EditSettingsForm: React.FC = () => {
 
   const updateSetting = useSettingUpdater(); // one call for _all_ keys
 
+  // Local state for the input field
+  const [inputValue, setInputValue] = useState(String(settings.maxLetterSize));
+
+  // Sync local inputValue if settings change externally
+  useEffect(() => {
+    setInputValue(String(settings.maxLetterSize));
+  }, [settings.maxLetterSize]);
+
   return (
     <>
       {/* <p className="text-xs text-gray-700">
@@ -58,13 +65,34 @@ export const EditSettingsForm: React.FC = () => {
       <Divider />
       <ControlBlock
         title="Maximal Letter Size:"
-        description="This is the maximal size of a letter. Larger ratios can produce very lare font sizes eg. 20000px. This value clips the examples to to a max."
+        description="This is the maximal size of a letter. Larger ratios can produce very lare font sizes eg. 20000px. This value clips the examples to to a max. Must e < 100"
         control={
           <TextInputWithLabel
             label=""
-            value={String(settings.maxLetterSize)}
+            value={inputValue}
             // onChange={(v) => updateSetting("maxLetterSize")(Number(v))}
-            onChange={(v) => updateSetting("maxLetterSize")(Number(v))}
+            onChange={(v) => {
+              // Always keep the new value in local state
+              setInputValue(v);
+              // Only write to settings if the value has more than 3 digits
+              if (v.replace(/\D/g, "").length > 2) {
+                const num = Number(v);
+                if (!isNaN(num)) {
+                  updateSetting("maxLetterSize")(num);
+                }
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const num = Number(inputValue);
+                if (num < 100) {
+                  setInputValue("100");
+                  updateSetting("maxLetterSize")(100);
+                } else if (!isNaN(num)) {
+                  updateSetting("maxLetterSize")(num);
+                }
+              }
+            }}
             selectOnFocus
             size={5}
             className="text-right"
@@ -74,7 +102,7 @@ export const EditSettingsForm: React.FC = () => {
       <Divider />
       <ControlBlock
         title="Layout Orientation"
-        description="Switch layout for desktop between panel top or left."
+        description="Switch layout for desktop (< 1400px) between panel top or left."
         control={
           <Switch
             checked={settings.layout === "left"}

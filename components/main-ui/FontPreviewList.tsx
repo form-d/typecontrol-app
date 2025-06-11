@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useGlobalState } from "../../context/GlobalStateContext";
 import Divider from "../elements/Divider";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
@@ -21,9 +21,12 @@ const FontPreviewList: React.FC<Props> = ({
   const { settings } = useGlobalState();
   const updateSetting = useSettingUpdater(); // one call for _all_ keys
 
-  if (!sizes.includes(selectedSize)) {
-    updateSetting("selectedSize")(sizes[0]);
-  }
+  useEffect(() => {
+    if (!sizes.includes(selectedSize)) {
+      updateSetting("selectedSize")(sizes[0]);
+    }
+  }, [sizes, selectedSize, updateSetting]);
+
   return (
     <div className="px-1 md:px-10 overflow-x-scroll">
       <div className="inline-flex flex-col justify-stretch">

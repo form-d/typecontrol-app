@@ -74,12 +74,6 @@ export type GlobalState = {
   snackbarConfig: SnackbarConfig;
   showSnackbar: (cfg: SnackbarConfig) => void;
 
-  // // user
-  // user: User;
-  // draftUser: User;
-  // setDraftUser: (u: User) => void;
-  // updateUser: () => void;
-
   // i18n
   languages: string[];
   language: string;
@@ -98,8 +92,7 @@ export type GlobalState = {
 
   // settings
   settings: UISettings;
-  // setSettings: (s: UISettings) => void;
-  setSettings: (s: UISettings) => void;
+  setSettings: React.Dispatch<React.SetStateAction<UISettings>>;
 
   // Main calc functions
   sizes: number[];

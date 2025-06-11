@@ -8,6 +8,7 @@ type Props = {
   label: string;
   value?: string;
   onChange: (value: string) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   id?: string;
   placeholder?: string;
   selectOnFocus?: boolean;
@@ -21,6 +22,7 @@ const TextInputWithLabel: React.FC<Props> = ({
   label,
   value,
   onChange,
+  onKeyDown,
   id,
   placeholder,
   selectOnFocus,
@@ -54,7 +56,9 @@ const TextInputWithLabel: React.FC<Props> = ({
         placeholder={placeholder}
         onFocus={selectOnFocus ? (e) => e.target.select() : undefined}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={onKeyDown}
         size={size}
+        autoComplete="off"
       />
     </Container>
   );

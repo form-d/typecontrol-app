@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-export function usePersistedState<T>(key: string, defaultValue: T): [T, (v: T) => void] {
+export function usePersistedState<T>(
+  key: string,
+  defaultValue: T
+): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [state, setState] = useState<T>(() => {
     if (typeof window !== "undefined") {
       try {
@@ -15,6 +18,21 @@ export function usePersistedState<T>(key: string, defaultValue: T): [T, (v: T) =
     return defaultValue;
   });
 
+  // Die neue Setter-Funktion, die Updater-Funktionen akzeptiert!
+  const setPersistedState: React.Dispatch<React.SetStateAction<T>> = useCallback(
+    (valueOrFn) => {
+      setState((prev) => {
+        // Falls eine Funktion übergeben wurde, ausführen:
+        const value =
+          typeof valueOrFn === "function"
+            ? (valueOrFn as (prev: T) => T)(prev)
+            : valueOrFn;
+        return value;
+      });
+    },
+    []
+  );
+
   useEffect(() => {
     try {
       localStorage.setItem(key, JSON.stringify(state));
@@ -23,5 +41,5 @@ export function usePersistedState<T>(key: string, defaultValue: T): [T, (v: T) =
     }
   }, [key, state]);
 
-  return [state, setState];
+  return [state, setPersistedState];
 }
