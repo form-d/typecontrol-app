@@ -6,10 +6,21 @@ import { useEffect, useState } from "react";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [hydrated, setHydrated] = useState(false);
+  const [hideOverlay, setHideOverlay] = useState(false);
   // After SSR, React attaches event handlers and “activates” the page on the client.
   // This process is called hydration
   // Hydration expects the client-rendered HTML to match what the server sent
-  useEffect(() => setHydrated(true), []);
+  useEffect(() => {
+    if (!hydrated) setHydrated(true);
+  }, [hydrated]);
+
+  useEffect(() => {
+    if (hydrated) {
+      // Wait for fade-out animation, then remove overlay
+      const timeout = setTimeout(() => setHideOverlay(true), 500);
+      return () => clearTimeout(timeout);
+    }
+  }, [hydrated]);
 
   if (!hydrated) {
     // White full-screen
@@ -23,9 +34,14 @@ function MyApp({ Component, pageProps }: AppProps) {
         href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"
         rel="stylesheet"
       />
-      <div className="fade-in">
-        <Component {...pageProps} />
-      </div>
+      <Component {...pageProps} />
+      {!hideOverlay && (
+        <div
+          className={`fixed inset-0 z-50 bg-white ${
+            hydrated ? "fade-out pointer-events-none" : ""
+          }`}
+        />
+      )}
     </GlobalStateProvider>
   );
 }
