@@ -7,7 +7,6 @@ import TextInputWithLabel from "../form/TextInputWithLabel";
 import Switch from "../form/Switch";
 import { getDefaultTourSteps } from "../../context/tourSteps";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
-import packageJson from "../../package.json";
 
 export const EditSettingsForm: React.FC = () => {
   const {
@@ -113,7 +112,8 @@ export const EditSettingsForm: React.FC = () => {
       />
       <Divider />
       <p className="text-xs text-gray-300">
-        App version: {packageJson.version}
+        App version: {process.env.NEXT_PUBLIC_APP_VERSION} (Build:{" "}
+        {process.env.NEXT_PUBLIC_GIT_COMMIT})
       </p>
       {/* <ControlBlock
         title="Line Wrapping"
