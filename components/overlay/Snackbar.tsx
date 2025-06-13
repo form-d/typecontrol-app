@@ -12,7 +12,7 @@ export const Snackbar: React.FC = () => {
     snackbarConfig
   );
   const baseClasses =
-    "fixed bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-sm shadow-lg";
+    "fixed z-15 bottom-4 max-w-sm w-[calc(100%-theme(space.7))] left-1/2 transform -translate-x-1/2 px-6 py-3 text-sm md:text-base rounded-lg shadow-lg";
   const colorClasses =
     variant === "error" ? "bg-red-600 text-white" : "bg-gray-800 text-white";
 
