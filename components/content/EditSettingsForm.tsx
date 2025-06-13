@@ -113,7 +113,9 @@ export const EditSettingsForm: React.FC = () => {
       <Divider />
       <p className="text-xs text-gray-300">
         App version: {process.env.NEXT_PUBLIC_APP_VERSION} (Build:{" "}
-        {process.env.NEXT_PUBLIC_GIT_COMMIT})
+        {process.env.NEXT_PUBLIC_GIT_COMMIT}
+        {" - "}
+        {process.env.NEXT_PUBLIC_COMMIT_DATE})
       </p>
       {/* <ControlBlock
         title="Line Wrapping"
