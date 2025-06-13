@@ -227,7 +227,7 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
     enabled: false,
     sampleText: "typeControl – letterspacing with ease",
     selectedFont: "Roboto",
-    availableWeights: [400],
+    availableWeights: [100, 200, 300, 400, 500, 600, 700, 800, 900],
     weight: 700,
     currentViewMode: "google",
     layout: "top",
