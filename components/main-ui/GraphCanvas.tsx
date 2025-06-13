@@ -115,8 +115,16 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
 
   // Bezier path
   const step = 1;
-  let pathD = `M 0 ${HEIGHT / 2}`;
-  for (let px = 0; px <= effectiveWidth; px += step) {
+  // Calculate the first value for px = 0
+  const size0 = minSize; // since px = 0
+  const diff0 = size0 - selectedSize;
+  const spacing0 = bezier(diff0) * scale;
+  const y0 = HEIGHT / 2 - (spacing0 * settings.bezierStrength) / 100;
+
+  // Start the path at the actual first value
+  let pathD = `M 0 ${y0}`;
+  for (let px = step; px <= effectiveWidth; px += step) {
+    // start at step, not 0!
     const size = minSize + ((maxSize - minSize) * px) / effectiveWidth;
     const diff = size - selectedSize;
     const spacing = bezier(diff) * scale;
