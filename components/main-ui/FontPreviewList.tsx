@@ -37,7 +37,7 @@ const FontPreviewList: React.FC<Props> = ({
               ? (letterSpacing / 100) * size
               : letterSpacing) + bezier(diff);
           return (
-            <div key={i} className="w-full">
+            <div key={i} className="w-full pt-4 md:pt-0">
               <div className="flex flex-col md:flex-row gap-2 justify-start">
                 <span className="w-full sm:w-20 self-center font-medium text-sm shrink-0 px-3">
                   {size}px
