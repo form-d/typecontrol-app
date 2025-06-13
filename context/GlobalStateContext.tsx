@@ -93,6 +93,7 @@ export type GlobalState = {
   // settings
   settings: UISettings;
   setSettings: React.Dispatch<React.SetStateAction<UISettings>>;
+  resetSettings: () => void; // <-- add this!
 
   // Main calc functions
   sizes: number[];
@@ -236,6 +237,8 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
     "ui-settings",
     defaultSettings
   );
+  // Reset function
+  const resetSettings = () => setSettings(defaultSettings);
 
   // 1) Compute sizes once, memoized on exactly the settings that affect them
   const sizes = useMemo<number[]>(() => {
@@ -335,6 +338,7 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
         // Seetings
         settings,
         setSettings,
+        resetSettings,
         // Main Functins depending on settings
         sizes,
         bezier,

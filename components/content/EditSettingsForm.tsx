@@ -7,6 +7,7 @@ import TextInputWithLabel from "../form/TextInputWithLabel";
 import Switch from "../form/Switch";
 import { getDefaultTourSteps } from "../../context/tourSteps";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
+import Button from "../elements/Button";
 
 export const EditSettingsForm: React.FC = () => {
   const {
@@ -20,6 +21,8 @@ export const EditSettingsForm: React.FC = () => {
     t,
     settings,
     setSettings,
+    resetSettings,
+    showSnackbar,
   } = useGlobalState();
   const steps = getDefaultTourSteps(t);
 
@@ -29,6 +32,13 @@ export const EditSettingsForm: React.FC = () => {
       resetTour(); // clear the flag
       openTour(steps); // reopen the tour
     }, 400);
+  };
+  const handleReset = () => {
+    closeModal();
+    resetSettings();
+    setTimeout(() => {
+      showSnackbar({ message: `App reset to default!` });
+    }, 800);
   };
 
   const updateSetting = useSettingUpdater(); // one call for _all_ keys
@@ -111,6 +121,20 @@ export const EditSettingsForm: React.FC = () => {
         }
       />
       <Divider />
+      {hasSeenTour && (
+        <>
+          <ControlBlock
+            title="Reset app"
+            description="Restore all app settings and values to default"
+            control={
+              <Button size="small" variant="secondary" onClick={handleReset}>
+                Reset
+              </Button>
+            }
+          />
+          <Divider />
+        </>
+      )}
       <p className="text-xs text-gray-300">
         App version: {process.env.NEXT_PUBLIC_APP_VERSION} (Build:{" "}
         {process.env.NEXT_PUBLIC_GIT_COMMIT}
