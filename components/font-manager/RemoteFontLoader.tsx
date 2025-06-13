@@ -17,44 +17,9 @@ const RemoteFontLoader: React.FC<RemoteFontLoaderProps> = ({
   // const [family, setFamily] = useState("");
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const sheetRef = useRef<CSSStyleSheet | null>(null);
   const { t, settings, showSnackbar } = useGlobalState();
-
-  // const loadRemote = () => {
-  //   if (!url.trim()) return;
-  //   setIsLoading(true);
-  //   // if (!family.trim() || !url.trim()) return;
-  //   updateSetting("selectedFont")("RemoteFont");
-  //   let sheet = sheetRef.current;
-  //   if (!sheet) {
-  //     sheet = new CSSStyleSheet();
-  //     document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
-  //     sheetRef.current = sheet;
-  //   }
-  //   try {
-  //     sheet.insertRule(
-  //       `@font-face {
-  //         font-family: '${settings.selectedFont}';
-  //         src: url('${url}');
-  //       }`
-  //     );
-  //     onLoad?.(settings.selectedFont);
-  //     // setFamily("");
-  //     // setUrl("");
-  //     setTimeout(() => {
-  //       setIsLoading(false);
-  //     }, 1000);
-  //   } catch (e) {
-  //     console.error("Failed to load remote font:", e);
-  //     alert(e);
-  //     showSnackbar({
-  //       message: `Failed to load remote font:'${e}'`,
-  //     });
-  //     setTimeout(() => {
-  //       setIsLoading(false);
-  //     }, 1000);
-  //   }
-  // };
 
   const loadRemote = async () => {
     const trimmedUrl = url.trim();
@@ -113,11 +78,14 @@ const RemoteFontLoader: React.FC<RemoteFontLoaderProps> = ({
       }
 
       onLoad?.(remoteFontFamily);
-      setUrl("");
+      // setUrl("");
     } catch (e: unknown) {
       const err = e instanceof Error ? e : new Error(String(e));
       console.error("Failed to load remote font:", err);
-      showSnackbar({ message: `Failed to load remote font: ${err.message}` });
+      showSnackbar({
+        message: `Failed to load remote font: ${err.message}`,
+        variant: "error",
+      });
     } finally {
       setTimeout(() => setIsLoading(false), 100);
     }
@@ -130,7 +98,7 @@ const RemoteFontLoader: React.FC<RemoteFontLoaderProps> = ({
       <TextInputWithLabel
         label="Remote Font"
         // label="Load font from remote server"
-        placeholder="Remote font URL"
+        placeholder="Remote font URL (ttf, otf, woff, woff2)"
         onChange={(v) => setUrl(v)}
         value={url}
         selectOnFocus
