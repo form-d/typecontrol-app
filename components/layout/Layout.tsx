@@ -57,7 +57,7 @@ const Layout: React.FC<LayoutProps> = ({
     <div ref={containerRef} className={containerClasses}>
       {isTop ? (
         // Sticky top bar: transparent background, stays at top while content scrolls
-        <aside className="md:sticky top-0 w-full z-10 p-4 bg-white/70 backdrop-blur-[32px] border border-b-black/15 p-4 space-y-4">
+        <aside className="h-[50vh] md:h-auto overflow-auto md:sticky top-0 w-full z-10 p-4 bg-white/70 backdrop-blur-[32px] border border-b-black/15 p-4 space-y-4">
           {bar}
         </aside>
       ) : (

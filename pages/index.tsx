@@ -12,7 +12,7 @@ const Home: React.FC = () => {
   return (
     <Layout orientation={settings.layout} bar={<ControlPanel sizes={sizes} />}>
       <div className="">
-        <div className="mx-auto">
+        <div className="mx-auto h-[50vh] md:h-auto overflow-auto">
           {/* <div className="mx-auto px-1 md:px-10"> */}
           <FontPreviewList
             sizes={sizes}
