@@ -1,47 +1,64 @@
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  ReactNode,
-  CSSProperties,
-} from "react";
+import React, { useState, useEffect, useRef, ReactNode } from "react";
+import { createPortal } from "react-dom";
+import {
+  useFloating,
+  offset,
+  flip,
+  shift,
+  arrow,
+  autoUpdate,
+} from "@floating-ui/react-dom";
 import Button from "../elements/Button";
 
 export type Placement =
-  | "top-start"
   | "top"
+  | "top-start"
   | "top-end"
-  | "bottom-start"
   | "bottom"
+  | "bottom-start"
   | "bottom-end"
-  | "left-start"
   | "left"
+  | "left-start"
   | "left-end"
-  | "right-start"
   | "right"
+  | "right-start"
   | "right-end";
 
 export type TourStep = {
-  /** CSS selector for the element to highlight */
   target: string;
-  /** Optional heading text for the tooltip */
   title?: ReactNode;
-  /** Optional body text for the tooltip */
   description?: ReactNode;
-  /** Tooltip placement relative to the target */
   placement?: Placement;
+  offset?: number;
 };
 
 type GuidedTourProps = {
-  /** Steps defining the tour */
   steps: TourStep[];
-  /** Called when tour finishes or is skipped */
   onClose?: () => void;
-  /** Clicking the overlay closes the tour */
   closeOnOverlayClick?: boolean;
 };
+
+const PADDING = 8;
+
+// Virtual element for floating-ui placement
+function makeVirtualElement(rect: DOMRect) {
+  return {
+    getBoundingClientRect: () =>
+      ({
+        top: rect.top - PADDING,
+        left: rect.left - PADDING,
+        right: rect.right + PADDING,
+        bottom: rect.bottom + PADDING,
+        width: rect.width + 2 * PADDING,
+        height: rect.height + 2 * PADDING,
+        x: rect.left - PADDING,
+        y: rect.top - PADDING,
+        toJSON: () => {},
+      } as DOMRect),
+  };
+}
 
 export const GuidedTour: React.FC<GuidedTourProps> = ({
   steps,
@@ -55,19 +72,77 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     width: 0,
     height: 0,
   });
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const [tooltipSize, setTooltipSize] = useState({ width: 0, height: 0 });
 
-  // animation states
+  // Animation states
   const [showOverlay, setShowOverlay] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [isEntering, setIsEntering] = useState(true);
 
   const step = steps[current];
+  const arrowRef = useRef<HTMLDivElement>(null);
 
-  // initial fade-in
+  // Floating UI
+  const floating = useFloating({
+    placement: step.placement || "bottom",
+    middleware: [
+      offset(18),
+      flip(),
+      shift({ padding: 8 }),
+      arrow({ element: arrowRef, padding: 8 }),
+    ],
+    whileElementsMounted: autoUpdate,
+    open: showTooltip && !isExiting,
+  });
+  const {
+    x,
+    y,
+    strategy,
+    refs,
+    middlewareData,
+    placement: actualPlacement,
+  } = floating;
 
+  // --- Scroll to target with offset, position overlay/tooltip before fade-in ---
+  useEffect(() => {
+    const el = document.querySelector(step.target) as HTMLElement | null;
+    if (el) {
+      const offset = step.offset ?? 0;
+      const rect = el.getBoundingClientRect();
+      const highlightTop = rect.top + window.scrollY - PADDING;
+      if (highlightTop > window.innerHeight) {
+        window.scrollTo({
+          top: highlightTop - offset,
+          behavior: "auto",
+        });
+      }
+
+      requestAnimationFrame(() => {
+        const rect2 = el.getBoundingClientRect();
+        setPosition({
+          top: rect2.top - PADDING,
+          left: rect2.left - PADDING,
+          width: rect2.width + 2 * PADDING,
+          height: rect2.height + 2 * PADDING,
+        });
+        refs.setReference(makeVirtualElement(rect2));
+        setShowOverlay(true);
+      });
+    }
+    return () => {
+      refs.setReference(null);
+      setShowOverlay(false);
+      setShowTooltip(false);
+    };
+    // eslint-disable-next-line
+  }, [current, step.target]);
+
+  // Set up floating ref
+  const tooltipRef = (node: HTMLDivElement | null) => {
+    refs.setFloating(node);
+  };
+
+  // Fade-in animation for overlay/tooltip
   useEffect(() => {
     setShowOverlay(true);
     const tipTimer = setTimeout(() => {
@@ -77,64 +152,25 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     return () => clearTimeout(tipTimer);
   }, []);
 
-  // Compute spotlight position
-  useEffect(() => {
-    const el = document.querySelector(step.target) as HTMLElement | null;
-    if (!el) return;
-    // const origZ = el.style.zIndex;
-    // const origPos = el.style.position;
-    // if (getComputedStyle(el).position === "static")
-    //   el.style.position = "relative";
-    // el.style.zIndex = "1000";
-    const rect = el.getBoundingClientRect();
-    setPosition({
-      top: rect.top + window.scrollY,
-      left: rect.left + window.scrollX,
-      width: rect.width,
-      height: rect.height,
-    });
-    // restore on cleanup
-    return () => {
-      // el.style.zIndex = origZ;
-      // el.style.position = origPos;
-    };
-  }, [current, step.target]);
-
-  // Measure tooltip dimensions
-  useEffect(() => {
-    if (!tooltipRef.current) return;
-    const rect = tooltipRef.current.getBoundingClientRect();
-    setTooltipSize({ width: rect.width, height: rect.height });
-  }, [current, showTooltip]);
-
-  // Handle window resize
+  // Handle window resize to update the spotlight overlay and tooltip reference
   useEffect(() => {
     const handleResize = () => {
       const el = document.querySelector(step.target) as HTMLElement | null;
       if (!el) return;
       const rect = el.getBoundingClientRect();
       setPosition({
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-        height: rect.height,
+        top: rect.top + window.scrollY - PADDING,
+        left: rect.left + window.scrollX - PADDING,
+        width: rect.width + 2 * PADDING,
+        height: rect.height + 2 * PADDING,
       });
+      refs.setReference(makeVirtualElement(rect));
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [step.target]);
+  }, [step.target, refs]);
 
   // Close with fade-out
-
-  // const handleClose = () => {
-  //   setIsExiting(true);
-  //   setShowTooltip(false);
-  //   setTimeout(() => {
-  //     setShowOverlay(false);
-  //     setTimeout(() => onClose?.(), 300);
-  //   }, 300);
-  // };
-
   const handleClose = () => {
     setIsExiting(true);
     setShowTooltip(false);
@@ -146,15 +182,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     }, 200);
   };
 
-  // Navigate between steps
-
-  // const changeStep = (i: number) => {
-  //   setShowTooltip(false);
-  //   // do not toggle overlay to keep it static
-  //   setCurrent(i);
-  //   setShowTooltip(true);
-  // };
-
+  // Step navigation
   const changeStep = (newIndex: number) => {
     setShowTooltip(false);
     setTimeout(() => {
@@ -172,74 +200,89 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
 
   const skip = () => handleClose();
 
-  // tooltip placement
-  const offset = 18;
-  const arrowSize = 12;
-  const half = arrowSize / 2;
-  const [side, align = "center"] = (step.placement || "bottom").split("-") as [
-    string,
-    string
-  ];
-  let tipTop = 0,
-    tipLeft = 0;
-  switch (side) {
-    case "top":
-      tipTop = position.top - tooltipSize.height - offset;
-      break;
-    case "bottom":
-      tipTop = position.top + position.height + offset;
-      break;
-    case "left":
-      tipLeft = position.left - tooltipSize.width - offset;
-      tipTop = position.top + (position.height - tooltipSize.height) / 2;
-      break;
-    case "right":
-      tipLeft = position.left + position.width + offset;
-      tipTop = position.top + (position.height - tooltipSize.height) / 2;
-      break;
-  }
-  if (side === "top" || side === "bottom") {
-    if (align === "start") tipLeft = position.left;
-    else if (align === "end")
-      tipLeft = position.left + position.width - tooltipSize.width;
-    else tipLeft = position.left + (position.width - tooltipSize.width) / 2;
-  }
-  if (side === "left" || side === "right") {
-    if (align === "start") tipTop = position.top;
-    else if (align === "end")
-      tipTop = position.top + position.height - tooltipSize.height;
-  }
-
-  // arrow styling
-  const arrowStyle: CSSProperties = {
-    position: "absolute",
-    width: arrowSize,
-    height: arrowSize,
-    background: "#fff",
-    transform: "rotate(45deg)",
+  // Floating-ui arrow positioning (derive on each render)
+  type Side = "top" | "bottom" | "left" | "right";
+  const opposite: Record<Side, Side> = {
+    top: "bottom",
+    bottom: "top",
+    left: "right",
+    right: "left",
   };
-  if (side === "top") arrowStyle.bottom = -half;
-  else if (side === "bottom") arrowStyle.top = -half;
-  else if (side === "left") arrowStyle.right = -half;
-  else arrowStyle.left = -half;
-  if (side === "top" || side === "bottom")
-    arrowStyle.left =
-      align === "start"
-        ? 8
-        : align === "end"
-        ? tooltipSize.width - 8 - arrowSize
-        : tooltipSize.width / 2 - half;
-  else
-    arrowStyle.top =
-      align === "start"
-        ? 8
-        : align === "end"
-        ? tooltipSize.height - 8 - arrowSize
-        : tooltipSize.height / 2 - half;
+  const [baseSide] = actualPlacement.split("-") as [Side];
+  const staticSide = opposite[baseSide];
+  const arrowX = middlewareData.arrow?.x ?? 0;
+  const arrowY = middlewareData.arrow?.y ?? 0;
+  console.log("staticSide :>> ", staticSide);
+
+  // Tooltip and Arrow in a single absolutely positioned container
+  const tooltipAndArrow =
+    showTooltip && !isExiting
+      ? createPortal(
+          <div
+            ref={tooltipRef}
+            role="tooltip"
+            className={`z-500 pointer-events-auto transition-opacity duration-300 ease-in-out`}
+            style={{
+              position: strategy,
+              top: y ?? 0,
+              left: x ?? 0,
+              zIndex: 500,
+            }}
+          >
+            {/* Arrow */}
+            <div
+              ref={arrowRef}
+              style={{
+                position: "absolute",
+                width: 12,
+                height: 12,
+                background: "#fff",
+                transform: "rotate(45deg)",
+                left: arrowX == 0 ? undefined : arrowX,
+                top: arrowY == 0 ? undefined : arrowY,
+                right: undefined,
+                bottom: undefined,
+                [staticSide]: -6,
+                boxShadow:
+                  "0 1px 3px 0 rgba(0,0,0,0.07), 0 1px 2px 0 rgba(0,0,0,0.05)",
+                zIndex: 0,
+                pointerEvents: "none",
+              }}
+            />
+            {/* Tooltip content */}
+            <div className="bg-white shadow-lg p-4 rounded-md max-w-xs relative z-10">
+              {step.title && (
+                <p className="text-sm font-bold text-gray-800 pb-1">
+                  {step.title}
+                </p>
+              )}
+              {step.description && (
+                <p className="text-xs leading-4 text-gray-600 pb-3">
+                  {step.description}
+                </p>
+              )}
+              <div className="flex justify-between">
+                <span className="text-xs font-bold text-gray-800">
+                  Step {current + 1} of {steps.length}
+                </span>
+                <div className="flex items-center space-x-2">
+                  <Button variant="text" size="small" onClick={skip}>
+                    Skip Tour
+                  </Button>
+                  <Button variant="primary" size="small" onClick={next}>
+                    {current === steps.length - 1 ? "Done" : "Next"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
 
   return (
     <>
-      {/* Transparent fullscreen overlay blocking interactions */}
+      {/* Overlay */}
       <div
         className={`fixed z-250 inset-0 pointer-events-none transition-opacity duration-500 ${
           showOverlay ? "opacity-100" : "opacity-0"
@@ -247,9 +290,9 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
         style={{ background: "transparent" }}
         onClick={closeOnOverlayClick ? skip : undefined}
       >
-        {/* Shadow overlay highlighting the target; static, only box-shadow transitions */}
+        {/* Spotlight */}
         <div
-          className={`fixed pointer-events-none transition-all duration-500 ease-in-out rounded-md ${
+          className={`fixed pointer-events-none transition-all duration-200 ease-in-out rounded-md ${
             isEntering ? "transition-none" : "transition-all"
           }`}
           style={{
@@ -261,39 +304,8 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
           }}
         />
       </div>
-
-      {/* Tooltip */}
-      <div
-        ref={tooltipRef}
-        role="tooltip"
-        className={`fixed z-500 bg-white shadow-lg p-4 rounded-md max-w-xs pointer-events-auto transition-opacity duration-300 ease-in-out ${
-          showTooltip && !isExiting ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ top: tipTop, left: tipLeft }}
-      >
-        <span style={arrowStyle} />
-        {step.title && (
-          <p className="text-sm font-bold text-gray-800 pb-1">{step.title}</p>
-        )}
-        {step.description && (
-          <p className="text-xs leading-4 text-gray-600 pb-3">
-            {step.description}
-          </p>
-        )}
-        <div className="flex justify-between">
-          <span className="text-xs font-bold text-gray-800">
-            Step {current + 1} of {steps.length}
-          </span>
-          <div className="flex items-center space-x-2">
-            <Button variant="text" size="small" onClick={skip}>
-              Skip Tour
-            </Button>
-            <Button variant="primary" size="small" onClick={next}>
-              {current === steps.length - 1 ? "Done" : "Next"}
-            </Button>
-          </div>
-        </div>
-      </div>
+      {/* Tooltip and Arrow (portaled) */}
+      {tooltipAndArrow}
     </>
   );
 };

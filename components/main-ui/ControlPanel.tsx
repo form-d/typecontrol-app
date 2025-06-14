@@ -178,7 +178,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
             />
           </div>
         </div>
-        <div className="z- 10 w-full justify-items-start flex flex-col gap-1">
+        <div
+          id="scale-col"
+          className="z- 10 w-full justify-items-start flex flex-col gap-1"
+        >
           <NumberInputWithLabel
             label={t("baseSize")}
             value={settings.baseSize}
@@ -200,71 +203,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
             disabled={settings.useCustom}
             onDisabledDoubleClick={() => updateSetting("useCustom")(false)}
           />
-          <CustomSlider
-            label={t("baseLetterSpacing")}
-            min={-5}
-            max={5}
-            step={0.1}
-            value={settings.letterSpacing}
-            onChange={(v) => updateSetting("letterSpacing")(v)}
-            unit={settings.letterSpacingPercent ? "%" : "px"}
-            precision={1}
-          />
-          <CheckboxWithLabel
-            label={t("baseSpacingPercentToggle")}
-            checked={settings.letterSpacingPercent}
-            // onChange={(v) =>
-            //   setSettings({ ...settings, letterSpacingPercent: v })
-            // }
-            onChange={(v) => updateSetting("letterSpacingPercent")(v)}
-          />
-        </div>
-        <div className="w-full flex flex-col gap-1">
-          <CustomSlider
-            label={t("bezierControl")}
-            min={0}
-            max={100}
-            step={1}
-            value={settings.bezierStrength}
-            onChange={(v) => updateSetting("bezierStrength")(v)}
-            unit="%"
-          />
-
-          <CustomSlider
-            label={t("bezierPowerControl")}
-            min={2}
-            max={5}
-            step={0.5}
-            value={settings.bezierPower}
-            onChange={(v) => updateSetting("bezierPower")(v)}
-          />
-
-          <SelectWithLabel
-            label={t("sizeSelect")}
-            value={String(settings.selectedSize)}
-            onChange={(v) => updateSetting("selectedSize")(Number(v))}
-            options={sizes.map((size) => ({
-              label: `${size}px`,
-              value: String(size),
-            }))}
-          />
-
-          <TextInputWithDropdown
-            label={t("customSampleText")}
-            value={settings.sampleText}
-            onChange={(v) => updateSetting("sampleText")(v)}
-            placeholder="Type or select a text…"
-            options={sampleOptions}
-            // optional: custom render each option
-            // optionRenderer={(item) => (
-            //   <span className="capitalize">{item.toLowerCase()}</span>
-            // )}
-            block
-            tooltipContent="Select from list"
-          />
-        </div>
-        <div className="w-full flex flex-col  gap-1">
-          <FontManager />
           <TextInputWithButton
             label={t("customSizes")}
             value={settings.customSizes}
@@ -298,6 +236,73 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
             checked={settings.useCustom}
             onChange={(v) => updateSetting("useCustom")(v)}
           />
+        </div>
+        <div id="bezier-col" className="w-full flex flex-col gap-1">
+          <CustomSlider
+            label={t("bezierControl")}
+            min={0}
+            max={100}
+            step={1}
+            value={settings.bezierStrength}
+            onChange={(v) => updateSetting("bezierStrength")(v)}
+            unit="%"
+          />
+
+          <CustomSlider
+            label={t("bezierPowerControl")}
+            min={2}
+            max={5}
+            step={0.5}
+            value={settings.bezierPower}
+            onChange={(v) => updateSetting("bezierPower")(v)}
+          />
+
+          <SelectWithLabel
+            label={t("sizeSelect")}
+            value={String(settings.selectedSize)}
+            onChange={(v) => updateSetting("selectedSize")(Number(v))}
+            options={sizes.map((size) => ({
+              label: `${size}px`,
+              value: String(size),
+            }))}
+          />
+
+          <CustomSlider
+            label={t("baseLetterSpacing")}
+            min={-5}
+            max={5}
+            step={0.1}
+            value={settings.letterSpacing}
+            onChange={(v) => updateSetting("letterSpacing")(v)}
+            unit={settings.letterSpacingPercent ? "%" : "px"}
+            precision={1}
+          />
+          <CheckboxWithLabel
+            label={t("baseSpacingPercentToggle")}
+            checked={settings.letterSpacingPercent}
+            // onChange={(v) =>
+            //   setSettings({ ...settings, letterSpacingPercent: v })
+            // }
+            onChange={(v) => updateSetting("letterSpacingPercent")(v)}
+          />
+        </div>
+        <div id="font-col" className="w-full flex flex-col  gap-1">
+          <FontManager />
+
+          <TextInputWithDropdown
+            label={t("customSampleText")}
+            value={settings.sampleText}
+            onChange={(v) => updateSetting("sampleText")(v)}
+            placeholder="Type or select a text…"
+            options={sampleOptions}
+            // optional: custom render each option
+            // optionRenderer={(item) => (
+            //   <span className="capitalize">{item.toLowerCase()}</span>
+            // )}
+            block
+            tooltipContent="Select from list"
+          />
+
           <div className="w-full h-full flex items-end justify-end">
             <Tooltip content="Customize your preferences" placement="top">
               <IconOnlyButton

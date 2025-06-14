@@ -281,7 +281,7 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
   // const [hasSeenTour, setHasSeenTour] = useState(true);
   const [hasSeenTour, setHasSeenTour] = usePersistedState<boolean>(
     "hasSeenTour",
-    true
+    false
   );
   const [isTourOpen, setTourOpen] = useState(false);
   const [tourSteps, setTourSteps] = useState<TourStep[]>([]);

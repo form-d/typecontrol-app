@@ -135,6 +135,24 @@ export const EditSettingsForm: React.FC = () => {
           <Divider />
         </>
       )}
+      {hasSeenTour && (
+        <>
+          <ControlBlock
+            title="Guide Tour"
+            description="Explor typeControl's fetaure and possibilites"
+            control={
+              <Button
+                size="small"
+                variant="secondary"
+                onClick={handleTourRestart}
+              >
+                Restart tour
+              </Button>
+            }
+          />
+          <Divider />
+        </>
+      )}
       <p className="text-xs text-gray-300">
         App version: {process.env.NEXT_PUBLIC_APP_VERSION} (Build:{" "}
         {process.env.NEXT_PUBLIC_GIT_COMMIT}
@@ -152,24 +170,6 @@ export const EditSettingsForm: React.FC = () => {
         }
       />
       <Divider /> */}
-      {/* {hasSeenTour && (
-        <>
-          <ControlBlock
-            title="Guide Tour"
-            description="Explor typeControl's fetaure and possibilites"
-            control={
-              <Button
-                size="small"
-                variant="secondary"
-                onClick={handleTourRestart}
-              >
-                Restart tour
-              </Button>
-            }
-          />
-          <Divider />
-        </>
-      )} */}
     </>
   );
 };

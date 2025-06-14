@@ -96,7 +96,7 @@ const TableExporter: React.FC<TableExporterProps> = ({ children }) => {
   ];
 
   return (
-    <div>
+    <div id="table-exporter">
       <div className="w-full flex justify-end gap-2 mb-4">
         <DropdownMenu
           tooltip="Table Options"
@@ -104,7 +104,7 @@ const TableExporter: React.FC<TableExporterProps> = ({ children }) => {
           enabled={true}
           trigger={
             <Button
-              id="tableExport-btn"
+              id="table-export-btn"
               variant="tertiary"
               size="small"
               startIcon={<Icon size="md" iconClass="ti ti-table-export" />}
