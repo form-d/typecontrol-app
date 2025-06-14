@@ -21,9 +21,7 @@ export const categorizedFonts: Record<string, string[]> = {
     'Nunito',
     'Baloo 2',
     'M PLUS Rounded 1c',
-    'Quicksand',
     'Comfortaa',
-    'Rubik',
     'Varela Round',
     'Kumbh Sans',
     'Fredoka',
@@ -70,7 +68,6 @@ export const categorizedFonts: Record<string, string[]> = {
   ],
   Superellipse: [
     'Chakra Petch',
-    'Sora',
     'Barlow Semi Condensed',
     'Yantramanav',
     'Saira',
