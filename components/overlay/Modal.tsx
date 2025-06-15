@@ -92,17 +92,6 @@ export const Modal: React.FC = () => {
 
         {/* Footer actions */}
         <div className="mt-4 flex justify-end gap-2">
-          {primaryButton && (
-            <Button
-              variant="primary"
-              onClick={() => {
-                primaryButton.action();
-                closeModal();
-              }}
-            >
-              {primaryButton.label}
-            </Button>
-          )}
           {secondaryButton && (
             <Button
               variant="secondary"
@@ -114,6 +103,18 @@ export const Modal: React.FC = () => {
               {secondaryButton.label}
             </Button>
           )}
+          {primaryButton && (
+            <Button
+              variant="primary"
+              onClick={() => {
+                primaryButton.action();
+                closeModal();
+              }}
+            >
+              {primaryButton.label}
+            </Button>
+          )}
+
           {!primaryButton && !secondaryButton && !suppressCloseButton && (
             <Button variant="secondary" onClick={closeModal}>
               Close

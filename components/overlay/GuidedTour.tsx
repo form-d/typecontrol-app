@@ -190,7 +190,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     height: 0,
   });
 
-  const { settings } = useGlobalState();
+  const { settings, openModal, closeModal } = useGlobalState();
 
   // Animation states
   const [showOverlay, setShowOverlay] = useState(false);
@@ -224,51 +224,40 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
   } = floating;
 
   // --------------------------------------------
-  // Centered Welcome Tooltip (portal)
+  //  Welcome Modal
   // --------------------------------------------
 
-  const welcomeTooltip =
-    showWelcome && welcome
-      ? createPortal(
-          <div
-            className="fixed inset-0 z-[600] flex items-center justify-center pointer-events-auto bg-black/50"
-            style={{ transition: "background 0.3s" }}
-          >
-            <div className="bg-white rounded-md shadow-lg p-6 max-w-sm mx-auto flex flex-col items-center">
-              {welcome.title && (
-                <p className="text-lg font-bold text-gray-800 pb-2 text-center">
-                  {welcome.title}
-                </p>
-              )}
-              {welcome.description && (
-                <p className="text-sm text-gray-600 pb-6 text-center">
-                  {welcome.description}
-                </p>
-              )}
-              <div className="flex gap-4">
-                <Button
-                  variant="text"
-                  size="small"
-                  onClick={() => {
-                    setShowWelcome(false);
-                    setTimeout(() => onClose?.(), 300);
-                  }}
-                >
-                  {welcome.skipLabel ?? "Skip"}
-                </Button>
-                <Button
-                  variant="primary"
-                  size="small"
-                  onClick={() => setShowWelcome(false)}
-                >
-                  {welcome.startLabel ?? "Start Tour"}
-                </Button>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )
-      : null;
+  useEffect(() => {
+    if (showWelcome && welcome) {
+      openModal({
+        title: String(welcome.title),
+        content: (
+          <div>
+            {welcome.description && (
+              <p className="text-sm text-gray-600 pb-6 text-center">
+                {welcome.description}
+              </p>
+            )}
+          </div>
+        ),
+        primaryButton: {
+          label: String(welcome.startLabel) ?? "Start Tour",
+          action: () => setShowWelcome(false),
+        },
+        secondaryButton: {
+          label: String(welcome.skipLabel) ?? "Skip",
+          action: () => {
+            setShowWelcome(false);
+            setTimeout(() => onClose?.(), 300);
+          },
+        },
+        closeOnBackdropClick: false,
+        suppressCloseButton: true,
+        showHeaderCloseButton: false,
+      });
+    }
+    // eslint-disable-next-line
+  }, [showWelcome, welcome]);
 
   const isAboveMd = useMediaQuery("(min-width: 768px)");
 
@@ -480,7 +469,6 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
 
   return (
     <>
-      {welcomeTooltip}
       {!showWelcome && (
         <>
           {/* Overlay */}
