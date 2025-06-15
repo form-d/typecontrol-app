@@ -56,7 +56,7 @@ type GuidedTourProps = {
 // CONSTANTS/UTILS
 // --------------------------------------------
 
-const PADDING = 16;
+const PADDING = 8;
 
 // Floating-ui virtual reference for highlight (with padding)
 function makeVirtualElement(rect: DOMRect) {
@@ -74,6 +74,52 @@ function makeVirtualElement(rect: DOMRect) {
         toJSON: () => {},
       } as DOMRect),
   };
+}
+
+// Find the closest scrollable parent of an element
+function getScrollParent(element: HTMLElement | null): HTMLElement | Window {
+  if (!element) return window;
+  let parent = element.parentElement;
+  while (parent) {
+    const style = getComputedStyle(parent);
+    if (
+      /(auto|scroll|overlay)/.test(style.overflowY + style.overflowX) &&
+      (parent.scrollHeight > parent.clientHeight ||
+        parent.scrollWidth > parent.clientWidth)
+    ) {
+      return parent;
+    }
+    parent = parent.parentElement;
+  }
+  return window;
+}
+
+// Scroll the correct scroll container to reveal the target, with offset and padding
+function scrollElementIntoViewWithOffset(
+  el: HTMLElement,
+  offset: number,
+  padding: number
+) {
+  const scrollParent = getScrollParent(el);
+  const rect = el.getBoundingClientRect();
+  if (scrollParent === window) {
+    const highlightTop = rect.top + window.scrollY - padding;
+    window.scrollTo({
+      top: highlightTop - offset,
+      behavior: "auto",
+    });
+  } else {
+    const parentRect = (scrollParent as HTMLElement).getBoundingClientRect();
+    const highlightTop =
+      rect.top -
+      parentRect.top +
+      (scrollParent as HTMLElement).scrollTop -
+      padding;
+    (scrollParent as HTMLElement).scrollTo({
+      top: highlightTop - offset,
+      behavior: "auto",
+    });
+  }
 }
 
 // --------------------------------------------
@@ -184,14 +230,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     const el = document.querySelector(step.target) as HTMLElement | null;
     if (el) {
       const offset = step.offset ?? 0;
-      const rect = el.getBoundingClientRect();
-      const highlightTop = rect.top + window.scrollY - PADDING;
-      if (highlightTop > window.innerHeight) {
-        window.scrollTo({
-          top: highlightTop - offset,
-          behavior: "auto",
-        });
-      }
+      scrollElementIntoViewWithOffset(el, offset, PADDING);
 
       requestAnimationFrame(() => {
         const rect2 = el.getBoundingClientRect();
@@ -230,6 +269,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
 
   // Handle window resize to update the spotlight overlay and tooltip reference
   useEffect(() => {
+    if (showWelcome) return;
     const handleResize = () => {
       const el = document.querySelector(step.target) as HTMLElement | null;
       if (!el) return;
@@ -266,7 +306,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     setTimeout(() => {
       setCurrent(newIndex);
       setShowOverlay(false);
-      setIsEntering(true);
+      // setIsEntering(true);
       setTimeout(() => setShowTooltip(true), 100);
     }, 300);
   };
@@ -384,7 +424,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
           >
             {/* Spotlight */}
             <div
-              className={`fixed pointer-events-none transition-all duration-500 ease-in-out rounded-md ${
+              className={`fixed pointer-events-none transition-all duration-200 ease-in-out rounded-md ${
                 isEntering ? "transition-none" : "transition-all"
               }`}
               style={{
