@@ -9,7 +9,7 @@ export function getDefaultTourConfig(
   return {
     welcome: {
       title: "👋 Welcome to typeControl!",
-      description: "This quick tour will show you the main features.",
+      description: "Let’s take a quick tour to explore the main features.",
       startLabel: "Let's do it!",
       skipLabel: "Nah, I'm fine",
     },
@@ -22,14 +22,14 @@ export function getDefaultTourConfig(
       },
       {
         target: "#bezier-col",
-        title: "Type scale function",
-        description: "Select a ratio to calculate a size scale. You find here the typical settings",
+        title: "Letter Spacing",
+        description: "This is typeControl's core function. Non linear letter spacing.",
         placement: "left-start",
       },
       {
         target: "#font-col",
-        title: "Type scale function",
-        description: "Select a ratio to calculate a size scale. You find here the typical settings",
+        title: "Font defintion",
+        description: "Select here the font to display and mofify the sample text.",
         placement: "left-start",
       },
       {
@@ -41,13 +41,13 @@ export function getDefaultTourConfig(
       {
         target: "#profile-btn",
         title: "App Preferences",
-        description: "Change the language, line clipping and more",
+        description: "Change the language, Layout and more.",
         placement: "left",
       },
       {
         target: "#table-export-btn",
         title: "Export letter spacing values",
-        description: "Export as csv or HTML table to use it in your tool",
+        description: "Export as csv or HTML table to use it in your tool. TIP: Click values to copy.",
         placement: "left",
         offset: 500,
       },

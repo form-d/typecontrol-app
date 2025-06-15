@@ -29,7 +29,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
     const tour = getDefaultTourConfig(t);
 
     // open the tour when this page mounts
-    openTour(tour);
+    setTimeout(() => {
+      openTour(tour);
+    }, 1000);
   }, [openTour, t]);
 
   const editPreferences = () => {
@@ -247,25 +249,29 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
             onChange={(v) => updateSetting("bezierStrength")(v)}
             unit="%"
           />
-
-          <CustomSlider
-            label={t("bezierPowerControl")}
-            min={2}
-            max={5}
-            step={0.5}
-            value={settings.bezierPower}
-            onChange={(v) => updateSetting("bezierPower")(v)}
-          />
-
-          <SelectWithLabel
-            label={t("sizeSelect")}
-            value={String(settings.selectedSize)}
-            onChange={(v) => updateSetting("selectedSize")(Number(v))}
-            options={sizes.map((size) => ({
-              label: `${size}px`,
-              value: String(size),
-            }))}
-          />
+          <div className="flex flex-row gap-10">
+            <div className="flex-1">
+              <CustomSlider
+                label={t("bezierPowerControl")}
+                min={2}
+                max={5}
+                step={0.5}
+                value={settings.bezierPower}
+                onChange={(v) => updateSetting("bezierPower")(v)}
+              />
+            </div>
+            <div className="basis-24 shrink-0">
+              <SelectWithLabel
+                label={t("sizeSelect")}
+                value={String(settings.selectedSize)}
+                onChange={(v) => updateSetting("selectedSize")(Number(v))}
+                options={sizes.map((size) => ({
+                  label: `${size}px`,
+                  value: String(size),
+                }))}
+              />
+            </div>
+          </div>
 
           <CustomSlider
             label={t("baseLetterSpacing")}

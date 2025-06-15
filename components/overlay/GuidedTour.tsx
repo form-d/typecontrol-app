@@ -9,8 +9,11 @@ import {
   shift,
   arrow,
   autoUpdate,
+  autoPlacement,
 } from "@floating-ui/react-dom";
 import Button from "../elements/Button";
+import { useGlobalState } from "../../context/GlobalStateContext";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 // --------------------------------------------
 // TYPES
@@ -30,11 +33,6 @@ export type Placement =
   | "right-start"
   | "right-end";
 
-export type TourConfig = {
-  welcome?: WelcomeStep;
-  steps: TourStep[];
-};
-
 export type TourStep = {
   target: string;
   title?: ReactNode;
@@ -43,18 +41,20 @@ export type TourStep = {
   offset?: number; // px from top when scrolling into view
 };
 
-type WelcomeStep = {
-  title?: ReactNode;
-  description?: ReactNode;
-  startLabel?: ReactNode;
-  skipLabel?: ReactNode;
+export type TourConfig = {
+  welcome?: {
+    title?: ReactNode;
+    description?: ReactNode;
+    startLabel?: ReactNode;
+    skipLabel?: ReactNode;
+  };
+  steps: TourStep[];
 };
 
 type GuidedTourProps = {
   config: TourConfig;
   onClose?: () => void;
   closeOnOverlayClick?: boolean;
-  welcome?: WelcomeStep;
 };
 
 // --------------------------------------------
@@ -99,20 +99,67 @@ function getScrollParent(element: HTMLElement | null): HTMLElement | Window {
   return window;
 }
 
+// Wait until the scroll is “settled” (not changing) for 100ms.
+function waitForScrollSettled(
+  getScroll: () => number,
+  cb: () => void,
+  stabilityWindow = 100, // ms
+  timeout = 1500
+) {
+  let lastScroll = getScroll();
+  let lastChanged = performance.now();
+  let start = performance.now();
+
+  function check(now: number) {
+    const currScroll = getScroll();
+    if (currScroll !== lastScroll) {
+      lastScroll = currScroll;
+      lastChanged = now;
+    }
+    if (now - lastChanged > stabilityWindow) {
+      cb();
+      return;
+    }
+    if (now - start > timeout) {
+      cb();
+      return;
+    }
+    requestAnimationFrame(check);
+  }
+  requestAnimationFrame(check);
+}
+
+// Smooth scroll helper with polling to detect finish
+function smoothScrollTo(
+  scrollParent: Window | HTMLElement,
+  top: number,
+  cb: () => void,
+  timeout = 1500
+) {
+  const isWindow = scrollParent === window;
+  const getScroll = () =>
+    isWindow ? window.scrollY : (scrollParent as HTMLElement).scrollTop;
+
+  if (isWindow) {
+    window.scrollTo({ top, behavior: "smooth" });
+  } else {
+    (scrollParent as HTMLElement).scrollTo({ top, behavior: "smooth" });
+  }
+  waitForScrollSettled(getScroll, cb, 100, timeout);
+}
+
 // Scroll the correct scroll container to reveal the target, with offset and padding
 function scrollElementIntoViewWithOffset(
   el: HTMLElement,
   offset: number,
-  padding: number
+  padding: number,
+  cb: () => void
 ) {
   const scrollParent = getScrollParent(el);
   const rect = el.getBoundingClientRect();
   if (scrollParent === window) {
     const highlightTop = rect.top + window.scrollY - padding;
-    window.scrollTo({
-      top: highlightTop - offset,
-      behavior: "auto",
-    });
+    smoothScrollTo(window, highlightTop - offset, cb);
   } else {
     const parentRect = (scrollParent as HTMLElement).getBoundingClientRect();
     const highlightTop =
@@ -120,10 +167,7 @@ function scrollElementIntoViewWithOffset(
       parentRect.top +
       (scrollParent as HTMLElement).scrollTop -
       padding;
-    (scrollParent as HTMLElement).scrollTo({
-      top: highlightTop - offset,
-      behavior: "auto",
-    });
+    smoothScrollTo(scrollParent as HTMLElement, highlightTop - offset, cb);
   }
 }
 
@@ -137,7 +181,6 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
   closeOnOverlayClick = false,
 }) => {
   const { steps, welcome } = config;
-
   const [showWelcome, setShowWelcome] = useState(!!welcome);
   const [current, setCurrent] = useState(0);
   const [position, setPosition] = useState({
@@ -146,6 +189,8 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     width: 0,
     height: 0,
   });
+
+  const { settings } = useGlobalState();
 
   // Animation states
   const [showOverlay, setShowOverlay] = useState(false);
@@ -160,8 +205,9 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
   const floating = useFloating({
     placement: step.placement || "bottom",
     middleware: [
+      autoPlacement(),
       offset(18),
-      flip(),
+      // flip(),
       shift({ padding: 8 }),
       arrow({ element: arrowRef, padding: 8 }),
     ],
@@ -224,21 +270,25 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
         )
       : null;
 
+  const isAboveMd = useMediaQuery("(min-width: 768px)");
+
   // --------------------------------------------
   // Step highlight, scroll, and floating-ui setup
   // --------------------------------------------
 
   useEffect(() => {
-    // Only run when NOT on welcome
     if (showWelcome) return;
 
+    let cancelled = false;
     let tipTimer: ReturnType<typeof setTimeout>;
+
     const el = document.querySelector(step.target) as HTMLElement | null;
     if (el) {
-      const offset = step.offset ?? 0;
-      scrollElementIntoViewWithOffset(el, offset, PADDING);
-
-      requestAnimationFrame(() => {
+      // const offset = step.offset ?? 0;
+      const offset =
+        settings.layout === "top" && isAboveMd ? step.offset ?? 16 : 16;
+      scrollElementIntoViewWithOffset(el, offset, PADDING, () => {
+        if (cancelled) return;
         const rect2 = el.getBoundingClientRect();
         setPosition({
           top: rect2.top - PADDING,
@@ -247,13 +297,25 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
           height: rect2.height + 2 * PADDING,
         });
         refs.setReference(makeVirtualElement(rect2));
-        setShowOverlay(true);
+        if (isEntering) {
+          setShowOverlay(true);
+          tipTimer = setTimeout(() => {
+            setShowTooltip(true);
+            setIsEntering(false);
+          }, 50);
+        } else {
+          setTimeout(() => {
+            setShowTooltip(true);
+          }, 600);
+        }
       });
     }
     return () => {
+      cancelled = true;
       refs.setReference(null);
-      setShowOverlay(false);
+      // setShowOverlay(false);
       setShowTooltip(false);
+      // if (tipTimer) clearTimeout(tipTimer);
     };
     // eslint-disable-next-line
   }, [current, step.target, showWelcome]);
@@ -263,16 +325,6 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     refs.setFloating(node);
   };
 
-  // Resize spotlight + floating-ui on window resize (when not in welcome)
-  useEffect(() => {
-    setShowOverlay(true);
-    const tipTimer = setTimeout(() => {
-      setShowTooltip(true);
-      setIsEntering(false);
-    }, 600);
-    return () => clearTimeout(tipTimer);
-  }, []);
-
   // Handle window resize to update the spotlight overlay and tooltip reference
   useEffect(() => {
     if (showWelcome) return;
@@ -281,8 +333,8 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
       if (!el) return;
       const rect = el.getBoundingClientRect();
       setPosition({
-        top: rect.top + window.scrollY - PADDING,
-        left: rect.left + window.scrollX - PADDING,
+        top: rect.top - PADDING,
+        left: rect.left - PADDING,
         width: rect.width + 2 * PADDING,
         height: rect.height + 2 * PADDING,
       });
@@ -291,6 +343,16 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [step.target, refs, showWelcome]);
+
+  // // Fade-in animation for overlay/tooltip
+  // useEffect(() => {
+  //   setShowOverlay(false);
+  //   setShowTooltip(false);
+  //   setTimeout(() => {
+  //     setShowOverlay(true);
+  //     setTimeout(() => setShowTooltip(true), 100);
+  //   }, 300);
+  // }, []);
 
   // --------------------------------------------
   // Navigation
@@ -311,9 +373,8 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     setShowTooltip(false);
     setTimeout(() => {
       setCurrent(newIndex);
-      setShowOverlay(false);
-      // setIsEntering(true);
-      setTimeout(() => setShowTooltip(true), 100);
+      // setShowOverlay(false);
+      // setTimeout(() => setShowTooltip(true), 100);
     }, 300);
   };
 
@@ -347,12 +408,14 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
   // --------------------------------------------
 
   const tooltipAndArrow =
-    showTooltip && !isExiting && !showWelcome
+    !isExiting && !showWelcome
       ? createPortal(
           <div
             ref={tooltipRef}
             role="tooltip"
-            className={`z-500 pointer-events-auto transition-opacity duration-300 ease-in-out`}
+            className={`z-500 pointer-events-auto transition-opacity duration-300 ease-in-out ${
+              showTooltip ? "opacity-100" : "opacity-0"
+            }`}
             style={{
               position: strategy,
               top: y ?? 0,
@@ -381,7 +444,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
               }}
             />
             {/* Tooltip content */}
-            <div className="bg-white shadow-lg p-4 rounded-md max-w-xs relative z-10">
+            <div className="bg-white shadow-lg p-4 rounded-md max-w-2xs md:max-w-xs relative z-10">
               {step.title && (
                 <p className="text-sm font-bold text-gray-800 pb-1">
                   {step.title}
