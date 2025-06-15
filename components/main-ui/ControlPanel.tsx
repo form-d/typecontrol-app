@@ -11,10 +11,10 @@ import Icon from "../elements/Icon";
 import { EditSettingsForm } from "../content/EditSettingsForm";
 import TextInputWithDropdown from "../form/TextInputWithDropdown";
 import FontManager from "../font-manager/FontManager";
-import { getDefaultTourSteps } from "../../context/tourSteps";
 import TextInputWithButton from "../form/TextInputWithButton";
 import Tooltip from "../elements/Tooltip";
 import { ShowInfoLayer } from "../content/ShowInfoLayer";
+import { getDefaultTourConfig } from "../../context/tourConfig";
 
 interface ControlPanelProps {
   sizes: number[];
@@ -26,10 +26,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
   const updateSetting = useSettingUpdater(); // one call for _all_ keys
 
   useEffect(() => {
-    const steps = getDefaultTourSteps(t);
+    const tour = getDefaultTourConfig(t);
 
     // open the tour when this page mounts
-    openTour(steps);
+    openTour(tour);
   }, [openTour, t]);
 
   const editPreferences = () => {

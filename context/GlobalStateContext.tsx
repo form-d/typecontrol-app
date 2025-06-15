@@ -14,7 +14,11 @@ import { Modal } from "../components/overlay/Modal";
 import { Snackbar } from "../components/overlay/Snackbar";
 import { usePersistedState } from "../hooks/usePersistedState";
 import { translations, defaultLanguage } from "../i18n/translations";
-import { GuidedTour, TourStep } from "../components/overlay/GuidedTour";
+import {
+  GuidedTour,
+  TourStep,
+  TourConfig,
+} from "../components/overlay/GuidedTour";
 
 // ----- Types -----
 export type ModalConfig = {
@@ -82,8 +86,8 @@ export type GlobalState = {
 
   // guided tour
   isTourOpen: boolean;
-  tourSteps: TourStep[];
-  openTour: (steps: TourStep[]) => void;
+  tourConfig: TourConfig | null;
+  openTour: (config: TourConfig) => void;
   closeTour: () => void;
   /** Indicates if user has already completed or skipped the tour */
   hasSeenTour: boolean;
@@ -284,11 +288,11 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
     false
   );
   const [isTourOpen, setTourOpen] = useState(false);
-  const [tourSteps, setTourSteps] = useState<TourStep[]>([]);
+  const [tourConfig, setTourConfig] = useState<TourConfig | null>(null);
   const openTour = useCallback(
-    (steps: TourStep[]) => {
-      if (hasSeenTour) return; // bail if already seen
-      setTourSteps(steps);
+    (config: TourConfig) => {
+      if (hasSeenTour) return;
+      setTourConfig(config);
       setTourOpen(true);
       disablePageScroll();
     },
@@ -296,8 +300,8 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
   );
   const closeTour = useCallback(() => {
     setTourOpen(false);
-    setTourSteps([]);
-    setHasSeenTour(true); // mark as seen or skipped
+    setTourConfig(null);
+    setHasSeenTour(true);
     enablePageScroll();
   }, [setHasSeenTour]);
 
@@ -330,7 +334,7 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
         t,
         // guided tour
         isTourOpen,
-        tourSteps,
+        tourConfig,
         openTour,
         closeTour,
         hasSeenTour,
@@ -350,17 +354,8 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
       {children}
       <Modal />
       <Snackbar />
-      {isTourOpen && (
-        <GuidedTour
-          welcome={{
-            title: "👋 Welcome to typeControl!",
-            description: "This quick tour will show you the main features.",
-            startLabel: "Let's do it!",
-            skipLabel: "Nah, I'm fine",
-          }}
-          steps={tourSteps}
-          onClose={closeTour}
-        />
+      {isTourOpen && tourConfig && (
+        <GuidedTour config={tourConfig} onClose={closeTour} />
       )}
     </GlobalStateContext.Provider>
   );

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useGlobalState } from "../../context/GlobalStateContext";
 import Divider from "../elements/Divider";
-import { getDefaultTourSteps } from "../../context/tourSteps";
 
 export const ShowInfoLayer: React.FC = () => {
   return (

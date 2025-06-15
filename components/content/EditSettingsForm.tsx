@@ -5,9 +5,9 @@ import ControlBlock from "../layout/ControlBlock";
 import SelectWithLabel from "../form/SelectWithLabel";
 import TextInputWithLabel from "../form/TextInputWithLabel";
 import Switch from "../form/Switch";
-import { getDefaultTourSteps } from "../../context/tourSteps";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 import Button from "../elements/Button";
+import { getDefaultTourConfig } from "../../context/tourConfig";
 
 export const EditSettingsForm: React.FC = () => {
   const {
@@ -24,13 +24,13 @@ export const EditSettingsForm: React.FC = () => {
     resetSettings,
     showSnackbar,
   } = useGlobalState();
-  const steps = getDefaultTourSteps(t);
+  const tour = getDefaultTourConfig(t);
 
   const handleTourRestart = () => {
     closeModal();
     setTimeout(() => {
       resetTour(); // clear the flag
-      openTour(steps); // reopen the tour
+      openTour(tour); // reopen the tour
     }, 400);
   };
   const handleReset = () => {

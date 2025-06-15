@@ -30,6 +30,11 @@ export type Placement =
   | "right-start"
   | "right-end";
 
+export type TourConfig = {
+  welcome?: WelcomeStep;
+  steps: TourStep[];
+};
+
 export type TourStep = {
   target: string;
   title?: ReactNode;
@@ -46,7 +51,7 @@ type WelcomeStep = {
 };
 
 type GuidedTourProps = {
-  steps: TourStep[];
+  config: TourConfig;
   onClose?: () => void;
   closeOnOverlayClick?: boolean;
   welcome?: WelcomeStep;
@@ -127,11 +132,12 @@ function scrollElementIntoViewWithOffset(
 // --------------------------------------------
 
 export const GuidedTour: React.FC<GuidedTourProps> = ({
-  steps,
+  config,
   onClose,
   closeOnOverlayClick = false,
-  welcome,
 }) => {
+  const { steps, welcome } = config;
+
   const [showWelcome, setShowWelcome] = useState(!!welcome);
   const [current, setCurrent] = useState(0);
   const [position, setPosition] = useState({
