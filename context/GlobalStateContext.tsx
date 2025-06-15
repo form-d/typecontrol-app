@@ -350,7 +350,18 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
       {children}
       <Modal />
       <Snackbar />
-      {isTourOpen && <GuidedTour steps={tourSteps} onClose={closeTour} />}
+      {isTourOpen && (
+        <GuidedTour
+          welcome={{
+            title: "👋 Welcome to typeControl!",
+            description: "This quick tour will show you the main features.",
+            startLabel: "Let's do it!",
+            skipLabel: "Nah, I'm fine",
+          }}
+          steps={tourSteps}
+          onClose={closeTour}
+        />
+      )}
     </GlobalStateContext.Provider>
   );
 };

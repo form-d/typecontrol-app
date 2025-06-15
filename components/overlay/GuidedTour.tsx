@@ -12,6 +12,10 @@ import {
 } from "@floating-ui/react-dom";
 import Button from "../elements/Button";
 
+// --------------------------------------------
+// TYPES
+// --------------------------------------------
+
 export type Placement =
   | "top"
   | "top-start"
@@ -31,18 +35,30 @@ export type TourStep = {
   title?: ReactNode;
   description?: ReactNode;
   placement?: Placement;
-  offset?: number;
+  offset?: number; // px from top when scrolling into view
+};
+
+type WelcomeStep = {
+  title?: ReactNode;
+  description?: ReactNode;
+  startLabel?: ReactNode;
+  skipLabel?: ReactNode;
 };
 
 type GuidedTourProps = {
   steps: TourStep[];
   onClose?: () => void;
   closeOnOverlayClick?: boolean;
+  welcome?: WelcomeStep;
 };
 
-const PADDING = 8;
+// --------------------------------------------
+// CONSTANTS/UTILS
+// --------------------------------------------
 
-// Virtual element for floating-ui placement
+const PADDING = 16;
+
+// Floating-ui virtual reference for highlight (with padding)
 function makeVirtualElement(rect: DOMRect) {
   return {
     getBoundingClientRect: () =>
@@ -60,11 +76,17 @@ function makeVirtualElement(rect: DOMRect) {
   };
 }
 
+// --------------------------------------------
+// COMPONENT
+// --------------------------------------------
+
 export const GuidedTour: React.FC<GuidedTourProps> = ({
   steps,
   onClose,
   closeOnOverlayClick = false,
+  welcome,
 }) => {
+  const [showWelcome, setShowWelcome] = useState(!!welcome);
   const [current, setCurrent] = useState(0);
   const [position, setPosition] = useState({
     top: 0,
@@ -103,8 +125,62 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     placement: actualPlacement,
   } = floating;
 
-  // --- Scroll to target with offset, position overlay/tooltip before fade-in ---
+  // --------------------------------------------
+  // Centered Welcome Tooltip (portal)
+  // --------------------------------------------
+
+  const welcomeTooltip =
+    showWelcome && welcome
+      ? createPortal(
+          <div
+            className="fixed inset-0 z-[600] flex items-center justify-center pointer-events-auto bg-black/50"
+            style={{ transition: "background 0.3s" }}
+          >
+            <div className="bg-white rounded-md shadow-lg p-6 max-w-sm mx-auto flex flex-col items-center">
+              {welcome.title && (
+                <p className="text-lg font-bold text-gray-800 pb-2 text-center">
+                  {welcome.title}
+                </p>
+              )}
+              {welcome.description && (
+                <p className="text-sm text-gray-600 pb-6 text-center">
+                  {welcome.description}
+                </p>
+              )}
+              <div className="flex gap-4">
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={() => {
+                    setShowWelcome(false);
+                    setTimeout(() => onClose?.(), 300);
+                  }}
+                >
+                  {welcome.skipLabel ?? "Skip"}
+                </Button>
+                <Button
+                  variant="primary"
+                  size="small"
+                  onClick={() => setShowWelcome(false)}
+                >
+                  {welcome.startLabel ?? "Start Tour"}
+                </Button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
+
+  // --------------------------------------------
+  // Step highlight, scroll, and floating-ui setup
+  // --------------------------------------------
+
   useEffect(() => {
+    // Only run when NOT on welcome
+    if (showWelcome) return;
+
+    let tipTimer: ReturnType<typeof setTimeout>;
     const el = document.querySelector(step.target) as HTMLElement | null;
     if (el) {
       const offset = step.offset ?? 0;
@@ -135,14 +211,14 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
       setShowTooltip(false);
     };
     // eslint-disable-next-line
-  }, [current, step.target]);
+  }, [current, step.target, showWelcome]);
 
-  // Set up floating ref
+  // Set up floating ref for tooltip
   const tooltipRef = (node: HTMLDivElement | null) => {
     refs.setFloating(node);
   };
 
-  // Fade-in animation for overlay/tooltip
+  // Resize spotlight + floating-ui on window resize (when not in welcome)
   useEffect(() => {
     setShowOverlay(true);
     const tipTimer = setTimeout(() => {
@@ -168,9 +244,12 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [step.target, refs]);
+  }, [step.target, refs, showWelcome]);
 
-  // Close with fade-out
+  // --------------------------------------------
+  // Navigation
+  // --------------------------------------------
+
   const handleClose = () => {
     setIsExiting(true);
     setShowTooltip(false);
@@ -182,11 +261,12 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     }, 200);
   };
 
-  // Step navigation
   const changeStep = (newIndex: number) => {
     setShowTooltip(false);
     setTimeout(() => {
       setCurrent(newIndex);
+      setShowOverlay(false);
+      setIsEntering(true);
       setTimeout(() => setShowTooltip(true), 100);
     }, 300);
   };
@@ -200,7 +280,10 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
 
   const skip = () => handleClose();
 
-  // Floating-ui arrow positioning (derive on each render)
+  // --------------------------------------------
+  // Floating-ui arrow
+  // --------------------------------------------
+
   type Side = "top" | "bottom" | "left" | "right";
   const opposite: Record<Side, Side> = {
     top: "bottom",
@@ -212,11 +295,13 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
   const staticSide = opposite[baseSide];
   const arrowX = middlewareData.arrow?.x ?? 0;
   const arrowY = middlewareData.arrow?.y ?? 0;
-  console.log("staticSide :>> ", staticSide);
 
-  // Tooltip and Arrow in a single absolutely positioned container
+  // --------------------------------------------
+  // Floating-ui Tooltip + Arrow Portal
+  // --------------------------------------------
+
   const tooltipAndArrow =
-    showTooltip && !isExiting
+    showTooltip && !isExiting && !showWelcome
       ? createPortal(
           <div
             ref={tooltipRef}
@@ -280,32 +365,41 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
         )
       : null;
 
+  // --------------------------------------------
+  // Render!
+  // --------------------------------------------
+
   return (
     <>
-      {/* Overlay */}
-      <div
-        className={`fixed z-250 inset-0 pointer-events-none transition-opacity duration-500 ${
-          showOverlay ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ background: "transparent" }}
-        onClick={closeOnOverlayClick ? skip : undefined}
-      >
-        {/* Spotlight */}
-        <div
-          className={`fixed pointer-events-none transition-all duration-200 ease-in-out rounded-md ${
-            isEntering ? "transition-none" : "transition-all"
-          }`}
-          style={{
-            top: position.top,
-            left: position.left,
-            width: position.width,
-            height: position.height,
-            boxShadow: "0 0 0 max(100vh, 100vw) rgba(0, 0, 0, 0.5)",
-          }}
-        />
-      </div>
-      {/* Tooltip and Arrow (portaled) */}
-      {tooltipAndArrow}
+      {welcomeTooltip}
+      {!showWelcome && (
+        <>
+          {/* Overlay */}
+          <div
+            className={`fixed z-250 inset-0 pointer-events-none transition-opacity duration-500 ${
+              showOverlay ? "opacity-100" : "opacity-0"
+            }`}
+            style={{ background: "transparent" }}
+            onClick={closeOnOverlayClick ? skip : undefined}
+          >
+            {/* Spotlight */}
+            <div
+              className={`fixed pointer-events-none transition-all duration-500 ease-in-out rounded-md ${
+                isEntering ? "transition-none" : "transition-all"
+              }`}
+              style={{
+                top: position.top,
+                left: position.left,
+                width: position.width,
+                height: position.height,
+                boxShadow: "0 0 0 max(100vh, 100vw) rgba(0, 0, 0, 0.5)",
+              }}
+            />
+          </div>
+          {/* Tooltip and Arrow (portaled) */}
+          {tooltipAndArrow}
+        </>
+      )}
     </>
   );
 };
