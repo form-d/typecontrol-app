@@ -25,8 +25,8 @@ export const Modal: React.FC = () => {
     secondaryButton,
     closeOnBackdropClick = true,
     suppressCloseButton = false,
-    /** Show an 'X' in the header to close */
     showHeaderCloseButton = false,
+    centered = false,
   } = (modalConfig as ModalConfig) || {};
 
   const [isRendered, setIsRendered] = useState(isModalOpen);
@@ -34,7 +34,6 @@ export const Modal: React.FC = () => {
 
   useEffect(() => {
     let timer: number;
-
     if (isModalOpen) {
       setIsRendered(true);
       setFadeState("out");
@@ -51,7 +50,7 @@ export const Modal: React.FC = () => {
   const backdropBase =
     "fixed flex items-center justify-center inset-0 bg-black/50 z-50 transition-opacity duration-300";
   const panelBase =
-    "flex flex-col max-w-xl bg-white p-4 mx-4 rounded-lg min-w-[300px] max-h-[calc(100%-2rem)] ease-in-out transition-all duration-300 delay-150";
+    "flex flex-col max-w-xl bg-white p-5 mx-4 rounded-lg min-w-[300px] max-h-[calc(100%-2rem)] ease-in-out transition-all duration-300 delay-150";
   const opacityClass = fadeState === "in" ? "opacity-100" : "opacity-0";
   const motionClass = fadeState === "in" ? "mb-0" : "-mb-10";
 
@@ -66,16 +65,23 @@ export const Modal: React.FC = () => {
       >
         {/* Header: Title and optional X button */}
         {(title || showHeaderCloseButton) && (
-          <div className="flex justify-between items-center mb-2">
-            {title && <h2 className="text-xl font-semibold">{title}</h2>}
-            {showHeaderCloseButton && (
-              // <button
-              //   onClick={closeModal}
-              //   aria-label="Close modal"
-              //   className="text-gray-500 hover:text-gray-700 focus:outline-none"
-              // >
-              //   &times;
-              // </button>
+          <div
+            className={
+              centered
+                ? "flex flex-col items-center mb-2"
+                : "flex justify-between items-center mb-2"
+            }
+          >
+            {title && (
+              <h2
+                className={`text-xl font-semibold ${
+                  centered ? "text-center w-full" : ""
+                }`}
+              >
+                {title}
+              </h2>
+            )}
+            {showHeaderCloseButton && !centered && (
               <IconOnlyButton
                 id="profile-btn"
                 ariaLabel="Close modal"
@@ -86,15 +92,19 @@ export const Modal: React.FC = () => {
             )}
           </div>
         )}
-
         {/* Content */}
-        <div className="overflow-y-auto">{content}</div>
-
+        <div className={`overflow-y-auto ${centered ? "text-center" : ""}`}>
+          {content}
+        </div>
         {/* Footer actions */}
-        <div className="mt-4 flex justify-end gap-2">
+        <div
+          className={`mt-4 flex gap-3 ${
+            centered ? "justify-center" : "justify-end"
+          }`}
+        >
           {secondaryButton && (
             <Button
-              variant="secondary"
+              variant="text"
               onClick={() => {
                 secondaryButton.action();
                 closeModal();
@@ -114,7 +124,6 @@ export const Modal: React.FC = () => {
               {primaryButton.label}
             </Button>
           )}
-
           {!primaryButton && !secondaryButton && !suppressCloseButton && (
             <Button variant="secondary" onClick={closeModal}>
               Close

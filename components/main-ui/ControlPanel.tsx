@@ -31,7 +31,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
     // open the tour when this page mounts
     setTimeout(() => {
       openTour(tour);
-    }, 700);
+    }, 500);
   }, [openTour, t]);
 
   const editPreferences = () => {

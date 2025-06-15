@@ -32,6 +32,7 @@ export type ModalConfig = {
   /** Show an 'X' in the header to close */
   showHeaderCloseButton?: boolean;
   disableScroll?: boolean;
+  centered?: boolean;
 };
 
 type SnackbarConfig = {
