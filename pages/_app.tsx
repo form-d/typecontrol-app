@@ -3,15 +3,20 @@ import type { AppProps } from "next/app";
 import { GlobalStateProvider } from "../context/GlobalStateContext";
 import { Nav } from "../components/main-ui/Nav";
 import { useEffect, useState } from "react";
+import Lottie from "lottie-react";
+import loaderAnimation from "../assets/typeControl.json";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [hydrated, setHydrated] = useState(false);
   const [hideOverlay, setHideOverlay] = useState(false);
-  // After SSR, React attaches event handlers and “activates” the page on the client.
-  // This process is called hydration
-  // Hydration expects the client-rendered HTML to match what the server sent
+  const [showLottie, setShowLottie] = useState(false);
+
   useEffect(() => {
-    if (!hydrated) setHydrated(true);
+    if (!hydrated) {
+      setTimeout(() => {
+        setHydrated(true);
+      }, 3750);
+    }
   }, [hydrated]);
 
   useEffect(() => {
@@ -22,10 +27,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   }, [hydrated]);
 
-  if (!hydrated) {
-    // White full-screen
-    return <div className="w-screen h-screen bg-white" />;
-  }
+  useEffect(() => {
+    // Delay for 1 second (1000 ms)
+    const timer = setTimeout(() => setShowLottie(true), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <GlobalStateProvider>
@@ -37,10 +43,22 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Component {...pageProps} />
       {!hideOverlay && (
         <div
-          className={`fixed inset-0 z-50 bg-white ${
+          className={`fixed inset-0 z-50 bg-white flex items-center justify-center ${
             hydrated ? "fade-out pointer-events-none" : ""
           }`}
-        />
+        >
+          {showLottie && (
+            <Lottie
+              animationData={loaderAnimation}
+              loop={false}
+              autoplay
+              style={{ width: 220, height: 40 }}
+              onComplete={() => {
+                // Your action here, e.g., setHideOverlay(true);
+              }}
+            />
+          )}
+        </div>
       )}
     </GlobalStateProvider>
   );
