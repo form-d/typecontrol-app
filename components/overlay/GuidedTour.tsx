@@ -414,7 +414,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
           <div
             ref={tooltipRef}
             role="tooltip"
-            className={`z-500 pointer-events-auto transition-opacity duration-300 ease-in-out ${
+            className={`z-500 shadow-lg pointer-events-auto transition-opacity duration-300 ease-in-out ${
               showTooltip ? "opacity-100" : "opacity-0"
             }`}
             style={{
@@ -438,14 +438,12 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
                 right: undefined,
                 bottom: undefined,
                 [staticSide]: -6,
-                boxShadow:
-                  "0 1px 3px 0 rgba(0,0,0,0.07), 0 1px 2px 0 rgba(0,0,0,0.05)",
                 zIndex: 0,
                 pointerEvents: "none",
               }}
             />
             {/* Tooltip content */}
-            <div className="bg-white shadow-lg p-4 rounded-md max-w-2xs md:max-w-xs relative z-10">
+            <div className="bg-white p-4 rounded-md max-w-2xs md:max-w-xs relative z-10">
               {step.title && (
                 <p className="text-sm font-bold text-gray-800 pb-1">
                   {step.title}
