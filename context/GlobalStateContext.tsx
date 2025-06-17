@@ -88,7 +88,7 @@ export type GlobalState = {
   // guided tour
   isTourOpen: boolean;
   tourConfig: TourConfig | null;
-  openTour: (config: TourConfig) => void;
+  openTour: (config: TourConfig, restart?: boolean) => void;
   closeTour: () => void;
   /** Indicates if user has already completed or skipped the tour */
   hasSeenTour: boolean;
@@ -114,26 +114,6 @@ const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
 export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  // // user persistence
-  // const defaultUser: User = {
-  //   id: "u123",
-  //   name: "Jane Doe",
-  //   email: "jane.doe@example.com",
-  // };
-  // const [user, setUser] = usePersistedState<User>("user", defaultUser);
-  // const [draftUser, setDraftUser] = useState<User>(user);
-
-  // // Keep a ref to the latest draftUser so updateUser never closes over a stale value
-  // const draftRef = useRef<User>(draftUser);
-  // useEffect(() => {
-  //   draftRef.current = draftUser;
-  // }, [draftUser]);
-
-  // // Now updateUser can be stable (no deps on draftUser) yet always set the latest draft
-  // const updateUser = useCallback(() => {
-  //   setUser(draftRef.current);
-  // }, [setUser]);
-
   // modal
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalConfig, setModalConfig] = useState<ModalConfig>({});
@@ -149,15 +129,6 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
   }, []);
 
   const openModal = useCallback((cfg: ModalConfig) => {
-    // setModalConfig(cfg);
-    // pull disableScroll out of cfg, defaulting to true
-    // const { disableScroll = true, ...rest } = cfg;
-
-    // alert(cfg.disableScroll);
-
-    // // save the merged config
-    // setModalConfig({ disableScroll, ...rest });
-
     // if cfg.disableScroll is explicitly false, turn it off;
     // otherwise default to true
     const shouldDisableScroll = cfg.disableScroll !== false;
@@ -283,28 +254,47 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
 
   // guided tour
   // --- Guided Tour persistence: remember if user has already seen/skipped it ---
-  // const [hasSeenTour, setHasSeenTour] = useState(true);
+  // const [hasSeenTour, setHasSeenTour] = useState(false);
   const [hasSeenTour, setHasSeenTour] = usePersistedState<boolean>(
     "hasSeenTour",
     false
   );
   const [isTourOpen, setTourOpen] = useState(false);
   const [tourConfig, setTourConfig] = useState<TourConfig | null>(null);
+
+  const hasSeenTourRef = useRef(hasSeenTour);
+  useEffect(() => {
+    hasSeenTourRef.current = hasSeenTour;
+  }, [hasSeenTour]);
+
+  const isTourOpenRef = useRef(isTourOpen);
+  useEffect(() => {
+    isTourOpenRef.current = isTourOpen;
+  }, [isTourOpen]);
+
   const openTour = useCallback(
-    (config: TourConfig) => {
-      if (hasSeenTour) return;
+    (config: TourConfig, restart: boolean = false) => {
+      if (hasSeenTourRef.current || isTourOpenRef.current) return;
       setTourConfig(config);
-      setTourOpen(true);
-      disablePageScroll();
+      if (restart) {
+        setTourOpen(true);
+        disablePageScroll();
+      } else {
+        setTimeout(() => {
+          setTourOpen(true);
+          disablePageScroll();
+        }, 5000);
+      }
     },
-    [hasSeenTour]
+    [disablePageScroll] // Refs don't need to be in the dependency array
   );
+
   const closeTour = useCallback(() => {
     setTourOpen(false);
     setTourConfig(null);
     setHasSeenTour(true);
     enablePageScroll();
-  }, [setHasSeenTour]);
+  }, [setHasSeenTour, isTourOpen, disablePageScroll]);
 
   // helper to let user re-start the tour
   const resetTour = useCallback(() => {

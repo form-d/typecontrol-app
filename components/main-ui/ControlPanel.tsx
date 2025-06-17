@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useGlobalState } from "../../context/GlobalStateContext";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 
@@ -14,7 +14,6 @@ import FontManager from "../font-manager/FontManager";
 import TextInputWithButton from "../form/TextInputWithButton";
 import Tooltip from "../elements/Tooltip";
 import { ShowInfoLayer } from "../content/ShowInfoLayer";
-import { getDefaultTourConfig } from "../../context/tourConfig";
 
 interface ControlPanelProps {
   sizes: number[];
@@ -24,15 +23,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
   const { openModal, t, settings, setSettings, openTour } = useGlobalState();
 
   const updateSetting = useSettingUpdater(); // one call for _all_ keys
-
-  useEffect(() => {
-    const tour = getDefaultTourConfig(t);
-
-    // open the tour when this page mounts
-    setTimeout(() => {
-      openTour(tour);
-    }, 500);
-  }, [openTour, t]);
 
   const editPreferences = () => {
     // setDraftUser(user);

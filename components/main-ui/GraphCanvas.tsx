@@ -83,7 +83,6 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
     // Check of element is visible
     if (elem.parentElement) {
       const style = window.getComputedStyle(elem.parentElement);
-      console.log("style.display :>> ", style.display);
       if (style.display !== "none") {
         setShouldRender(true);
       }

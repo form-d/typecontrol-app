@@ -1,19 +1,31 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useRef } from "react";
 import { useGlobalState } from "../context/GlobalStateContext";
 import GraphCanvas from "../components/main-ui/GraphCanvas";
 import FontSizeTable from "../components/main-ui/FontSizeTable";
 import FontPreviewList from "../components/main-ui/FontPreviewList";
 import ControlPanel from "../components/main-ui/ControlPanel";
 import Layout from "../components/layout/Layout";
+import { getDefaultTourConfig } from "../context/tourConfig";
 
 const Home: React.FC = () => {
-  const { settings, sizes, bezier } = useGlobalState();
+  const { settings, sizes, bezier, t, openTour } = useGlobalState();
+  // useRef lets you keep a value that persists for the life of
+  // the component instance, without causing rerenders.
+  const hasMountedRef = useRef(false);
+
+  const tour = getDefaultTourConfig(t);
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      // First time: use the delay
+      openTour(tour);
+    }
+  }, []);
 
   return (
     <Layout orientation={settings.layout} bar={<ControlPanel sizes={sizes} />}>
       <div className="">
         <div className="mx-auto h-[50vh] md:h-auto overflow-auto">
-          {/* <div className="mx-auto px-1 md:px-10"> */}
           <FontPreviewList
             sizes={sizes}
             selectedSize={settings.selectedSize}

@@ -157,17 +157,37 @@ function scrollElementIntoViewWithOffset(
 ) {
   const scrollParent = getScrollParent(el);
   const rect = el.getBoundingClientRect();
+
   if (scrollParent === window) {
+    // Visible area for the viewport
+    const visibleTop = padding + offset;
+    const visibleBottom = window.innerHeight - padding - offset;
+
+    // Is element fully visible?
+    if (rect.top >= visibleTop && rect.bottom <= visibleBottom) {
+      cb(); // Already fully visible, just call the callback
+      return;
+    }
+
     const highlightTop = rect.top + window.scrollY - padding;
     smoothScrollTo(window, highlightTop - offset, cb);
   } else {
-    const parentRect = (scrollParent as HTMLElement).getBoundingClientRect();
-    const highlightTop =
-      rect.top -
-      parentRect.top +
-      (scrollParent as HTMLElement).scrollTop -
-      padding;
-    smoothScrollTo(scrollParent as HTMLElement, highlightTop - offset, cb);
+    const parent = scrollParent as HTMLElement;
+    const parentRect = parent.getBoundingClientRect();
+
+    // Visible area for the scroll parent
+    const visibleTop = parentRect.top + padding + offset;
+    const visibleBottom = parentRect.bottom - padding - offset;
+
+    // Is element fully visible within parent?
+    if (rect.top >= visibleTop && rect.bottom <= visibleBottom) {
+      cb(); // Already fully visible
+      return;
+    }
+
+    const highlightTop = rect.top - parentRect.top + parent.scrollTop - padding;
+
+    smoothScrollTo(parent, highlightTop - offset, cb);
   }
 }
 
@@ -247,6 +267,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
         secondaryButton: {
           label: String(welcome.skipLabel) ?? "Skip",
           action: () => {
+            setIsExiting(true);
             setShowWelcome(false);
             setTimeout(() => onClose?.(), 300);
           },
@@ -254,6 +275,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
         closeOnBackdropClick: false,
         suppressCloseButton: true,
         showHeaderCloseButton: false,
+        centered: true,
       });
     }
     // eslint-disable-next-line
@@ -266,7 +288,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
   // --------------------------------------------
 
   useEffect(() => {
-    if (showWelcome) return;
+    if (showWelcome || isExiting) return;
 
     let cancelled = false;
     let tipTimer: ReturnType<typeof setTimeout>;
@@ -332,16 +354,6 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [step.target, refs, showWelcome]);
-
-  // // Fade-in animation for overlay/tooltip
-  // useEffect(() => {
-  //   setShowOverlay(false);
-  //   setShowTooltip(false);
-  //   setTimeout(() => {
-  //     setShowOverlay(true);
-  //     setTimeout(() => setShowTooltip(true), 100);
-  //   }, 300);
-  // }, []);
 
   // --------------------------------------------
   // Navigation
