@@ -33,8 +33,8 @@ export const EditSettingsForm: React.FC = () => {
       // some delay to make rest work
       setTimeout(() => {
         openTour(tour, true); // reopen the tour
-      }, 50);
-    }, 600);
+      }, 100);
+    }, 1000);
   };
   const handleReset = () => {
     closeModal();

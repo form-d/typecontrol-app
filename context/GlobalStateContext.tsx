@@ -283,7 +283,7 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
         setTimeout(() => {
           setTourOpen(true);
           disablePageScroll();
-        }, 5000);
+        }, 5500);
       }
     },
     [disablePageScroll] // Refs don't need to be in the dependency array

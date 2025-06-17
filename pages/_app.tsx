@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (!hydrated) {
       setTimeout(() => {
         setHydrated(true);
-      }, 3750);
+      }, 4250);
     }
   }, [hydrated]);
 
