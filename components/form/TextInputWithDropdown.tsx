@@ -42,9 +42,10 @@ const TextInputWithDropdown: React.FC<Props> = ({
 
   // const containerRef = useRef<HTMLDivElement>(null);
 
-  const { open, setOpen, floatingProps, referenceProps } = useFloatingDropdown({
-    offsetPx: 8,
-  });
+  const { open, setOpen, floatingProps, referenceProps, pointerTrap } =
+    useFloatingDropdown({
+      offsetPx: 8,
+    });
 
   const handleSelect = (item: string) => {
     onChange(item);
@@ -99,6 +100,8 @@ const TextInputWithDropdown: React.FC<Props> = ({
               </div>
             </button>
           </Tooltip>
+          {/* Render pointerTrap before dropdown */}
+          {pointerTrap}
           {/* Dropdown menu */}
           {open &&
             createPortal(

@@ -62,10 +62,11 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   menuClassName = "right-0 mt-2 w-56 bg-white border rounded-sm shadow-lg z-30",
   items,
 }) => {
-  const { open, setOpen, floatingProps, referenceProps } = useFloatingDropdown({
-    placement,
-    widthMatchReference: false,
-  });
+  const { open, setOpen, floatingProps, referenceProps, pointerTrap } =
+    useFloatingDropdown({
+      placement,
+      widthMatchReference: false,
+    });
 
   return (
     <div className="inline-block">
@@ -82,6 +83,8 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
           {trigger}
         </div>
       </Tooltip>
+      {/* Render pointerTrap before dropdown */}
+      {pointerTrap}
       {open &&
         // Portal not strictly needed if Floating UI positions with fixed, but it’s safest:
         createPortal(

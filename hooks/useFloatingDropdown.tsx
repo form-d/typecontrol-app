@@ -43,6 +43,9 @@ import {
   Placement,
 } from "@floating-ui/react-dom";
 
+// -------------- Add this for pointer event blocking --------------
+import { createPortal } from "react-dom";
+
 type UseFloatingDropdownOptions = {
   /** Preferred dropdown placement (default: 'bottom-start') */
   placement?: Placement;
@@ -52,16 +55,19 @@ type UseFloatingDropdownOptions = {
   widthMatchReference?: boolean;
   /** Maximum dropdown height in px (default: 160) */
   maxHeightPx?: number;
+  /** When true, prevent scroll and pointer/hover outside while open */
+  modal?: boolean;
 };
 
 /**
- * useFloatingDropdown hook: handles dropdown positioning, flipping, sizing, and outside click.
+ * Extends useFloatingDropdown with modal: when open, blocks pointer/hover/scroll outside dropdown & trigger.
  */
 export function useFloatingDropdown({
   placement = "bottom-start",
   offsetPx = 0,
   widthMatchReference = true,
   maxHeightPx = 160,
+  modal = true,
 }: UseFloatingDropdownOptions = {}) {
   const [open, setOpen] = useState(false);
 
@@ -74,7 +80,7 @@ export function useFloatingDropdown({
       size({
         apply({ availableHeight, rects, elements }) {
           Object.assign(elements.floating.style, {
-            maxHeight: `${Math.max(maxHeightPx, availableHeight) - 24}px`,
+            maxHeight: `${Math.max(maxHeightPx, availableHeight) - 16}px`,
             ...(widthMatchReference
               ? { width: `${rects.reference.width}px` }
               : {}),
@@ -101,6 +107,39 @@ export function useFloatingDropdown({
     document.addEventListener("mousedown", handle);
     return () => document.removeEventListener("mousedown", handle);
   }, [open, refs.reference, refs.floating]);
+
+  // --------- Modal/Scroll & pointer event trap logic -------------
+  // Prevent scroll and show pointer trap overlay
+  useEffect(() => {
+    if (!open || !modal) return;
+
+    // Prevent scroll on body
+    const orig = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = orig;
+    };
+  }, [open, modal]);
+
+  // Render pointer-event-trapping overlay (if modal)
+  const pointerTrap =
+    open && modal
+      ? createPortal(
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 19, // just below zIndex: 20 of floatingProps
+              background: "transparent",
+              pointerEvents: "all",
+            }}
+            aria-hidden="true"
+            tabIndex={-1}
+          />,
+          document.body
+        )
+      : null;
 
   return {
     /** Is the dropdown open? */
@@ -131,5 +170,7 @@ export function useFloatingDropdown({
     referenceProps: {
       ref: (node: HTMLElement | null) => refs.setReference(node),
     },
+    /** If modal: render {pointerTrap} just before your dropdown portal */
+    pointerTrap,
   };
 }

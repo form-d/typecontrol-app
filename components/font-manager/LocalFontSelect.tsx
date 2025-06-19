@@ -80,7 +80,7 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
   const sheetRef = useRef<CSSStyleSheet | null>(null);
 
   // Floating Dropdown Hook!
-  const { open, setOpen, floatingProps, referenceProps, update } =
+  const { open, setOpen, floatingProps, referenceProps, update, pointerTrap } =
     useFloatingDropdown({
       offsetPx: 8,
     });
@@ -332,6 +332,8 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
               </svg>
             </div>
           </div>
+          {/* Render pointerTrap before dropdown */}
+          {pointerTrap}
           {/* Dropdown rendered via portal and floating-ui */}
           {open &&
             createPortal(
