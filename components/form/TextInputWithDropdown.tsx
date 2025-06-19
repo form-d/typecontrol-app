@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, ReactNode } from "react";
+import { createPortal } from "react-dom";
 import InputWrapper, { InputWrapperProps } from "../layout/InputWrapper";
 import Tooltip from "../elements/Tooltip";
-// import { ChevronDown } from "react-feather"; // or your preferred icon library
+import { useFloatingDropdown } from "../../hooks/useFloatingDropdown";
 
 interface Props {
   label?: string;
@@ -39,34 +40,22 @@ const TextInputWithDropdown: React.FC<Props> = ({
     ? { label, layout: "stacked", labelWidthClass: "w-1/4" }
     : {};
 
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  // const containerRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        isOpen &&
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+  const { open, setOpen, floatingProps, referenceProps } = useFloatingDropdown({
+    offsetPx: 8,
+  });
 
   const handleSelect = (item: string) => {
     onChange(item);
-    setIsOpen(false);
+    setOpen(false);
   };
 
   return (
     <Container {...wrapperProps}>
       <div className="relative">
         <div
-          ref={containerRef}
+          {...referenceProps}
           className={`inline-flex items-stretch bg-white border border-gray-300 rounded-lg overflow-hidden ${
             block ? "w-full" : ""
           } ${className ?? ""}`}
@@ -94,9 +83,9 @@ const TextInputWithDropdown: React.FC<Props> = ({
             <button
               type="button"
               className="flex-none px-1.5 py-2 border-l border-gray-300 rounded-e-lg h-8 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
-              onClick={() => setIsOpen((open) => !open)}
+              onClick={() => setOpen((open) => !open)}
               aria-haspopup="true"
-              aria-expanded={isOpen}
+              aria-expanded={open}
             >
               {/* <ChevronDown size={16} /> */}
               <div className="pointer-events-none px-0 text-purple-500">
@@ -111,21 +100,26 @@ const TextInputWithDropdown: React.FC<Props> = ({
             </button>
           </Tooltip>
           {/* Dropdown menu */}
-          {isOpen && (
-            <ul className="absolute left-0 mt-10 w-full bg-white border border-gray-200 rounded-sm shadow-lg z-10 max-h-60 overflow-auto">
-              {options.map((item) => (
-                <li key={item}>
-                  <button
-                    type="button"
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                    onClick={() => handleSelect(item)}
-                  >
-                    {optionRenderer ? optionRenderer(item) : item}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+          {open &&
+            createPortal(
+              <ul
+                {...floatingProps}
+                className="w-full bg-white border border-gray-200 rounded-sm shadow-lg z-10 max-h-60 overflow-auto"
+              >
+                {options.map((item) => (
+                  <li key={item}>
+                    <button
+                      type="button"
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                      onClick={() => handleSelect(item)}
+                    >
+                      {optionRenderer ? optionRenderer(item) : item}
+                    </button>
+                  </li>
+                ))}
+              </ul>,
+              document.body
+            )}
         </div>
       </div>
     </Container>

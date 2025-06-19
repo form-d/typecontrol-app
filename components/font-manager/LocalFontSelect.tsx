@@ -3,14 +3,8 @@ import SelectWithLabel from "../form/SelectWithLabel";
 import InputWrapper from "../layout/InputWrapper";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 import Icon from "../elements/Icon";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  size,
-} from "@floating-ui/react-dom";
-import ReactDOM from "react-dom";
+import { useFloatingDropdown } from "../../hooks/useFloatingDropdown";
+import { createPortal } from "react-dom";
 
 export interface LocalFontSelectProps {
   value?: string;
@@ -62,7 +56,6 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
 }) => {
   const [fonts, setFonts] = useState<FontMeta[]>([]);
   const [loaded, setLoaded] = useState(false);
-  const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("");
   const [searchMode, setSearchMode] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -82,51 +75,21 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
   });
 
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement | null>(null);
   const loadFontsOnce = useRef<Promise<void> | null>(null);
   const sheetRef = useRef<CSSStyleSheet | null>(null);
 
-  // Floating UI setup - correct v2 API
-  const { x, y, refs, strategy, update } = useFloating({
-    placement: "bottom-start",
-    middleware: [
-      offset(0),
-      flip(),
-      size({
-        apply({ availableHeight, rects, elements }) {
-          Object.assign(elements.floating.style, {
-            maxHeight: `${Math.max(160, availableHeight)}px`,
-            width: `${rects.reference.width}px`,
-          });
-        },
-      }),
-    ],
-    whileElementsMounted: autoUpdate,
-  });
+  // Floating Dropdown Hook!
+  const { open, setOpen, floatingProps, referenceProps, update } =
+    useFloatingDropdown({
+      offsetPx: 8,
+    });
 
   useEffect(() => {
     if (autoFocus) inputRef.current?.focus();
   }, [autoFocus]);
 
-  // Updated outside click handler for portal dropdown and input (Floating UI v2)
-  useEffect(() => {
-    if (!open) return;
-    const onClickOutside = (e: MouseEvent) => {
-      const refEl = refs.reference.current;
-      const floatEl = refs.floating.current;
-      if (
-        !(refEl instanceof Element && refEl.contains(e.target as Node)) &&
-        !(floatEl instanceof Element && floatEl.contains(e.target as Node))
-      ) {
-        closeDropdown();
-      }
-    };
-    document.addEventListener("mousedown", onClickOutside);
-    return () => document.removeEventListener("mousedown", onClickOutside);
-  }, [open, refs.reference, refs.floating]);
-
-  // load fonts
+  // Font loading logic
   const loadFonts = () => {
     if (loaded) return Promise.resolve();
     if (!loadFontsOnce.current) {
@@ -181,7 +144,7 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     return loadFontsOnce.current;
   };
 
-  // open
+  // open/close
   const openDropdown = async () => {
     if (disabled) return;
     await loadFonts();
@@ -199,7 +162,6 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     }, 0);
   };
 
-  // close
   const closeDropdown = () => {
     const prev = prevRef.current;
     setSelectedFamily(prev.family);
@@ -312,19 +274,18 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     isFocused && (searchMode ? filter.length > 0 : selectedFamily.length > 0);
 
   const isFamilyChosen = selectedFamily != null && selectedFamily !== "";
-  const defaultVariationText = "– Select a variation –";
-
   const updateSetting = useSettingUpdater();
 
   return (
     <>
       <InputWrapper label="Locale Font:" layout="left" labelWidthClass="w-1/4">
-        <div ref={containerRef} className={`relative ${className}`}>
+        <div className={`relative ${className}`}>
           <div className="relative">
             <input
+              {...referenceProps}
               ref={(node) => {
                 inputRef.current = node;
-                refs.setReference(node);
+                referenceProps.ref(node);
               }}
               type="text"
               className="w-full h-8 bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-900 text-md leading-tight focus:outline-hidden focus:bg-white focus:border-purple-500"
@@ -373,19 +334,15 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
           </div>
           {/* Dropdown rendered via portal and floating-ui */}
           {open &&
-            ReactDOM.createPortal(
+            createPortal(
               <ul
+                {...floatingProps}
                 ref={(node) => {
                   listRef.current = node;
-                  refs.setFloating(node);
+                  floatingProps.ref(node);
                 }}
-                className="z-20 mt-1 max-h-60 w-full overflow-auto bg-white border rounded-sm shadow-sm"
+                className="z-20 max-h-60 w-full overflow-auto bg-white border rounded-sm shadow-sm"
                 role="listbox"
-                style={{
-                  position: strategy,
-                  top: y ?? 0,
-                  left: x ?? 0,
-                }}
               >
                 {displayed.map((fam) => (
                   <li
