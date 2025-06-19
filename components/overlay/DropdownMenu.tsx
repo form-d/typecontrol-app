@@ -1,6 +1,6 @@
-import React, { ReactNode, useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Tooltip, { Placement } from "../elements/Tooltip";
-
+import { useFloatingDropdown } from "../../hooks/useFloatingDropdown";
 /**
  * A generic dropdown menu component with tooltip and click-outside behavior.
  *
@@ -49,7 +49,7 @@ interface DropdownMenuProps {
   tooltip: string;
   placement?: Placement;
   enabled?: boolean;
-  trigger: ReactNode;
+  trigger: React.ReactNode;
   menuClassName?: string;
   items: MenuItem[];
 }
@@ -59,66 +59,63 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   placement = "bottom-end",
   enabled = true,
   trigger,
-  menuClassName = "absolute right-0 mt-2 w-56 bg-white border rounded-sm shadow-lg z-30",
+  menuClassName = "right-0 mt-2 w-56 bg-white border rounded-sm shadow-lg z-30",
   items,
 }) => {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [open]);
+  const { open, setOpen, floatingProps, referenceProps } = useFloatingDropdown({
+    placement,
+    widthMatchReference: false,
+  });
 
   return (
-    <div className="relative inline-block" ref={ref}>
+    <div className="inline-block">
       <Tooltip
         content={tooltip}
         placement={placement}
         enabled={enabled && !open}
       >
-        <div onClick={() => setOpen((o) => !o)} className="inline-block">
+        <div
+          {...referenceProps}
+          onClick={() => setOpen((o) => !o)}
+          className="inline-block"
+        >
           {trigger}
         </div>
       </Tooltip>
-
-      {open && (
-        <div className={menuClassName}>
-          {items.map((item, idx) => (
-            <button
-              key={idx}
-              type="button"
-              disabled={item.disabled}
-              onClick={() => {
-                item.onClick();
-                setOpen(false);
-              }}
-              className={
-                `w-full text-left px-4 py-2 ` +
-                `${
-                  item.disabled
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-gray-100"
-                } ` +
-                `${item.active ? "font-semibold" : ""}`
-              }
-            >
-              {item.label}
-              {item.helperText && (
-                <div className="text-xs text-gray-500 mt-1">
-                  {item.helperText}
-                </div>
-              )}
-            </button>
-          ))}
-        </div>
-      )}
+      {open &&
+        // Portal not strictly needed if Floating UI positions with fixed, but it’s safest:
+        createPortal(
+          <div {...floatingProps} className={menuClassName}>
+            {items.map((item, idx) => (
+              <button
+                key={idx}
+                type="button"
+                disabled={item.disabled}
+                onClick={() => {
+                  item.onClick();
+                  setOpen(false);
+                }}
+                className={
+                  `w-full text-left px-4 py-2 ` +
+                  `${
+                    item.disabled
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-gray-100"
+                  } ` +
+                  `${item.active ? "font-semibold" : ""}`
+                }
+              >
+                {item.label}
+                {item.helperText && (
+                  <div className="text-xs text-gray-500 mt-1">
+                    {item.helperText}
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>,
+          document.body
+        )}
     </div>
   );
 };
