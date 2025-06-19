@@ -1,39 +1,42 @@
 /**
  * useFloatingDropdown – Reusable hook for dropdown, menu, and tooltip positioning via Floating UI v2.
  *
- * Handles:
+ * Features:
  *   - Flipping and collision detection (auto-positions above or below)
  *   - Sizing (matches trigger width, limits max height)
  *   - Outside click to close
+ *   - Modal mode: disables scroll/pointer outside while open (optional)
+ *   - Closes on touch scroll (mobile) only if touch starts outside trigger/dropdown, with debounce
  *   - Exposes refs and props for trigger and pane, compatible with portals
  *
  * ## Usage Example:
- *
  * import { useFloatingDropdown } from "./useFloatingDropdown";
  * import { createPortal } from "react-dom";
  *
  * function MyDropdown() {
  *   const {
- *     open, setOpen, referenceProps, floatingProps
- *   } = useFloatingDropdown();
+ *     open, setOpen, referenceProps, floatingProps, pointerTrap
+ *   } = useFloatingDropdown({ modal: true });
  *
  *   return (
  *     <div>
  *       <button
  *         {...referenceProps}
  *         onClick={() => setOpen((v) => !v)}
+ *         aria-expanded={open}
+ *         aria-haspopup="menu"
  *       >Open Menu</button>
+ *       {pointerTrap}
  *       {open && createPortal(
- *         <div {...floatingProps}>Dropdown Content</div>,
+ *         <div {...floatingProps} role="menu">Dropdown Content</div>,
  *         document.body
  *       )}
  *     </div>
  *   );
  * }
- *
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   useFloating,
   autoUpdate,
@@ -42,9 +45,16 @@ import {
   size,
   Placement,
 } from "@floating-ui/react-dom";
-
-// -------------- Add this for pointer event blocking --------------
 import { createPortal } from "react-dom";
+
+// Simple debounce helper
+function debounce<T extends (...args: any[]) => void>(fn: T, ms = 150) {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), ms);
+  };
+}
 
 type UseFloatingDropdownOptions = {
   /** Preferred dropdown placement (default: 'bottom-start') */
@@ -60,7 +70,7 @@ type UseFloatingDropdownOptions = {
 };
 
 /**
- * Extends useFloatingDropdown with modal: when open, blocks pointer/hover/scroll outside dropdown & trigger.
+ * useFloatingDropdown hook: handles dropdown positioning, flipping, sizing, outside click, modal and touch scroll-to-close.
  */
 export function useFloatingDropdown({
   placement = "bottom-start",
@@ -71,7 +81,6 @@ export function useFloatingDropdown({
 }: UseFloatingDropdownOptions = {}) {
   const [open, setOpen] = useState(false);
 
-  // Floating UI for dynamic positioning and collision
   const { x, y, refs, strategy, update } = useFloating({
     placement,
     middleware: [
@@ -91,7 +100,7 @@ export function useFloatingDropdown({
     whileElementsMounted: autoUpdate,
   });
 
-  // Closes dropdown on click outside trigger or dropdown
+  // Click outside to close
   useEffect(() => {
     if (!open) return;
     const handle = (e: MouseEvent) => {
@@ -108,21 +117,19 @@ export function useFloatingDropdown({
     return () => document.removeEventListener("mousedown", handle);
   }, [open, refs.reference, refs.floating]);
 
-  // --------- Modal/Scroll & pointer event trap logic -------------
-  // Prevent scroll and show pointer trap overlay
+  // Modal/Scroll & pointer event trap logic
   useEffect(() => {
     if (!open || !modal) return;
 
     // Prevent scroll on body
     const orig = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = orig;
     };
   }, [open, modal]);
 
-  // Render pointer-event-trapping overlay (if modal)
+  // Pointer/hover trap overlay for modal
   const pointerTrap =
     open && modal
       ? createPortal(
@@ -130,7 +137,7 @@ export function useFloatingDropdown({
             style={{
               position: "fixed",
               inset: 0,
-              zIndex: 19, // just below zIndex: 20 of floatingProps
+              zIndex: 19,
               background: "transparent",
               pointerEvents: "all",
             }}
@@ -141,10 +148,60 @@ export function useFloatingDropdown({
         )
       : null;
 
+  // --- Close dropdown on touch scroll (mobile) if touch starts outside ---
+  const touchScrollRef = useRef<{ lastY: number | null; shouldClose: boolean }>(
+    {
+      lastY: null,
+      shouldClose: false,
+    }
+  );
+
+  useEffect(() => {
+    if (!open) return;
+
+    function onTouchStart(e: TouchEvent) {
+      touchScrollRef.current.lastY = e.touches[0]?.clientY ?? null;
+      const refEl = refs.reference.current;
+      const floatEl = refs.floating.current;
+      const target = e.target as Node;
+      // Only close if touch starts outside both trigger and dropdown
+      if (
+        (refEl instanceof Element && refEl.contains(target)) ||
+        (floatEl instanceof Element && floatEl.contains(target))
+      ) {
+        touchScrollRef.current.shouldClose = false;
+      } else {
+        touchScrollRef.current.shouldClose = true;
+      }
+    }
+    const closeDropdown = debounce(() => setOpen(false), 80);
+
+    function onTouchMove(e: TouchEvent) {
+      if (!touchScrollRef.current.shouldClose) return;
+      const lastY = touchScrollRef.current.lastY;
+      const currentY = e.touches[0]?.clientY ?? null;
+      if (
+        lastY !== null &&
+        currentY !== null &&
+        Math.abs(currentY - lastY) > 5
+      ) {
+        closeDropdown();
+        touchScrollRef.current.lastY = null;
+      }
+    }
+
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+    };
+  }, [open, refs.reference, refs.floating]);
+
   return {
-    /** Is the dropdown open? */
+    /** Is the dropdown open? (uncontrolled by default) */
     open,
-    /** Open/close the dropdown */
+    /** Call setOpen(true/false) to open/close the dropdown (or use setOpen(v => !v) to toggle) */
     setOpen,
     /** Floating UI refs (advanced use) */
     refs,
