@@ -9,27 +9,28 @@ import loaderAnimation from "../assets/typeControl.json";
 function MyApp({ Component, pageProps }: AppProps) {
   const [hydrated, setHydrated] = useState(false);
   const [hideOverlay, setHideOverlay] = useState(false);
+  const [fadeOverlay, setfadeOverlay] = useState(false);
   const [showLottie, setShowLottie] = useState(false);
 
   useEffect(() => {
     if (!hydrated) {
-      setTimeout(() => {
-        setHydrated(true);
-      }, 4250);
+      setHydrated(true);
+      // setTimeout(() => {
+      // }, 4250);
     }
   }, [hydrated]);
 
   useEffect(() => {
-    if (hydrated) {
+    if (fadeOverlay) {
       // Wait for fade-out animation, then remove overlay
-      const timeout = setTimeout(() => setHideOverlay(true), 500);
+      const timeout = setTimeout(() => setHideOverlay(true), 1000);
       return () => clearTimeout(timeout);
     }
-  }, [hydrated]);
+  }, [fadeOverlay]);
 
   useEffect(() => {
     // Delay for 1 second (1000 ms)
-    const timer = setTimeout(() => setShowLottie(true), 800);
+    const timer = setTimeout(() => setShowLottie(true), 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -40,11 +41,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"
         rel="stylesheet"
       />
-      <Component {...pageProps} />
+      {hydrated && <Component {...pageProps} />}
       {!hideOverlay && (
         <div
           className={`fixed inset-0 z-50 bg-white flex items-center justify-center ${
-            hydrated ? "fade-out pointer-events-none" : ""
+            fadeOverlay ? "fade-out pointer-events-none" : ""
           }`}
         >
           {showLottie && (
@@ -54,6 +55,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               autoplay
               style={{ width: 220, height: 40 }}
               onComplete={() => {
+                setfadeOverlay(true);
                 // Your action here, e.g., setHideOverlay(true);
               }}
             />
