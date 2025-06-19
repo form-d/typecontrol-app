@@ -3,6 +3,14 @@ import SelectWithLabel from "../form/SelectWithLabel";
 import InputWrapper from "../layout/InputWrapper";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 import Icon from "../elements/Icon";
+import {
+  useFloating,
+  autoUpdate,
+  offset,
+  flip,
+  size,
+} from "@floating-ui/react-dom";
+import ReactDOM from "react-dom";
 
 export interface LocalFontSelectProps {
   value?: string;
@@ -11,9 +19,7 @@ export interface LocalFontSelectProps {
   disabled?: boolean;
   autoFocus?: boolean;
   className?: string;
-  /** When true, apply the selected font to the input text */
   previewFont?: boolean;
-  /** When true, preview always uses the Regular (or fallback) variation rather than the selected variation */
   useRegularPreview?: boolean;
 }
 
@@ -65,7 +71,6 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
   const [selectedFullName, setSelectedFullName] = useState("");
   const [selectedVariation, setSelectedVariation] = useState("Regular");
 
-  // preserve previous selection for cancel (capture family, fullName, variation)
   const prevRef = useRef<{
     family: string;
     fullName: string;
@@ -76,27 +81,50 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     variation: selectedVariation,
   });
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLUListElement>(null);
+  const listRef = useRef<HTMLUListElement | null>(null);
   const loadFontsOnce = useRef<Promise<void> | null>(null);
   const sheetRef = useRef<CSSStyleSheet | null>(null);
+
+  // Floating UI setup - correct v2 API
+  const { x, y, refs, strategy, update } = useFloating({
+    placement: "bottom-start",
+    middleware: [
+      offset(0),
+      flip(),
+      size({
+        apply({ availableHeight, rects, elements }) {
+          Object.assign(elements.floating.style, {
+            maxHeight: `${Math.max(160, availableHeight)}px`,
+            width: `${rects.reference.width}px`,
+          });
+        },
+      }),
+    ],
+    whileElementsMounted: autoUpdate,
+  });
 
   useEffect(() => {
     if (autoFocus) inputRef.current?.focus();
   }, [autoFocus]);
+
+  // Updated outside click handler for portal dropdown and input (Floating UI v2)
   useEffect(() => {
     if (!open) return;
     const onClickOutside = (e: MouseEvent) => {
+      const refEl = refs.reference.current;
+      const floatEl = refs.floating.current;
       if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      )
+        !(refEl instanceof Element && refEl.contains(e.target as Node)) &&
+        !(floatEl instanceof Element && floatEl.contains(e.target as Node))
+      ) {
         closeDropdown();
+      }
     };
     document.addEventListener("mousedown", onClickOutside);
     return () => document.removeEventListener("mousedown", onClickOutside);
-  }, [open]);
+  }, [open, refs.reference, refs.floating]);
 
   // load fonts
   const loadFonts = () => {
@@ -157,7 +185,6 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
   const openDropdown = async () => {
     if (disabled) return;
     await loadFonts();
-    // save previous state
     prevRef.current = {
       family: selectedFamily,
       fullName: selectedFullName,
@@ -167,12 +194,14 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     setFilter("");
     setOpen(true);
     inputRef.current?.select();
+    setTimeout(() => {
+      update();
+    }, 0);
   };
 
   // close
   const closeDropdown = () => {
     const prev = prevRef.current;
-    // restore prior selection
     setSelectedFamily(prev.family);
     setSelectedFullName(prev.fullName);
     setSelectedVariation(prev.variation);
@@ -206,7 +235,6 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     const vars = Array.from(
       new Set(fonts.filter((f) => f.family === fam).map((f) => f.variationName))
     );
-    // ensure 'Regular' first if present
     if (vars.includes("Regular"))
       return ["Regular", ...vars.filter((v) => v !== "Regular")];
     return vars;
@@ -218,15 +246,12 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     if (!previewFont || !fam) return undefined;
     const familyMetas = fonts.filter((f) => f.family === fam);
     if (!familyMetas.length) return undefined;
-    // look for Regular
     const regular = familyMetas.find((f) => f.variationName === "Regular");
     if (regular) return regular.fullName;
-    // fallback to weight >= 400
     const above400 = familyMetas
       .filter((f) => f.weight >= 400)
       .sort((a, b) => a.weight - b.weight);
     if (above400.length) return above400[0].fullName;
-    // else return first available
     return familyMetas[0].fullName;
   };
 
@@ -255,10 +280,8 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     setSelectedFullName(meta.fullName);
     onChange?.(meta.fullName);
     updateSetting("selectedFont")(meta.fullName);
-    // no need to close dropdown here
   };
 
-  // input change
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
     if (v === "") {
@@ -291,7 +314,7 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
   const isFamilyChosen = selectedFamily != null && selectedFamily !== "";
   const defaultVariationText = "– Select a variation –";
 
-  const updateSetting = useSettingUpdater(); // one call for _all_ keys
+  const updateSetting = useSettingUpdater();
 
   return (
     <>
@@ -299,7 +322,10 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
         <div ref={containerRef} className={`relative ${className}`}>
           <div className="relative">
             <input
-              ref={inputRef}
+              ref={(node) => {
+                inputRef.current = node;
+                refs.setReference(node);
+              }}
               type="text"
               className="w-full h-8 bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-900 text-md leading-tight focus:outline-hidden focus:bg-white focus:border-purple-500"
               placeholder="Select font…"
@@ -345,48 +371,48 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
               </svg>
             </div>
           </div>
-          {open && (
-            <ul
-              ref={listRef}
-              className="absolute z-20 mt-1 max-h-60 w-full overflow-auto bg-white border rounded-sm shadow-sm"
-              role="listbox"
-            >
-              {displayed.map((fam) => (
-                <li
-                  key={fam}
-                  data-family={fam}
-                  role="option"
-                  onClick={() => handleSelectFamily(fam)}
-                  className="flex items-center justify-between px-3 py-1.5 hover:bg-gray-100 cursor-pointer text-sm"
-                >
-                  <span>{fam}</span>
-                  {selectedFamily === fam && (
-                    <Icon size="md" iconClass="ti ti-check" />
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
+          {/* Dropdown rendered via portal and floating-ui */}
+          {open &&
+            ReactDOM.createPortal(
+              <ul
+                ref={(node) => {
+                  listRef.current = node;
+                  refs.setFloating(node);
+                }}
+                className="z-20 mt-1 max-h-60 w-full overflow-auto bg-white border rounded-sm shadow-sm"
+                role="listbox"
+                style={{
+                  position: strategy,
+                  top: y ?? 0,
+                  left: x ?? 0,
+                }}
+              >
+                {displayed.map((fam) => (
+                  <li
+                    key={fam}
+                    data-family={fam}
+                    role="option"
+                    onClick={() => handleSelectFamily(fam)}
+                    className="flex items-center justify-between px-3 py-1.5 hover:bg-gray-100 cursor-pointer text-sm"
+                  >
+                    <span>{fam}</span>
+                    {selectedFamily === fam && (
+                      <Icon size="md" iconClass="ti ti-check" />
+                    )}
+                  </li>
+                ))}
+              </ul>,
+              document.body
+            )}
           {/* variation selector outside dropdown */}
         </div>
       </InputWrapper>
-      {/* {selectedFamily && ( */}
       <div className="mt-2">
         <SelectWithLabel
           label="Style/Variation:"
           disabled={!isFamilyChosen || getVariations(selectedFamily).length < 2}
-          // value="test"
           value={selectedVariation}
-          // value={selectedFamily ? selectedVariation : defaultVariationText}
-          // label={t("fontSelectLabel")}
-          // disabled={!!selectedFamily}
-          // disabled={selectedFamily != null && selectedFamily !== ""}
-          // value={selectedVariation}
           onChange={(v) => handleSelectVariation(v)}
-          // options={sizes.map((size) => ({
-          //   label: `${size}px`,
-          //   value: String(size),
-          // }))}
           options={
             selectedFamily
               ? getVariations(selectedFamily).map((vr) => ({
@@ -402,7 +428,6 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
           }
         />
       </div>
-      {/* )} */}
     </>
   );
 };
