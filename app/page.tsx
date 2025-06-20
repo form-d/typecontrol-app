@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useRef } from "react";
 import { useGlobalState } from "../context/GlobalStateContext";
 import GraphCanvas from "../components/main-ui/GraphCanvas";
@@ -7,17 +8,15 @@ import ControlPanel from "../components/main-ui/ControlPanel";
 import Layout from "../components/layout/Layout";
 import { getDefaultTourConfig } from "../context/tourConfig";
 
-const Home: React.FC = () => {
+export default function Home() {
   const { settings, sizes, bezier, t, openTour } = useGlobalState();
-  // useRef lets you keep a value that persists for the life of
-  // the component instance, without causing rerenders.
   const hasMountedRef = useRef(false);
 
   const tour = getDefaultTourConfig(t);
+
   useEffect(() => {
     if (!hasMountedRef.current) {
       hasMountedRef.current = true;
-      // First time: use the delay
       openTour(tour);
     }
   }, []);
@@ -33,7 +32,6 @@ const Home: React.FC = () => {
             letterSpacing={settings.letterSpacing}
             letterSpacingPercent={settings.letterSpacingPercent}
           />
-
           <FontSizeTable
             sizes={sizes}
             selectedSize={settings.selectedSize}
@@ -41,7 +39,6 @@ const Home: React.FC = () => {
             letterSpacing={settings.letterSpacing}
             letterSpacingPercent={settings.letterSpacingPercent}
           />
-
           <div className="space-y-4 my-8 hidden lg:block px-1 md:px-10">
             <GraphCanvas
               sizes={sizes}
@@ -53,6 +50,4 @@ const Home: React.FC = () => {
       </div>
     </Layout>
   );
-};
-
-export default Home;
+}
