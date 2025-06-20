@@ -4,7 +4,7 @@ interface ControlBlockProps {
   /** Main label/title for the control */
   title: string;
   /** Optional secondary description text */
-  description?: string;
+  description?: React.ReactNode;
   /** The control element to render, e.g. a Switch, Select, Input, etc. */
   control: React.ReactNode;
   /** Additional Tailwind classes for customization */

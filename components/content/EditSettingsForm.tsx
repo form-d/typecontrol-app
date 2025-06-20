@@ -8,6 +8,7 @@ import Switch from "../form/Switch";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 import Button from "../elements/Button";
 import { getDefaultTourConfig } from "../../context/tourConfig";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 export const EditSettingsForm: React.FC = () => {
   const {
@@ -45,6 +46,7 @@ export const EditSettingsForm: React.FC = () => {
   };
 
   const updateSetting = useSettingUpdater(); // one call for _all_ keys
+  const isAboveXl = useMediaQuery("(min-width: 1280px)");
 
   // Local state for the input field
   const [inputValue, setInputValue] = useState(String(settings.maxLetterSize));
@@ -113,31 +115,38 @@ export const EditSettingsForm: React.FC = () => {
         }
       />
       <Divider />
-      <ControlBlock
-        title="Layout Orientation"
-        description="Switch layout for desktop (< 1400px) between panel top or left."
-        control={
-          <Switch
-            checked={settings.layout === "left"}
-            onChange={(v) => updateSetting("layout")(v ? "left" : "top")}
-          />
-        }
-      />
-      <Divider />
-      {hasSeenTour && (
+      {isAboveXl && (
         <>
           <ControlBlock
-            title="Reset app"
-            description="Restore all app settings and values to default"
+            title="Layout Orientation"
+            description={
+              <>
+                Switch layout for <b>desktop &gt; 1400px</b> between panel top
+                or left.
+              </>
+            }
             control={
-              <Button size="small" variant="secondary" onClick={handleReset}>
-                Reset
-              </Button>
+              <Switch
+                checked={settings.layout === "left"}
+                onChange={(v) => updateSetting("layout")(v ? "left" : "top")}
+              />
             }
           />
           <Divider />
         </>
       )}
+
+      <ControlBlock
+        title="Reset app"
+        description="Restore all app settings and values to default"
+        control={
+          <Button size="small" variant="secondary" onClick={handleReset}>
+            Reset
+          </Button>
+        }
+      />
+      <Divider />
+
       {hasSeenTour && (
         <>
           <ControlBlock
