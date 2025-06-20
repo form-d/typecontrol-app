@@ -129,9 +129,18 @@ export function useFloatingDropdown({
     };
   }, [open, modal]);
 
-  // Pointer/hover trap overlay for modal
+  // Helper to check for non-touch device
+  function isNonTouchDevice() {
+    if (typeof window === "undefined") return true;
+    return !(
+      "ontouchstart" in window ||
+      (window.matchMedia && window.matchMedia("(pointer: coarse)").matches)
+    );
+  }
+
+  // Pointer/hover trap overlay for modal, desktop only
   const pointerTrap =
-    open && modal
+    open && modal && isNonTouchDevice()
       ? createPortal(
           <div
             style={{
