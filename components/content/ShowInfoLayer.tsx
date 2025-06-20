@@ -23,7 +23,7 @@ export const ShowInfoLayer: React.FC = () => {
         to better control letter spacing. And that was the starting point for{" "}
         <i>typeControl</i>.
       </p>
-      <p className="text-xs text-gray-500">Copyright 2025 Heiko Owczarzak</p>
+      <p className="text-xs text-gray-500">Copyright 2025</p>
     </>
   );
 };
