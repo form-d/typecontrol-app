@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useGlobalState, ModalConfig } from "../../context/GlobalStateContext";
 import Button from "../elements/Button";
 import IconOnlyButton from "../elements/IconOnlyButton";
 import Icon from "../elements/Icon";
+import Divider from "../elements/Divider";
 
 /**
  * Global Modal component with fade-in/out, optional fallback Close button, and optional header X button.
@@ -32,6 +33,40 @@ export const Modal: React.FC = () => {
   const [isRendered, setIsRendered] = useState(isModalOpen);
   const [fadeState, setFadeState] = useState<"in" | "out">("out");
 
+  // 1. Track overflow state
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const [isContentOverflowing, setIsContentOverflowing] = useState(false);
+
+  // 2. Use ResizeObserver for dynamic content and resizing
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const checkOverflow = () => {
+      setIsContentOverflowing(el.scrollHeight > el.clientHeight);
+    };
+
+    checkOverflow();
+
+    // Use ResizeObserver for both size and content changes
+    const resizeObserver = new window.ResizeObserver(checkOverflow);
+    resizeObserver.observe(el);
+
+    // In case parent/container changes (modal resizing), observe parent too:
+    if (el.parentElement) {
+      resizeObserver.observe(el.parentElement);
+    }
+
+    // Also update on window resize for good measure
+    window.addEventListener("resize", checkOverflow);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [content, isRendered]); // run again when modal appears or content changes
+
+  // Fade-in/out effect logic (unchanged)
   useEffect(() => {
     let timer: number;
     if (isModalOpen) {
@@ -50,7 +85,7 @@ export const Modal: React.FC = () => {
   const backdropBase =
     "fixed flex items-center justify-center inset-0 bg-black/50 z-50 transition-opacity duration-300";
   const panelBase =
-    "flex flex-col max-w-xl bg-white p-5 mx-4 rounded-lg min-w-[300px] max-h-[calc(100%-2rem)] ease-in-out transition-all duration-300 delay-150";
+    "flex flex-col max-w-xl bg-white mx-4 rounded-lg min-w-[300px] max-h-[calc(100%-2rem)] ease-in-out transition-all duration-300 delay-150";
   const opacityClass = fadeState === "in" ? "opacity-100" : "opacity-0";
   const motionClass = fadeState === "in" ? "mb-0" : "-mb-10";
 
@@ -68,8 +103,8 @@ export const Modal: React.FC = () => {
           <div
             className={
               centered
-                ? "flex flex-col items-center mb-2"
-                : "flex justify-between items-center mb-2"
+                ? "flex flex-col items-center px-5 py-4"
+                : "flex justify-between items-center px-5 py-4"
             }
           >
             {title && (
@@ -92,44 +127,58 @@ export const Modal: React.FC = () => {
             )}
           </div>
         )}
+        {/* Divider only if content is overflowing */}
+        {/* {isContentOverflowing && <Divider spacing="none" />} */}
         {/* Content */}
-        <div className={`overflow-y-auto ${centered ? "text-center" : ""}`}>
+        <div
+          ref={contentRef}
+          className={`overflow-y-auto px-5 pb-5 ${
+            centered ? "text-center" : ""
+          }`}
+          style={{ flex: 1, minHeight: 0 }} // ensures proper scrolling with flex layout
+        >
           {content}
         </div>
         {/* Footer actions */}
-        <div
-          className={`mt-4 flex gap-3 ${
-            centered ? "justify-center" : "justify-end"
-          }`}
-        >
-          {secondaryButton && (
-            <Button
-              variant="text"
-              onClick={() => {
-                secondaryButton.action();
-                closeModal();
-              }}
+        {(primaryButton || secondaryButton || !suppressCloseButton) && (
+          <div>
+            {/* Divider only if content is overflowing */}
+            {isContentOverflowing && <Divider spacing="none" />}
+            <div
+              className={`px-5 py-4 flex gap-3 ${
+                centered ? "justify-center" : "justify-end"
+              }`}
             >
-              {secondaryButton.label}
-            </Button>
-          )}
-          {primaryButton && (
-            <Button
-              variant="primary"
-              onClick={() => {
-                primaryButton.action();
-                closeModal();
-              }}
-            >
-              {primaryButton.label}
-            </Button>
-          )}
-          {!primaryButton && !secondaryButton && !suppressCloseButton && (
-            <Button variant="secondary" onClick={closeModal}>
-              Close
-            </Button>
-          )}
-        </div>
+              {secondaryButton && (
+                <Button
+                  variant="text"
+                  onClick={() => {
+                    secondaryButton.action();
+                    closeModal();
+                  }}
+                >
+                  {secondaryButton.label}
+                </Button>
+              )}
+              {primaryButton && (
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    primaryButton.action();
+                    closeModal();
+                  }}
+                >
+                  {primaryButton.label}
+                </Button>
+              )}
+              {!primaryButton && !secondaryButton && !suppressCloseButton && (
+                <Button variant="secondary" onClick={closeModal}>
+                  Close
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

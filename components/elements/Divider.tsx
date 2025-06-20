@@ -71,7 +71,7 @@ const Divider: React.FC<DividerProps> = ({
 
   return (
     <div
-      className={`${spacingClass} ${flexClass} ${thicknessClass} ${colorClass} ${className}`}
+      className={`${spacingClass} ${flexClass} ${thicknessClass} ${colorClass} flex-shrink-0 flex-grow-0 ${className}`}
     />
   );
 };

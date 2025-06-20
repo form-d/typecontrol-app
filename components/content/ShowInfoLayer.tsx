@@ -24,7 +24,6 @@ export const ShowInfoLayer: React.FC = () => {
         to better control letter spacing. And that was the starting point for{" "}
         <i>typeControl</i>.
       </p>
-      <Divider spacing="none" />
     </>
   );
 };
