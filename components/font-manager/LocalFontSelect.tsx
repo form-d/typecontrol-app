@@ -182,7 +182,26 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
       const el = fam
         ? listRef.current.querySelector(`[data-family="${fam}"]`)
         : listRef.current.firstElementChild;
-      (el as HTMLElement)?.scrollIntoView({ block: "center" });
+      if (el && listRef.current) {
+        // Scroll the list container so that the element is in view
+        const parent = listRef.current;
+        const child = el as HTMLElement;
+        parent.scrollTop =
+          child.offsetTop - parent.clientHeight / 2 - child.clientHeight / 2;
+        console.log(
+          "scrollTop :>> ",
+          child.offsetTop -
+            parent.offsetTop -
+            parent.clientHeight / 2 +
+            child.clientHeight / 2
+        );
+        console.log("child.offsetTop :>> ", child.offsetTop);
+        console.log("parent.scrollHeight :>> ", parent.scrollHeight);
+        console.log(
+          "child.offsetTop - parent.clientHeight / 2 - child.clientHeight / 2 :>> ",
+          child.offsetTop - parent.clientHeight / 2 - child.clientHeight / 2
+        );
+      }
     }
   }, [open, searchMode, selectedFamily]);
 
