@@ -100,7 +100,7 @@ const TableExporter: React.FC<TableExporterProps> = ({ children }) => {
       <div className="w-full flex justify-end gap-2 mb-4">
         <DropdownMenu
           tooltip="Table Options"
-          placement="top"
+          placement="bottom-end"
           enabled={true}
           trigger={
             <Button

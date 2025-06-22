@@ -1,10 +1,18 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  Fragment,
+} from "react";
 import SelectWithLabel from "../form/SelectWithLabel";
 import InputWrapper from "../layout/InputWrapper";
 import { useSettingUpdater } from "../../hooks/useSettingUpdater";
 import Icon from "../elements/Icon";
 import { useFloatingDropdown } from "../../hooks/useFloatingDropdown";
 import { createPortal } from "react-dom";
+import { Transition } from "@headlessui/react";
+import { tree } from "next/dist/build/templates/app-page";
 
 export interface LocalFontSelectProps {
   value?: string;
@@ -56,6 +64,7 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
 }) => {
   const [fonts, setFonts] = useState<FontMeta[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState("");
   const [searchMode, setSearchMode] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -83,15 +92,37 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
   const { open, setOpen, floatingProps, referenceProps, update, pointerTrap } =
     useFloatingDropdown({
       offsetPx: 8,
+      onClickOutside: () => {
+        closeDropdown();
+      },
     });
 
   useEffect(() => {
     if (autoFocus) inputRef.current?.focus();
   }, [autoFocus]);
 
+  useEffect(() => {
+    if (!isFocused) {
+      restorePreviousSelection();
+    }
+  }, [isFocused]);
+  // useEffect(() => {
+  //   if (!open) return;
+  //   const onClickOutside = (e: MouseEvent) => {
+  //     if (
+  //       containerRef.current &&
+  //       !containerRef.current.contains(e.target as Node)
+  //     )
+  //       closeDropdown();
+  //   };
+  //   document.addEventListener("mousedown", onClickOutside);
+  //   return () => document.removeEventListener("mousedown", onClickOutside);
+  // }, [open]);
+
   // Font loading logic
   const loadFonts = () => {
     if (loaded) return Promise.resolve();
+    setIsLoading(true);
     if (!loadFontsOnce.current) {
       loadFontsOnce.current = (async () => {
         try {
@@ -147,7 +178,6 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
   // open/close
   const openDropdown = async () => {
     if (disabled) return;
-    await loadFonts();
     prevRef.current = {
       family: selectedFamily,
       fullName: selectedFullName,
@@ -155,22 +185,63 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     };
     setSearchMode(false);
     setFilter("");
-    setOpen(true);
-    inputRef.current?.select();
+    if (!fonts.length) {
+      await loadFonts();
+      setIsLoading(false);
+    }
     setTimeout(() => {
+      setOpen(true);
       update();
+      // select input text
+      inputRef.current?.select();
     }, 0);
   };
 
   const closeDropdown = () => {
+    if (!open) return;
+    setOpen(false);
+    restorePreviousSelection();
+    // prevent dropdown from fashing
+    setTimeout(() => {
+      setSearchMode(false);
+      setFilter("");
+    }, 200);
+  };
+
+  const clearInput = () => {
+    setFilter("");
+    setSearchMode(false);
+    setSelectedFamily("");
+    setSelectedFullName("");
+    setSelectedVariation("Regular");
+    setSelectedFullName("");
+    onChange?.("");
+    inputRef.current?.focus();
+  };
+
+  const restorePreviousSelection = () => {
     const prev = prevRef.current;
+    if (!prev) return;
     setSelectedFamily(prev.family);
     setSelectedFullName(prev.fullName);
     setSelectedVariation(prev.variation);
     onChange?.(prev.fullName);
-    setOpen(false);
-    setSearchMode(false);
-    setFilter("");
+  };
+
+  const scrollIntoView = () => {
+    if (!open || !listRef.current) return;
+    const fam = selectedFamily || "";
+    const el = fam
+      ? listRef.current.querySelector(`[data-family="${fam}"]`)
+      : listRef.current.firstElementChild;
+    if (el && listRef.current) {
+      // Scroll the list container so that the element is in view
+      const parent = listRef.current;
+      const child = el as HTMLElement;
+      parent.scrollTop =
+        child.offsetTop - parent.clientHeight - child.clientHeight;
+      // child.offsetTop - parent.clientHeight / 2 - child.clientHeight / 2;
+    }
   };
 
   // scroll behavior
@@ -178,32 +249,32 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     if (!open || !listRef.current) return;
     if (searchMode) listRef.current.scrollTop = 0;
     else {
-      const fam = selectedFamily || "";
-      const el = fam
-        ? listRef.current.querySelector(`[data-family="${fam}"]`)
-        : listRef.current.firstElementChild;
-      if (el && listRef.current) {
-        // Scroll the list container so that the element is in view
-        const parent = listRef.current;
-        const child = el as HTMLElement;
-        parent.scrollTop =
-          child.offsetTop - parent.clientHeight / 2 - child.clientHeight / 2;
-        console.log(
-          "scrollTop :>> ",
-          child.offsetTop -
-            parent.offsetTop -
-            parent.clientHeight / 2 +
-            child.clientHeight / 2
-        );
-        console.log("child.offsetTop :>> ", child.offsetTop);
-        console.log("parent.scrollHeight :>> ", parent.scrollHeight);
-        console.log(
-          "child.offsetTop - parent.clientHeight / 2 - child.clientHeight / 2 :>> ",
-          child.offsetTop - parent.clientHeight / 2 - child.clientHeight / 2
-        );
-      }
+      // const fam = selectedFamily || "";
+      // const el = fam
+      //   ? listRef.current.querySelector(`[data-family="${fam}"]`)
+      //   : listRef.current.firstElementChild;
+      // if (el && listRef.current) {
+      //   // Scroll the list container so that the element is in view
+      //   const parent = listRef.current;
+      //   const child = el as HTMLElement;
+      //   parent.scrollTop =
+      //     child.offsetTop - parent.clientHeight / 2 - child.clientHeight / 2;
+      //   console.log(
+      //     "scrollTop :>> ",
+      //     child.offsetTop -
+      //       parent.offsetTop -
+      //       parent.clientHeight / 2 +
+      //       child.clientHeight / 2
+      //   );
+      //   console.log("child.offsetTop :>> ", child.offsetTop);
+      //   console.log("parent.scrollHeight :>> ", parent.scrollHeight);
+      //   console.log(
+      //     "child.offsetTop - parent.clientHeight / 2 - child.clientHeight / 2 :>> ",
+      //     child.offsetTop - parent.clientHeight / 2 - child.clientHeight / 2
+      //   );
+      // }
     }
-  }, [open, searchMode, selectedFamily]);
+  }, [open, searchMode]);
 
   // derive lists
   const families = Array.from(new Set(fonts.map((f) => f.family)));
@@ -243,11 +314,11 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     const meta = fonts.find(
       (f) => f.family === fam && f.variationName === variation
     )!;
+    setOpen(false);
     setSelectedFamily(fam);
     setSelectedVariation(variation);
     setSelectedFullName(meta.fullName);
     onChange?.(meta.fullName);
-    setOpen(false);
     setSearchMode(false);
     setFilter("");
     updateSetting("selectedFont")(meta.fullName);
@@ -278,22 +349,20 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     }
   };
 
-  const clearInput = () => {
-    setFilter("");
-    setSearchMode(false);
-    setSelectedFamily("");
-    setSelectedFullName("");
-    setSelectedVariation("Regular");
-    setSelectedFullName("");
-    onChange?.("");
-    inputRef.current?.focus();
-  };
-
   const showClear =
     isFocused && (searchMode ? filter.length > 0 : selectedFamily.length > 0);
 
   const isFamilyChosen = selectedFamily != null && selectedFamily !== "";
   const updateSetting = useSettingUpdater();
+
+  const [shouldShow, setShouldShow] = useState(false);
+
+  // open is true
+  // useEffect(() => {
+  //   if (open) {
+  //     requestAnimationFrame(() => setShouldShow(true));
+  //   }
+  // }, [open]);
 
   return (
     <>
@@ -307,13 +376,13 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
                 referenceProps.ref(node);
               }}
               type="text"
-              className="w-full h-8 bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-900 text-md leading-tight focus:outline-hidden focus:bg-white focus:border-purple-500"
+              className="w-full h-8 bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-900 text-md leading-tight hover:border-gray-400 focus:outline-hidden focus:bg-white focus:border-purple-500"
               placeholder="Select font…"
               value={searchMode ? filter : selectedFamily}
               disabled={disabled}
               onFocus={() => {
                 setIsFocused(true);
-                openDropdown();
+                // openDropdown(); // needed ???
               }}
               onBlur={() => setIsFocused(false)}
               onClick={openDropdown}
@@ -334,28 +403,78 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={clearInput}
-                className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute flex justify-center items-center right-6 top-1/2 transform -translate-y-1/2 text-gray-500 bg-transparent hover:bg-gray-100 transition-colors duration-150 p-0 h-5 w-5 rounded cursor-pointer"
                 aria-label="Clear"
               >
-                ×
+                <Icon size="xs" iconClass="ti ti-x" />
               </button>
             )}
 
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-purple-500">
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-              </svg>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex justify-center items-center px-2 text-purple-500">
+              {isLoading ? (
+                <span className="inline-flex items-center">
+                  <svg
+                    aria-hidden="true"
+                    role="status"
+                    className={"w-4 h-4 text-current animate-spin"}
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 
+                      50 100.591C22.3858 100.591 0 78.2051 0 
+                      50.5908C0 22.9766 22.3858 0.59082 50 
+                      0.59082C77.6142 0.59082 100 22.9766 100 
+                      50.5908ZM9.08144 50.5908C9.08144 73.1895 
+                      27.4013 91.5094 50 91.5094C72.5987 91.5094 
+                      90.9186 73.1895 90.9186 50.5908C90.9186 
+                      27.9921 72.5987 9.67226 50 9.67226C27.4013 
+                      9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 
+                      35.9116 97.0079 33.5539C95.2932 28.8227 
+                      92.871 24.3692 89.8167 20.348C85.8452 
+                      15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 
+                      4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 
+                      0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 
+                      1.69328 37.813 4.19778 38.4501 6.62326C39.0873 
+                      9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 
+                      9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 
+                      10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 
+                      17.9648 79.3347 21.5619 82.5849 25.841C84.9175 
+                      28.9121 86.7997 32.2913 88.1811 35.8758C89.083 
+                      38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="#ffffff"
+                    />
+                  </svg>
+                </span>
+              ) : (
+                <svg
+                  className="fill-current h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              )}
             </div>
           </div>
-          {/* Render pointerTrap before dropdown */}
-          {pointerTrap}
           {/* Dropdown rendered via portal and floating-ui */}
-          {open &&
-            createPortal(
+          {createPortal(
+            <Transition
+              as={Fragment}
+              show={open && displayed.length > 0}
+              enter="transition-opacity duration-100"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity duration-250"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+              beforeEnter={scrollIntoView}
+            >
               <ul
                 {...floatingProps}
                 ref={(node) => {
@@ -379,9 +498,10 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
                     )}
                   </li>
                 ))}
-              </ul>,
-              document.body
-            )}
+              </ul>
+            </Transition>,
+            document.body
+          )}
           {/* variation selector outside dropdown */}
         </div>
       </InputWrapper>

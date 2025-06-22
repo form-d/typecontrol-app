@@ -67,6 +67,8 @@ type UseFloatingDropdownOptions = {
   maxHeightPx?: number;
   /** When true, prevent scroll and pointer/hover outside while open */
   modal?: boolean;
+  /** Callback when click outside occurs */
+  onClickOutside?: () => void;
 };
 
 /**
@@ -78,6 +80,7 @@ export function useFloatingDropdown({
   widthMatchReference = true,
   maxHeightPx = 160,
   modal = true,
+  onClickOutside,
 }: UseFloatingDropdownOptions = {}) {
   const [open, setOpen] = useState(false);
 
@@ -111,11 +114,14 @@ export function useFloatingDropdown({
         !(floatEl instanceof Element && floatEl.contains(e.target as Node))
       ) {
         setOpen(false);
+        if (typeof onClickOutside === "function") {
+          onClickOutside();
+        }
       }
     };
     document.addEventListener("mousedown", handle);
     return () => document.removeEventListener("mousedown", handle);
-  }, [open, refs.reference, refs.floating]);
+  }, [open, refs.reference, refs.floating, onClickOutside]);
 
   // Modal/Scroll & pointer event trap logic
   useEffect(() => {

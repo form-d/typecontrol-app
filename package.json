@@ -9,6 +9,7 @@
   "dependencies": {
     "@floating-ui/react-dom": "^2.1.2",
     "@floating-ui/react-dom-interactions": "^0.13.3",
+    "@headlessui/react": "^2.2.4",
     "lottie-react": "^2.4.1",
     "next": "latest",
     "react": "latest",

@@ -1,6 +1,8 @@
+import { Fragment, useState } from "react";
 import { createPortal } from "react-dom";
 import Tooltip, { Placement } from "../elements/Tooltip";
 import { useFloatingDropdown } from "../../hooks/useFloatingDropdown";
+import { Transition } from "@headlessui/react";
 /**
  * A generic dropdown menu component with tooltip and click-outside behavior.
  *
@@ -59,7 +61,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   placement = "bottom-end",
   enabled = true,
   trigger,
-  menuClassName = "right-0 mt-2 w-56 bg-white border rounded-sm shadow-lg z-30",
+  menuClassName = "right-0 mt-2 w-56 bg-white border rounded-sm shadow-xl z-30",
   items,
 }) => {
   const { open, setOpen, floatingProps, referenceProps, pointerTrap } =
@@ -85,40 +87,52 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
       </Tooltip>
       {/* Render pointerTrap before dropdown */}
       {pointerTrap}
-      {open &&
+      {
         // Portal not strictly needed if Floating UI positions with fixed, but it’s safest:
         createPortal(
-          <div {...floatingProps} className={menuClassName}>
-            {items.map((item, idx) => (
-              <button
-                key={idx}
-                type="button"
-                disabled={item.disabled}
-                onClick={() => {
-                  item.onClick();
-                  setOpen(false);
-                }}
-                className={
-                  `w-full text-left px-4 py-2 ` +
-                  `${
-                    item.disabled
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-gray-100"
-                  } ` +
-                  `${item.active ? "font-semibold" : ""}`
-                }
-              >
-                {item.label}
-                {item.helperText && (
-                  <div className="text-xs text-gray-500 mt-1">
-                    {item.helperText}
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>,
+          <Transition
+            as={Fragment}
+            show={open}
+            enter="transition-opacity duration-100"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity duration-250"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div {...floatingProps} className={menuClassName}>
+              {items.map((item, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  disabled={item.disabled}
+                  onClick={() => {
+                    item.onClick();
+                    setOpen(false);
+                  }}
+                  className={
+                    `w-full text-left px-4 py-2 ` +
+                    `${
+                      item.disabled
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-gray-100"
+                    } ` +
+                    `${item.active ? "font-semibold" : ""}`
+                  }
+                >
+                  {item.label}
+                  {item.helperText && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      {item.helperText}
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </Transition>,
           document.body
-        )}
+        )
+      }
     </div>
   );
 };

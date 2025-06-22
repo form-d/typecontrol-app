@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect, ReactNode } from "react";
+import React, { useState, useRef, useEffect, ReactNode, Fragment } from "react";
 import { createPortal } from "react-dom";
 import InputWrapper, { InputWrapperProps } from "../layout/InputWrapper";
 import Tooltip from "../elements/Tooltip";
 import { useFloatingDropdown } from "../../hooks/useFloatingDropdown";
+import { Transition } from "@headlessui/react";
 
 interface Props {
   label?: string;
@@ -57,7 +58,7 @@ const TextInputWithDropdown: React.FC<Props> = ({
       <div className="relative">
         <div
           {...referenceProps}
-          className={`inline-flex items-stretch bg-white border border-gray-300 rounded-lg overflow-hidden ${
+          className={`inline-flex items-stretch bg-white border border-gray-300 rounded-lg overflow-hidden hover:border-gray-400 ${
             block ? "w-full" : ""
           } ${className ?? ""}`}
         >
@@ -65,7 +66,7 @@ const TextInputWithDropdown: React.FC<Props> = ({
           <input
             id={inputId}
             type="text"
-            className="grow h-8 px-4 py-2 text-gray-900 text-sm border-none leading-tight focus:outline-hidden focus:border-purple-500"
+            className="grow h-8 px-4 py-2 text-gray-900 text-sm border-none leading-tight focus:outline-hidden"
             value={value}
             placeholder={placeholder}
             onFocus={
@@ -83,7 +84,7 @@ const TextInputWithDropdown: React.FC<Props> = ({
           >
             <button
               type="button"
-              className="flex-none px-1.5 py-2 border-l border-gray-300 rounded-e-lg h-8 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
+              className="flex-none px-1.5 py-2 border-l border-gray-300 rounded-e-lg h-8 hover:bg-gray-100 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
               onClick={() => setOpen((open) => !open)}
               aria-haspopup="true"
               aria-expanded={open}
@@ -103,11 +104,20 @@ const TextInputWithDropdown: React.FC<Props> = ({
           {/* Render pointerTrap before dropdown */}
           {pointerTrap}
           {/* Dropdown menu */}
-          {open &&
-            createPortal(
+          {createPortal(
+            <Transition
+              as={Fragment}
+              show={open}
+              enter="transition-opacity duration-200"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity duration-150"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
               <ul
                 {...floatingProps}
-                className="w-full bg-white border border-gray-200 rounded-sm shadow-lg z-10 max-h-60 overflow-auto"
+                className="w-full bg-white border border-gray-200 rounded-sm shadow-xl z-10 max-h-60 overflow-auto"
               >
                 {options.map((item) => (
                   <li key={item}>
@@ -120,9 +130,10 @@ const TextInputWithDropdown: React.FC<Props> = ({
                     </button>
                   </li>
                 ))}
-              </ul>,
-              document.body
-            )}
+              </ul>
+            </Transition>,
+            document.body
+          )}
         </div>
       </div>
     </Container>
