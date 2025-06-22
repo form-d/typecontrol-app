@@ -209,13 +209,12 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
   };
 
   const clearInput = () => {
-    setFilter("");
     setSearchMode(false);
+    setFilter("");
     setSelectedFamily("");
     setSelectedFullName("");
     setSelectedVariation("Regular");
     setSelectedFullName("");
-    onChange?.("");
     inputRef.current?.focus();
   };
 
@@ -368,9 +367,8 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     <>
       <InputWrapper label="Locale Font:" layout="left" labelWidthClass="w-1/4">
         <div className={`relative ${className}`}>
-          <div className="relative">
+          <div {...referenceProps} className="relative">
             <input
-              {...referenceProps}
               ref={(node) => {
                 inputRef.current = node;
                 referenceProps.ref(node);
