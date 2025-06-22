@@ -59,7 +59,7 @@ const TextInputWithDropdown: React.FC<Props> = ({
     <Container {...wrapperProps}>
       <div className="relative">
         <div
-          className={`inline-flex items-stretch bg-white ${
+          className={`inline-flex items-stretch bg-white rounded-lg ${
             block ? "w-full" : ""
           } ${className ?? ""}`}
         >
