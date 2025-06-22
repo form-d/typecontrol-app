@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import InputWrapper from "../layout/InputWrapper";
+import Icon from "../elements/Icon";
 
 interface NumberInputWithLabelProps {
   hold?: boolean;
@@ -85,10 +86,11 @@ const NumberInputWithLabel = ({
           onMouseDown={() => startHolding(handleDecrease)}
           onMouseUp={stopHolding}
           onMouseLeave={stopHolding}
-          className="bg-white text-gray-900 dark:bg-gray-700 hover:bg-gray-200 border border-gray-300 rounded-s-lg px-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
+          className="bg-white w-10 text-purple-500 hover:bg-gray-100 border border-gray-300 rounded-s-lg px-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
           disabled={disabled}
         >
-          <svg
+          <Icon size="sm" iconClass="ti ti-minus" />
+          {/* <svg
             className="w-3 h-3"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
@@ -102,13 +104,13 @@ const NumberInputWithLabel = ({
               strokeWidth="2"
               d="M1 1h16"
             />
-          </svg>
+          </svg> */}
         </button>
         <input
           ref={inputRef}
           id={inputId}
           type="number"
-          className="appearance-none bg-white border border-x-0 border-gray-300 h-8 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-400 disabled:pointer-events-none"
+          className="appearance-none bg-white border border-x-0 border-gray-300 h-8 text-center text-gray-900 text-sm focus:purple-500 block w-full py-2.5 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-400 disabled:pointer-events-none"
           // block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded leading-tight focus:outline-hidden focus:shadow-outline
           value={value}
           step={step}
@@ -131,10 +133,11 @@ const NumberInputWithLabel = ({
           onMouseDown={() => startHolding(handleIncrease)}
           onMouseUp={stopHolding}
           onMouseLeave={stopHolding}
-          className="bg-white text-gray-900 hover:bg-gray-200 border border-gray-300 rounded-e-lg px-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
+          className="bg-white text-purple-500 w-10 hover:bg-gray-100 border border-gray-300 rounded-e-lg px-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
           disabled={disabled}
         >
-          <svg
+          <Icon size="xs" iconClass="ti ti-plus" />
+          {/* <svg
             className="w-3 h-3"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
@@ -148,7 +151,7 @@ const NumberInputWithLabel = ({
               strokeWidth="2"
               d="M9 1v16M1 9h16"
             />
-          </svg>
+          </svg> */}
         </button>
       </div>
     </InputWrapper>

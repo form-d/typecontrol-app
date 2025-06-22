@@ -46,7 +46,11 @@ const Icon: React.FC<IconProps> = ({
 
   if (iconClass) {
     // Render font-icon
-    return <i className={`${iconClass} ${classes}`} />;
+    return (
+      <i
+        className={`relative before:absolute before:inset-0 before:flex before:items-center before:justify-center ${iconClass} ${classes}`}
+      />
+    );
   }
 
   // Render SVG or React icon node

@@ -11,6 +11,7 @@ interface CustomSliderProps {
   unit?: string;
   disabled?: boolean;
   onDisabledDoubleClick?: () => void;
+  unitTextAlign?: "left" | "center" | "right";
   /**
    * Number of decimal places to display after the comma
    * @default 3
@@ -29,6 +30,7 @@ const CustomSlider = ({
   disabled = false,
   onDisabledDoubleClick,
   precision = 0,
+  unitTextAlign = "right",
 }: CustomSliderProps): React.ReactElement => {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -36,6 +38,12 @@ const CustomSlider = ({
   const startPos = useRef<{ x: number; y: number } | null>(null);
 
   const percent = ((value - min) / (max - min)) * 100;
+
+  const alignmentClassMap: Record<"left" | "center" | "right", string> = {
+    left: "text-left",
+    center: "text-center",
+    right: "text-right",
+  };
 
   // Utility to get clientX from Mouse or Touch event
   function getClientX(
@@ -184,7 +192,7 @@ const CustomSlider = ({
           </div>
           <div>
             <div
-              className={`text-sm w-12 text-right ${
+              className={`text-sm w-12 ${alignmentClassMap[unitTextAlign]} ${
                 disabled ? "text-gray-400" : "text-black"
               }`}
             >

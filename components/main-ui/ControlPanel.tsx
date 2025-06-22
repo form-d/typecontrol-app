@@ -238,8 +238,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
             value={settings.bezierStrength}
             onChange={(v) => updateSetting("bezierStrength")(v)}
             unit="%"
+            unitTextAlign="center"
           />
-          <div className="flex flex-row gap-10">
+          <div className="flex flex-row gap-11">
             <div className="flex-1">
               <CustomSlider
                 label={t("bezierPowerControl")}
