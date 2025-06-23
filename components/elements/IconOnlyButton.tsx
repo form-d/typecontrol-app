@@ -2,7 +2,7 @@ import React from "react";
 import type { ButtonVariant } from "./Button";
 
 export type IconOnlyButtonShape = "square" | "circle";
-export type IconOnlyButtonSize = "small" | "standard" | "large";
+export type IconOnlyButtonSize = "tiny" | "small" | "standard" | "large";
 
 interface IconOnlyButtonProps {
   /** Accessible label for screen readers */
@@ -35,6 +35,7 @@ const variantClasses: Record<ButtonVariant, string> = {
 
 // Map sizes to width/height utilities
 const dimensionMap: Record<IconOnlyButtonSize, string> = {
+  tiny: "w-5 h-5",
   small: "w-6 h-6",
   standard: "w-8 h-8",
   large: "w-10 h-10",
@@ -78,6 +79,10 @@ const IconOnlyButton: React.FC<IconOnlyButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       className={`inline-flex items-center justify-center ${vClasses} ${sizeClass} ${shapeClass} ${disabledClasses} ${className}`.trim()}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
     >
       {/* Screen reader description */}
       <span className="sr-only">{ariaLabel}</span>

@@ -13,6 +13,7 @@ import { useFloatingDropdown } from "../../hooks/useFloatingDropdown";
 import { createPortal } from "react-dom";
 import { Transition } from "@headlessui/react";
 import { tree } from "next/dist/build/templates/app-page";
+import IconOnlyButton from "../elements/IconOnlyButton";
 
 export interface LocalFontSelectProps {
   value?: string;
@@ -348,13 +349,26 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
     }
   };
 
-  const showClear =
-    isFocused && (searchMode ? filter.length > 0 : selectedFamily.length > 0);
+  // const showClear =
+  //   isFocused && (searchMode ? filter.length > 0 : selectedFamily.length > 0);
 
   const isFamilyChosen = selectedFamily != null && selectedFamily !== "";
   const updateSetting = useSettingUpdater();
 
-  const [shouldShow, setShouldShow] = useState(false);
+  const [showClear, setShowClear] = useState(false);
+
+  useEffect(() => {
+    if (
+      isFocused &&
+      (searchMode ? filter.length > 0 : selectedFamily.length > 0)
+    ) {
+      // Delay setting showClear to avoid event interference
+      const t = setTimeout(() => setShowClear(true), 100);
+      return () => clearTimeout(t);
+    } else {
+      setShowClear(false);
+    }
+  }, [isFocused, filter, selectedFamily]);
 
   // open is true
   // useEffect(() => {
@@ -397,15 +411,26 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
             />
 
             {showClear && (
-              <button
-                type="button"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={clearInput}
-                className="absolute flex justify-center items-center right-6 top-1/2 transform -translate-y-1/2 text-gray-500 bg-transparent hover:bg-gray-100 transition-colors duration-150 p-0 h-5 w-5 rounded cursor-pointer"
-                aria-label="Clear"
-              >
-                <Icon size="xs" iconClass="ti ti-x" />
-              </button>
+              <IconOnlyButton
+                ariaLabel="Clear"
+                icon={<Icon size="xs" iconClass="ti ti-x" />}
+                variant="subtle"
+                size="small"
+                shape="square"
+                className="absolute right-6 top-1/2 transform -translate-y-1/2"
+                onClick={(e) => {
+                  clearInput();
+                }}
+              />
+              // <button
+              //   type="button"
+              //   onMouseDown={(e) => e.preventDefault()}
+              //   onClick={clearInput}
+              //   className="absolute flex justify-center items-center right-6 top-1/2 transform -translate-y-1/2 text-gray-500 bg-transparent hover:bg-gray-100 transition-colors duration-150 p-0 h-5 w-5 rounded cursor-pointer"
+              //   aria-label="Clear"
+              // >
+              //   <Icon size="xs" iconClass="ti ti-x" />
+              // </button>
             )}
 
             <div className="pointer-events-none absolute inset-y-0 right-0 flex justify-center items-center px-2 text-purple-500">

@@ -14,6 +14,8 @@ import {
 import Button from "../elements/Button";
 import { useGlobalState } from "../../context/GlobalStateContext";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import Icon from "../elements/Icon";
+import IconOnlyButton from "../elements/IconOnlyButton";
 
 // --------------------------------------------
 // TYPES
@@ -445,23 +447,46 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
             {/* Tooltip content */}
             <div className="bg-white p-4 rounded-md max-w-2xs md:max-w-xs relative z-10">
               {step.title && (
-                <p className="text-sm font-bold text-gray-800 pb-1">
-                  {step.title}
-                </p>
+                <div className="flex items-center justify-between -mr-2 ">
+                  <div className="text-sm font-bold text-gray-800 pb-1">
+                    {step.title}
+                  </div>
+                  <IconOnlyButton
+                    ariaLabel="Skip"
+                    icon={<Icon size="xs" iconClass="ti ti-x" />}
+                    variant="subtle"
+                    size="small"
+                    shape="square"
+                    className="-mt-4"
+                    onClick={skip}
+                  />
+                  {/* <button
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={skip}
+                    className="flex justify-center items-center top-1/2 transform -translate-y-1/2 text-gray-500 bg-transparent hover:bg-gray-100 transition-colors duration-150 p-0 h-5 w-5 rounded cursor-pointer"
+                    aria-label="Clear"
+                  >
+                    <Icon size="xs" iconClass="ti ti-x" />
+                  </button> */}
+                </div>
               )}
               {step.description && (
                 <p className="text-xs leading-4 text-gray-600 pb-3">
                   {step.description}
                 </p>
               )}
-              <div className="flex justify-between">
-                <span className="text-xs font-bold text-gray-800">
-                  Step {current + 1} of {steps.length}
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-400">
+                  {current + 1} of {steps.length}
                 </span>
                 <div className="flex items-center space-x-2">
-                  <Button variant="text" size="small" onClick={skip}>
-                    Skip Tour
+                  <Button variant="tertiary" size="small" onClick={prev}>
+                    Previous
                   </Button>
+                  {/* <Button variant="text" size="small" onClick={skip}>
+                    Skip Tour
+                  </Button> */}
                   <Button variant="primary" size="small" onClick={next}>
                     {current === steps.length - 1 ? "Done" : "Next"}
                   </Button>
@@ -499,7 +524,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
                 left: position.left,
                 width: position.width,
                 height: position.height,
-                boxShadow: "0 0 0 max(100vh, 100vw) rgba(0, 0, 0, 0.5)",
+                boxShadow: "0 0 0 max(150vh, 150vw) rgba(0, 0, 0, 0.5)",
               }}
             />
           </div>
