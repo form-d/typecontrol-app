@@ -19,7 +19,7 @@ const CheckboxWithLabel: React.FC<Props> = ({
     <div className="w-full flex gap-2 text-xs items-center">
       <input
         className="
-          peer relative appearance-none shrink-0 w-4 h-4 border-2 border-gray-300 rounded mt-1 bg-white
+          peer relative appearance-none shrink-0 w-4 h-4 border-2 border-gray-300 rounded-md mt-1 bg-white
           focus:outline-hidden focus:ring-offset-0 :focus-visible:ring-1 :focus-visible:ring-blue-100
           checked:bg-purple-500 checked:border-0
           disabled:border-steel-400 disabled:bg-steel-400

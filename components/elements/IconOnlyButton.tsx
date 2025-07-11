@@ -68,7 +68,7 @@ const IconOnlyButton: React.FC<IconOnlyButtonProps> = ({
 }) => {
   const vClasses = variantClasses[variant];
   const sizeClass = dimensionMap[size];
-  const shapeClass = shape === "circle" ? "rounded-full" : "rounded-md";
+  const shapeClass = shape === "circle" ? "rounded-full" : "rounded-xl";
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
 
   return (

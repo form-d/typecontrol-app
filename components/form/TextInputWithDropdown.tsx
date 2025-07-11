@@ -58,7 +58,7 @@ const TextInputWithDropdown: React.FC<Props> = ({
       <div className="relative">
         <div
           {...referenceProps}
-          className={`inline-flex items-stretch bg-white border border-gray-300 rounded-lg overflow-hidden hover:border-gray-400 ${
+          className={`inline-flex items-stretch bg-white border border-gray-300 rounded-xl overflow-hidden hover:border-gray-400 ${
             block ? "w-full" : ""
           } ${className ?? ""}`}
         >
@@ -84,7 +84,7 @@ const TextInputWithDropdown: React.FC<Props> = ({
           >
             <button
               type="button"
-              className="flex-none px-1.5 py-2 border-l border-gray-300 rounded-e-lg h-8 hover:bg-gray-100 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
+              className="flex-none px-2 py-2 border-l border-gray-300 rounded-e-xl h-8 hover:bg-gray-100 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
               onClick={() => setOpen((open) => !open)}
               aria-haspopup="true"
               aria-expanded={open}

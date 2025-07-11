@@ -86,7 +86,7 @@ const NumberInputWithLabel = ({
           onMouseDown={() => startHolding(handleDecrease)}
           onMouseUp={stopHolding}
           onMouseLeave={stopHolding}
-          className="flex justify-center items-center bg-white w-10 text-purple-500 hover:bg-gray-100 border border-gray-300 rounded-s-lg px-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
+          className="flex justify-center items-center bg-white w-10 text-purple-500 hover:bg-gray-100 border border-gray-300 rounded-s-xl px-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
           disabled={disabled}
         >
           <Icon size="sm" iconClass="ti ti-minus" />
@@ -133,7 +133,7 @@ const NumberInputWithLabel = ({
           onMouseDown={() => startHolding(handleIncrease)}
           onMouseUp={stopHolding}
           onMouseLeave={stopHolding}
-          className="flex justify-center items-center bg-white text-purple-500 w-10 hover:bg-gray-100 border border-gray-300 rounded-e-lg px-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
+          className="flex justify-center items-center bg-white text-purple-500 w-15 hover:bg-gray-100 border border-gray-300 rounded-e-xl px-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
           disabled={disabled}
         >
           <Icon size="xs" iconClass="ti ti-plus" />

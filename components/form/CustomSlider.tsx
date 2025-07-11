@@ -178,10 +178,10 @@ const CustomSlider = ({
                 style={{ width: `${percent}%` }}
               />
               <div
-                className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full border ${
+                className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-0 ${
                   disabled
                     ? "bg-gray-100 border-gray-400"
-                    : "bg-white border-purple-500 cursor-grab"
+                    : "bg-purple-500 border-purple-500 cursor-grab"
                 } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-10 before:h-10 before:bg-transparent before:rounded-full`}
                 // className="relative before:content-[''] before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-8 before:h-8 before:bg-purple-200/40 before:rounded-full before:pointer-events-none"
                 style={{
