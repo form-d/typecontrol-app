@@ -17,6 +17,10 @@ interface CustomSliderProps {
    * @default 3
    */
   precision?: number;
+  /**
+   * Show step markers along the track
+   */
+  showSteps?: boolean;
 }
 
 const CustomSlider = ({
@@ -31,6 +35,7 @@ const CustomSlider = ({
   onDisabledDoubleClick,
   precision = 0,
   unitTextAlign = "right",
+  showSteps = false,
 }: CustomSliderProps): React.ReactElement => {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -94,12 +99,6 @@ const CustomSlider = ({
     setDragging(true);
   };
 
-  // const handleTouchMove = (e: TouchEvent) => {
-  //   if (dragging && e.touches.length > 0) {
-  //     updateValue(e.touches[0].clientX);
-  //   }
-  // };
-
   const handleTouchMove = (e: TouchEvent) => {
     if (!dragging || !startPos.current || e.touches.length === 0) return;
     const touch = e.touches[0];
@@ -111,10 +110,8 @@ const CustomSlider = ({
         if (dx > dy) {
           setIntent("horizontal");
           updateValue(touch.clientX);
-          // e.preventDefault(); // Prevent scroll
         } else {
           setIntent("vertical");
-          // Allow native scroll, so no preventDefault
         }
       }
     } else if (intent === "horizontal") {
@@ -131,21 +128,17 @@ const CustomSlider = ({
     if (dragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
-
-      // NEW: Touch events
       window.addEventListener("touchmove", handleTouchMove);
       window.addEventListener("touchend", handleTouchEnd);
     } else {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
-
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
     }
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
-
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
     };
@@ -169,24 +162,40 @@ const CustomSlider = ({
                 disabled ? "bg-white/10" : "bg-white/15 cursor-pointer"
               } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-full before:h-6 before:bg-transparent before:rounded-full`}
               onMouseDown={handleMouseDown}
-              onTouchStart={handleTouchStart} // <-- ADDED
+              onTouchStart={handleTouchStart}
             >
+              {/* Track fill */}
               <div
                 className={`absolute glow top-0 left-0 h-1 rounded-full ${
                   disabled ? "bg-neutral-500" : "bg-purple-500"
                 }`}
                 style={{ width: `${percent}%` }}
               />
+
+              {/* Step Markers */}
+              {showSteps &&
+                Array.from({
+                  length: Math.floor((max - min) / step) + 1,
+                }).map((_, i) => {
+                  const stepValue = min + i * step;
+                  const left = ((stepValue - min) / (max - min)) * 100;
+                  return (
+                    <div
+                      key={i}
+                      className="absolute top-1/2 w-[2px] h-2 bg-white/40 -translate-y-1/2 rounded-full"
+                      style={{ left: `${left}%` }}
+                    />
+                  );
+                })}
+
+              {/* Slider Thumb */}
               <div
                 className={`absolute glow top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-0 ${
                   disabled
                     ? "bg-neutral-500 border-neutral-500"
                     : "bg-purple-500 border-purple-500 cursor-grab"
                 } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-10 before:h-10 before:bg-transparent before:rounded-full`}
-                // className="relative before:content-[''] before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-8 before:h-8 before:bg-purple-200/40 before:rounded-full before:pointer-events-none"
-                style={{
-                  left: `${percent}%`,
-                }}
+                style={{ left: `${percent}%` }}
               />
             </div>
           </div>
@@ -196,7 +205,6 @@ const CustomSlider = ({
                 disabled ? "text-neutral-600" : "text-white/80"
               }`}
             >
-              {/* {String(intent)} */}
               {value.toFixed(precision)}
               {unit || ""}
             </div>

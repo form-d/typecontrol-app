@@ -254,6 +254,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
                 value={settings.bezierPower}
                 onChange={(v) => updateSetting("bezierPower")(v)}
                 unitTextAlign="center"
+                showSteps
               />
             </div>
             <div className="basis-24 shrink-0">
