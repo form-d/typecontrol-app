@@ -59,7 +59,7 @@ const TextInputWithDropdown: React.FC<Props> = ({
     <Container {...wrapperProps}>
       <div className="relative">
         <div
-          className={`inline-flex items-stretch bg-white rounded-xl ${
+          className={`inline-flex items-stretch bg-white/5 rounded-xl ${
             block ? "w-full" : ""
           } ${className ?? ""}`}
         >
@@ -68,9 +68,9 @@ const TextInputWithDropdown: React.FC<Props> = ({
             id={inputId}
             type="text"
             className={`
-              grow h-8 px-4 py-2 text-gray-900 text-sm border border-gray-300 
+              grow h-8 px-4 py-2 text-white/80 text-sm border border-neutral-700 
               rounded-s-xl leading-tight focus:outline-hidden focus:border-purple-500
-              disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none
+              disabled:border-neutral-700 disabled:bg-gray/50 disabled:text-neutral-600 disabled:shadow-none
               hover:border-gray-400
             `}
             value={value}
@@ -95,11 +95,11 @@ const TextInputWithDropdown: React.FC<Props> = ({
             <button
               type="button"
               className={`
-                flex-none px-2.5 py-1.5 border-y border-r border-gray-300 
-                rounded-e-xl h-8 focus-visible:border-purple-500 focus-visible:ring-2 
-                focus:outline-hidden hover:bg-gray-100
-                disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-400
-                text-purple-500
+                flex-none px-2.5 py-1.5 border-y border-r border-neutral-700 
+                rounded-e-xl h-8 bg-white/5 focus-visible:border-purple-500 focus-visible:ring-2 
+                focus:outline-hidden hover:bg-white/10
+                disabled:border-neutral-700 disabled:bg-white/5 disabled:text-neutral-600
+                text-purple-400
               `}
               onClick={onClick}
               disabled={buttonIsDisabled}

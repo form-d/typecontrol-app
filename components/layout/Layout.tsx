@@ -57,13 +57,17 @@ const Layout: React.FC<LayoutProps> = ({
     <div ref={containerRef} className={containerClasses}>
       {isTop ? (
         // Sticky top bar: transparent background, stays at top while content scrolls
-        <aside className="h-[50vh] md:h-auto overflow-auto md:sticky top-0 w-full z-10 p-4 bg-white/70 backdrop-blur-[32px] border border-b-black/15 p-4 space-y-4">
-          {bar}
+        <aside className="h-[50vh]  md:h-auto overflow-auto md:sticky top-0 w-full z-10">
+          <div className="p-4 bg-black/90 backdrop-blur-[32px] p-4 space-y-4 rounded-2xl m-3">
+            {bar}
+          </div>
         </aside>
       ) : (
         // Sidebar on left
-        <aside className="w-96 md:sticky top-0 border border-r-black/15 p-4 h-screen overflow-scroll">
-          {bar}
+        <aside className="w-96 md:sticky  top-0 h-screen p-2">
+          <div className="bg-black/90 p-4 overflow-scroll rounded-2xl h-full">
+            {bar}
+          </div>
         </aside>
       )}
 

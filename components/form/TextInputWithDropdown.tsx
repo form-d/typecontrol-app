@@ -58,7 +58,7 @@ const TextInputWithDropdown: React.FC<Props> = ({
       <div className="relative">
         <div
           {...referenceProps}
-          className={`inline-flex items-stretch bg-white border border-gray-300 rounded-xl overflow-hidden hover:border-gray-400 ${
+          className={`inline-flex items-stretch bg-white/5 border border-neutral-700 rounded-xl overflow-hidden hover:border-gray-400 ${
             block ? "w-full" : ""
           } ${className ?? ""}`}
         >
@@ -66,7 +66,7 @@ const TextInputWithDropdown: React.FC<Props> = ({
           <input
             id={inputId}
             type="text"
-            className="grow h-8 px-4 py-2 text-gray-900 text-sm border-none leading-tight focus:outline-hidden"
+            className="grow h-8 px-4 py-2 text-white/80 text-sm border-none leading-tight focus:outline-hidden"
             value={value}
             placeholder={placeholder}
             onFocus={
@@ -84,13 +84,13 @@ const TextInputWithDropdown: React.FC<Props> = ({
           >
             <button
               type="button"
-              className="flex-none px-2 py-2 border-l border-gray-300 rounded-e-xl h-8 hover:bg-gray-100 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
+              className="flex-none px-2 py-2 border-l border-neutral-700 rounded-e-xl h-8 bg-white/5 hover:bg-white/15 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
               onClick={() => setOpen((open) => !open)}
               aria-haspopup="true"
               aria-expanded={open}
             >
               {/* <ChevronDown size={16} /> */}
-              <div className="pointer-events-none px-0 text-purple-500">
+              <div className="pointer-events-none px-0 text-purple-400">
                 <svg
                   className="fill-current h-4 w-4"
                   xmlns="http://www.w3.org/2000/svg"

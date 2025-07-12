@@ -166,21 +166,21 @@ const CustomSlider = ({
             <div
               ref={trackRef}
               className={`relative h-1 rounded-full ${
-                disabled ? "bg-gray-200" : "bg-black/10 cursor-pointer"
+                disabled ? "bg-white/10" : "bg-white/15 cursor-pointer"
               } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-full before:h-6 before:bg-transparent before:rounded-full`}
               onMouseDown={handleMouseDown}
               onTouchStart={handleTouchStart} // <-- ADDED
             >
               <div
-                className={`absolute top-0 left-0 h-1 rounded-full ${
-                  disabled ? "bg-gray-400" : "bg-purple-500"
+                className={`absolute glow top-0 left-0 h-1 rounded-full ${
+                  disabled ? "bg-neutral-500" : "bg-purple-500"
                 }`}
                 style={{ width: `${percent}%` }}
               />
               <div
-                className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-0 ${
+                className={`absolute glow top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-0 ${
                   disabled
-                    ? "bg-gray-100 border-gray-400"
+                    ? "bg-neutral-500 border-neutral-500"
                     : "bg-purple-500 border-purple-500 cursor-grab"
                 } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-10 before:h-10 before:bg-transparent before:rounded-full`}
                 // className="relative before:content-[''] before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-8 before:h-8 before:bg-purple-200/40 before:rounded-full before:pointer-events-none"
@@ -193,7 +193,7 @@ const CustomSlider = ({
           <div>
             <div
               className={`text-sm w-12 ${alignmentClassMap[unitTextAlign]} ${
-                disabled ? "text-gray-400" : "text-black"
+                disabled ? "text-neutral-600" : "text-white/80"
               }`}
             >
               {/* {String(intent)} */}

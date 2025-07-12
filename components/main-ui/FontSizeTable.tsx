@@ -52,7 +52,7 @@ const FontSizeTable: React.FC<Props> = ({
                     key={i}
                     className={
                       size === selectedSize
-                        ? "flex items-center after:bg-purple-500 after:-z-1 relative block after:opacity-7 after:rounded-lg after:absolute after:bottom-2 after:right-2 after:top-2 after:left-2 w-full"
+                        ? "flex items-center after:bg-purple-500 after:-z-1 relative block after:opacity-7 after:rounded-xl after:absolute after:bottom-2 after:right-2 after:top-2 after:left-2 w-full"
                         : "flex items-center"
                     }
                   >

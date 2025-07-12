@@ -86,7 +86,7 @@ const NumberInputWithLabel = ({
           onMouseDown={() => startHolding(handleDecrease)}
           onMouseUp={stopHolding}
           onMouseLeave={stopHolding}
-          className="flex justify-center items-center bg-white w-10 text-purple-500 hover:bg-gray-100 border border-gray-300 rounded-s-xl px-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
+          className="flex justify-center items-center bg-white/10 w-10 text-purple-400 hover:bg-white/15 border border-neutral-700 rounded-s-xl px-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-hidden disabled:border-neutral-700 disabled:text-neutral-600 disabled:bg-white/10"
           disabled={disabled}
         >
           <Icon size="sm" iconClass="ti ti-minus" />
@@ -110,7 +110,7 @@ const NumberInputWithLabel = ({
           ref={inputRef}
           id={inputId}
           type="number"
-          className="appearance-none bg-white border border-x-0 border-gray-300 h-8 text-center text-gray-900 text-sm focus:purple-500 block w-full py-2.5 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-400 disabled:pointer-events-none"
+          className="appearance-none bg-white/5 border border-x-0 border-neutral-700 h-8 text-center text-white text-sm focus:purple-500 block w-full py-2.5 disabled:border-neutral-700 disabled:bg-white/5 disabled:text-neutral-600 disabled:pointer-events-none hover:outline-gray-400 hover:outline-1 hover:-outline-offset-1"
           // block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded leading-tight focus:outline-hidden focus:shadow-outline
           value={value}
           step={step}
@@ -133,7 +133,7 @@ const NumberInputWithLabel = ({
           onMouseDown={() => startHolding(handleIncrease)}
           onMouseUp={stopHolding}
           onMouseLeave={stopHolding}
-          className="flex justify-center items-center bg-white text-purple-500 w-15 hover:bg-gray-100 border border-gray-300 rounded-e-xl px-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-hidden disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50"
+          className="flex justify-center items-center bg-white/10 text-purple-400 w-15 hover:bg-white/15 border border-gray-700 rounded-e-xl px-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-hidden disabled:border-neutral-700 disabled:text-neutral-600 disabled:bg-white/10"
           disabled={disabled}
         >
           <Icon size="xs" iconClass="ti ti-plus" />

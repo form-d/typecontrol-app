@@ -58,7 +58,7 @@ const SelectWithLabel: React.FC<Props> = ({
       <div className="inline-block relative">
         <select
           id={selectId}
-          className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-1 pr-7 h-8 rounded-xl text-sm leading-tight focus:outline-hidden focus:shadow-outline disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none"
+          className="block appearance-none w-full bg-white/5 border-1 border-neutral-700 text-white hover:border-gray-400 px-4 py-1 pr-7 h-8 rounded-xl text-sm leading-tight focus:outline-hidden focus:shadow-outline disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
