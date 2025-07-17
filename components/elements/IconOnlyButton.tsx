@@ -26,11 +26,13 @@ interface IconOnlyButtonProps {
 
 // Reuse variant classes from Button
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-purple-600 text-white hover:bg-purple-700",
-  secondary: "bg-gray-300 text-gray-800 hover:bg-gray-400",
-  tertiary: "border border-gray-300 text-gray-800 hover:bg-gray-100",
-  text: "bg-transparent text-purple-600 hover:bg-gray-100",
-  subtle: "bg-transparent text-gray-500 hover:bg-gray-100",
+  primary: "bg-primary text-white hover:bg-primary-dark",
+  secondary: "bg-neutral-300 text-neutral-800 hover:bg-neutral-400",
+  tertiary:
+    "border border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-white/80 hover:bg-neutral-100 dark:hover:bg-white/10",
+  text: "bg-transparent text-primary-dark hover:bg-black/5 dark:hover:bg-white/10",
+  subtle:
+    "bg-transparent dark:text-neutral-600 dark:hover:bg-white/10 text-neutral-500 hover:bg-neutral-100",
 };
 
 // Map sizes to width/height utilities

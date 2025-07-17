@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 export const ShowInfoLayer: React.FC = () => {
   return (
     <>
-      <p className="text-sm text-gray-700 mb-4">
+      <p className="text-sm text-neutral-700 mb-4">
         Another type scale tool. Again? You might think. But, it's not the case,
         even though <i>typeControl</i> offers type scale as a function, that was
         not the reason for creating this tool.
       </p>
-      <p className="text-sm text-gray-700 mt-4 mb-4">
+      <p className="text-sm text-neutral-700 mt-4 mb-4">
         It all started with the fact that I wanted to define the letter spacing
         for the font size tokens for a design system in such a way, that the
         larger the font size, the smaller the letter spacing. To achieve
@@ -23,7 +23,7 @@ export const ShowInfoLayer: React.FC = () => {
         to better control letter spacing. And that was the starting point for{" "}
         <i>typeControl</i>.
       </p>
-      <p className="text-xs text-gray-500">Copyright 2025</p>
+      <p className="text-xs text-neutral-500">Copyright 2025</p>
     </>
   );
 };

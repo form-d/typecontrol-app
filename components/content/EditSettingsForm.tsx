@@ -58,7 +58,7 @@ export const EditSettingsForm: React.FC = () => {
 
   return (
     <>
-      {/* <p className="text-xs text-gray-700">
+      {/* <p className="text-xs text-neutral-700">
         Hier kannst du beliebige Einstellungen oder Inhalte einfügen.
       </p> */}
       <Divider />
@@ -165,7 +165,7 @@ export const EditSettingsForm: React.FC = () => {
           <Divider />
         </>
       )}
-      <p className="text-xs text-gray-300">
+      <p className="text-xs text-neutral-300">
         App version: {process.env.NEXT_PUBLIC_APP_VERSION} (Build:{" "}
         {process.env.NEXT_PUBLIC_GIT_COMMIT}
         {" - "}

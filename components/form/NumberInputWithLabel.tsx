@@ -86,32 +86,17 @@ const NumberInputWithLabel = ({
           onMouseDown={() => startHolding(handleDecrease)}
           onMouseUp={stopHolding}
           onMouseLeave={stopHolding}
-          className="flex justify-center items-center bg-white/10 w-10 text-purple-400 hover:bg-white/15 border border-neutral-700 rounded-s-xl px-2 h-8 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-hidden disabled:border-neutral-700 disabled:text-neutral-600 disabled:bg-white/10"
+          className="flex justify-center items-center bg-black/2 dark:bg-white/10 w-10 text-primary dark:hover:bg-white/10 border border-neutral-300 dark:border-neutral-700 rounded-s-xl px-2 h-8 focus:outline-hidden dark:disabled:border-neutral-700 disabled:text-neutral-400 dark:disabled:text-neutral-600 disabled:bg-black/2 dark:disabled:bg-white/10 hover:outline-neutral-400 hover:outline-1 hover:-outline-offset-1"
           disabled={disabled}
         >
           <Icon size="sm" iconClass="ti ti-minus" />
-          {/* <svg
-            className="w-3 h-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 18 2"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M1 1h16"
-            />
-          </svg> */}
         </button>
         <input
           ref={inputRef}
           id={inputId}
           type="number"
-          className="appearance-none bg-white/5 border border-x-0 border-neutral-700 h-8 text-center text-white text-sm focus:purple-500 block w-full py-2.5 disabled:border-neutral-700 disabled:bg-white/5 disabled:text-neutral-600 disabled:pointer-events-none hover:outline-gray-400 hover:outline-1 hover:-outline-offset-1"
-          // block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded leading-tight focus:outline-hidden focus:shadow-outline
+          className="appearance-none dark:bg-white/5 border border-x-0 dark:border-neutral-700 h-8 text-center text-neutral-400 dark:text-white text-sm dark:focus:purple-500 block w-full py-2.5 dark:disabled:border-neutral-700 dark:disabled:bg-white/5 dark:disabled:text-neutral-600 disabled:pointer-events-none dark:hover:outline-neutral-400 hover:outline-1 hover:-outline-offset-1"
+          // block appearance-none w-full bg-white border border-neutral-300 hover:border-neutral-400 px-4 py-2 pr-8 rounded leading-tight focus:outline-hidden focus:shadow-outline
           value={value}
           step={step}
           min={min}
@@ -133,25 +118,10 @@ const NumberInputWithLabel = ({
           onMouseDown={() => startHolding(handleIncrease)}
           onMouseUp={stopHolding}
           onMouseLeave={stopHolding}
-          className="flex justify-center items-center bg-white/10 text-purple-400 w-15 hover:bg-white/15 border border-gray-700 rounded-e-xl px-2 h-8 focus:ring-gray-100 focus:ring-2 focus:outline-hidden disabled:border-neutral-700 disabled:text-neutral-600 disabled:bg-white/10"
+          className="flex justify-center items-center bg-black/2 dark:bg-white/10 w-10 text-primary dark:hover:bg-white/10 border border-neutral-300 dark:border-neutral-700 rounded-e-xl px-2 h-8 focus:outline-hidden dark:disabled:border-neutral-700 disabled:text-neutral-400 dark:disabled:text-neutral-600 disabled:bg-black/2 dark:disabled:bg-white/10 hover:outline-neutral-400 hover:outline-1 hover:-outline-offset-1"
           disabled={disabled}
         >
           <Icon size="xs" iconClass="ti ti-plus" />
-          {/* <svg
-            className="w-3 h-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 18 18"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 1v16M1 9h16"
-            />
-          </svg> */}
         </button>
       </div>
     </InputWrapper>

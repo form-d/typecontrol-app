@@ -68,10 +68,10 @@ const TextInputWithDropdown: React.FC<Props> = ({
             id={inputId}
             type="text"
             className={`
-              grow h-8 px-4 py-2 text-white/80 text-sm border border-neutral-700 
+              grow h-8 px-4 py-2 text-black/80 dark:text-white/80 text-sm border border-neutral-700 
               rounded-s-xl leading-tight focus:outline-hidden focus:border-purple-500
               disabled:border-neutral-700 disabled:bg-gray/50 disabled:text-neutral-600 disabled:shadow-none
-              hover:border-gray-400
+              hover:border-neutral-400
             `}
             value={value}
             placeholder={placeholder}
@@ -97,9 +97,9 @@ const TextInputWithDropdown: React.FC<Props> = ({
               className={`
                 flex-none px-2.5 py-1.5 border-y border-r border-neutral-700 
                 rounded-e-xl h-8 bg-white/5 focus-visible:border-purple-500 focus-visible:ring-2 
-                focus:outline-hidden hover:bg-white/10
+                focus:outline-hidden hover:outline-neutral-400 hover:outline-1 hover:-outline-offset-1
                 disabled:border-neutral-700 disabled:bg-white/5 disabled:text-neutral-600
-                text-purple-400
+                text-primary
               `}
               onClick={onClick}
               disabled={buttonIsDisabled}

@@ -226,7 +226,7 @@ const LocalFontSelect: React.FC<FontSelectProps> = ({
           disabled={disabled}
           aria-label="Toggle font list"
           aria-expanded={open}
-          className="border border-l-0 px-3 py-2 rounded-r hover:bg-gray-100 disabled:opacity-50"
+          className="border border-l-0 px-3 py-2 rounded-r hover:bg-neutral-100 disabled:opacity-50"
           onClick={toggleList}
         >
           ▾
@@ -282,7 +282,7 @@ const LocalFontSelect: React.FC<FontSelectProps> = ({
                 </li>
               ))
             ) : (
-              <li className="px-3 py-2 text-gray-500">No fonts found</li>
+              <li className="px-3 py-2 text-neutral-500">No fonts found</li>
             )}
           </ul>
 

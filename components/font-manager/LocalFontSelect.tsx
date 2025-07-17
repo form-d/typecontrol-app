@@ -388,7 +388,7 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
                 referenceProps.ref(node);
               }}
               type="text"
-              className="w-full h-8 bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-900 text-md leading-tight hover:border-gray-400 focus:outline-hidden focus:bg-white focus:border-purple-500"
+              className="w-full h-8 bg-white border border-neutral-300 rounded-lg py-2 px-4 text-neutral-900 text-md leading-tight hover:border-neutral-400 focus:outline-hidden focus:bg-white focus:border-purple-500"
               placeholder="Select font…"
               value={searchMode ? filter : selectedFamily}
               disabled={disabled}
@@ -426,7 +426,7 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
               //   type="button"
               //   onMouseDown={(e) => e.preventDefault()}
               //   onClick={clearInput}
-              //   className="absolute flex justify-center items-center right-6 top-1/2 transform -translate-y-1/2 text-gray-500 bg-transparent hover:bg-gray-100 transition-colors duration-150 p-0 h-5 w-5 rounded cursor-pointer"
+              //   className="absolute flex justify-center items-center right-6 top-1/2 transform -translate-y-1/2 text-neutral-500 bg-transparent hover:bg-neutral-100 transition-colors duration-150 p-0 h-5 w-5 rounded cursor-pointer"
               //   aria-label="Clear"
               // >
               //   <Icon size="xs" iconClass="ti ti-x" />
@@ -513,7 +513,7 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
                     data-family={fam}
                     role="option"
                     onClick={() => handleSelectFamily(fam)}
-                    className="flex items-center justify-between px-3 py-1.5 hover:bg-gray-100 cursor-pointer text-sm"
+                    className="flex items-center justify-between px-3 py-1.5 hover:bg-neutral-100 cursor-pointer text-sm"
                   >
                     <span>{fam}</span>
                     {selectedFamily === fam && (

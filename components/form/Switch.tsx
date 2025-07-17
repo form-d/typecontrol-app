@@ -26,7 +26,7 @@ const Switch: React.FC<SwitchProps> = ({
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={`inline-flex relative items-center ${
-        checked ? "bg-purple-500" : "bg-gray-300"
+        checked ? "bg-primary" : "bg-neutral-300"
       } h-6 w-11 px-0.5 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500 ${className}`}
     >
       {label && <span className="sr-only">{label}</span>}
@@ -47,7 +47,7 @@ const Switch: React.FC<SwitchProps> = ({
           <svg
             fill="none"
             viewBox="0 0 12 12"
-            className="w-3 h-3 text-gray-500"
+            className="w-3 h-3 text-neutral-500"
           >
             <path
               d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2"
@@ -69,7 +69,7 @@ const Switch: React.FC<SwitchProps> = ({
           <svg
             fill="currentColor"
             viewBox="0 0 12 12"
-            className="w-3 h-3 text-gray-500"
+            className="w-3 h-3 text-neutral-500"
           >
             <path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" />
           </svg>

@@ -107,9 +107,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
     "
       >
         <div className="w-full">
-          <div className="flex flex-row items-center gap-1">
+          <div className="flex flex-row items-center gap-1 ml-1">
             <svg
-              className="text-purple-500"
+              className="text-primary"
               width="110"
               height="20"
               viewBox="0 0 110 20"

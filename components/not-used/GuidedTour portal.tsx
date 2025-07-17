@@ -270,15 +270,17 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
       >
         <span style={arrowStyle} />
         {step.title && (
-          <p className="text-sm font-bold text-gray-800 pb-1">{step.title}</p>
+          <p className="text-sm font-bold text-neutral-800 pb-1">
+            {step.title}
+          </p>
         )}
         {step.description && (
-          <p className="text-xs leading-4 text-gray-600 pb-3">
+          <p className="text-xs leading-4 text-neutral-600 pb-3">
             {step.description}
           </p>
         )}
         <div className="flex justify-between">
-          <span className="text-xs font-bold text-gray-800">
+          <span className="text-xs font-bold text-neutral-800">
             Step {current + 1} of {steps.length}
           </span>
           <div className="flex items-center space-x-2">

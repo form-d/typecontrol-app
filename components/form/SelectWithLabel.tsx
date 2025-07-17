@@ -58,7 +58,7 @@ const SelectWithLabel: React.FC<Props> = ({
       <div className="inline-block relative">
         <select
           id={selectId}
-          className="block appearance-none w-full bg-white/5 border-1 border-neutral-700 text-white hover:border-gray-400 px-4 py-1 pr-7 h-8 rounded-xl text-sm leading-tight focus:outline-hidden focus:shadow-outline disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none"
+          className="block appearance-none w-full dark:bg-white/5 border-1 border-neutral-300 dark:border-neutral-700 text-black dark:text-white hover:border-neutral-400 dark:hover:border-neutral-400 px-4 py-1 pr-7 h-8 rounded-xl text-sm leading-tight focus:outline-hidden focus:shadow-outline disabled:border-neutral-200 disabled:bg-neutral-50 disabled:text-neutral-500 disabled:shadow-none"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
@@ -79,7 +79,7 @@ const SelectWithLabel: React.FC<Props> = ({
             )
           )}
         </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-purple-500">
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-primary">
           <svg
             className="fill-current h-4 w-4"
             xmlns="http://www.w3.org/2000/svg"

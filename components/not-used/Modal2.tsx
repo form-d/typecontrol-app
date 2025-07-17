@@ -60,7 +60,7 @@ const Modal = ({
       onClick={closeOnBackdropClick ? onClose : undefined}
     >
       <div
-        className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-lg w-full"
+        className="bg-white dark:bg-neutral-900 rounded-lg shadow-lg p-6 max-w-lg w-full"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Optional Close button */}
@@ -68,7 +68,7 @@ const Modal = ({
           <div className="flex justify-end">
             <button
               onClick={onClose}
-              className="text-gray-600 hover:text-black dark:hover:text-white"
+              className="text-neutral-600 hover:text-black dark:hover:text-white"
             >
               ✕
             </button>

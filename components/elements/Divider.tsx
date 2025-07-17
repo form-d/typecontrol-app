@@ -39,9 +39,9 @@ const Divider: React.FC<DividerProps> = ({
 }) => {
   // Predefined color mapping
   const colorMap: Record<"light" | "medium" | "dark", string> = {
-    light: "bg-gray-200",
-    medium: "bg-gray-500",
-    dark: "bg-gray-800",
+    light: "bg-neutral-200",
+    medium: "bg-neutral-500",
+    dark: "bg-neutral-800",
   };
   const colorClass = customColorClass ?? colorMap[color];
 

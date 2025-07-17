@@ -33,10 +33,10 @@ interface ButtonProps {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-violet-600 text-white hover:bg-purple-700",
-  secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
-  tertiary: "border border-gray-300 text-gray-800 hover:bg-gray-100",
-  text: "bg-transparent text-purple-600 hover:underline",
+  primary: "bg-primary text-black hover:bg-primary-dark glow",
+  secondary: "bg-neutral-200 text-neutral-800 hover:bg-neutral-300",
+  tertiary: "border border-neutral-300 text-neutral-800 hover:bg-neutral-100",
+  text: "bg-transparent text-primary-darker hover:underline",
   subtle: "bg-transparent text-purple-600 hover:underline",
 };
 
@@ -82,7 +82,7 @@ const Button: React.FC<ButtonProps> = ({
   // const isDisabled = disabled;
   const isDisabled = disabled || isLoading;
   const baseClasses =
-    "inline-flex items-center font-medium leading-none rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2";
+    "inline-flex items-center font-medium leading-none rounded-xl focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2";
   const vClasses = variantClasses[variant];
   const sClasses = sizeClasses[size];
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";

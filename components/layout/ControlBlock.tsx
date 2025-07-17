@@ -31,9 +31,9 @@ const ControlBlock: React.FC<ControlBlockProps> = ({
   return (
     <div className={`flex items-center justify-between gap-4 ${className}`}>
       <div className="flex flex-col">
-        <span className="text-sm font-medium text-gray-900">{title}</span>
+        <span className="text-sm font-medium text-neutral-900">{title}</span>
         {description && (
-          <span className="mt-0.5 text-xs text-gray-500">{description}</span>
+          <span className="mt-0.5 text-xs text-neutral-500">{description}</span>
         )}
       </div>
       <div className="self-start">{control}</div>

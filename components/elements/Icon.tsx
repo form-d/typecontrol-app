@@ -18,7 +18,7 @@ interface IconProps {
  * Supports SVG/React icons or font-icon classes, with size presets.
  *
  * Usage with SVG:
- * <Icon size="lg" className="text-gray-600">
+ * <Icon size="lg" className="text-neutral-600">
  *   <svg viewBox="0 0 20 20">...</svg>
  * </Icon>
  *

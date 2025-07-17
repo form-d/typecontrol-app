@@ -15,6 +15,14 @@
 @theme {
   --breakpoint-3xl: 120rem;
 }
+@theme static {
+  --color-primary: var(--color-lime-400);
+  --color-primary-dark: var(--color-lime-500);
+  --color-primary-darker: var(--color-lime-600);
+  --color-secondary: var(--color-blue-500);
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -47,7 +55,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--color-neutral-200, currentcolor);
   }
 }
 
@@ -85,5 +93,5 @@
 }
 
 .glow {
-  box-shadow: 0px 0px 15px 0px rgba(172, 70, 255, 0.25);
+  box-shadow: 0px 0px 10px 0px --alpha(var(--color-primary) / 30%);
 }

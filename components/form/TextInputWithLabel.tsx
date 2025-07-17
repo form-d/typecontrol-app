@@ -51,7 +51,7 @@ const TextInputWithLabel: React.FC<Props> = ({
         type="text"
         className={`${
           block ? "w-full" : ""
-        } h-8 bg-white border border-gray-300 rounded-xl py-2 px-4 text-gray-900 text-sm leading-tight focus:outline-hidden focus:bg-white focus:border-purple-500 ${className}`}
+        } h-8 bg-white border border-neutral-300 rounded-xl py-2 px-4 text-neutral-900 text-sm leading-tight focus:outline-hidden focus:bg-white focus:border-purple-500 ${className}`}
         value={value}
         placeholder={placeholder}
         onFocus={selectOnFocus ? (e) => e.target.select() : undefined}

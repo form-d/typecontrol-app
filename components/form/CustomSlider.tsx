@@ -158,42 +158,51 @@ const CustomSlider = ({
           <div className="select-none mt-px w-full">
             <div
               ref={trackRef}
-              className={`relative h-1 rounded-full ${
-                disabled ? "bg-white/10" : "bg-white/15 cursor-pointer"
-              } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-full before:h-6 before:bg-transparent before:rounded-full`}
+              className={`relative h-1 before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-full before:h-6 before:bg-transparent before:rounded-full ${
+                disabled ? "" : "cursor-pointer"
+              }`}
               onMouseDown={handleMouseDown}
               onTouchStart={handleTouchStart}
             >
+              <div
+                className={`absolute rounded-full w-full h-full ${
+                  disabled
+                    ? "opacity-10 bg-black dark:bg-white"
+                    : "opacity-10 bg-black dark:bg-white"
+                }`}
+              >
+                {/* Step Markers */}
+                {showSteps &&
+                  Array.from({
+                    length: Math.floor((max - min) / step) + 1,
+                  }).map((_, i) => {
+                    const stepValue = min + i * step;
+                    if (stepValue <= min || stepValue >= max) return null; // Skip first & last
+                    const left = ((stepValue - min) / (max - min)) * 100;
+                    return (
+                      <div
+                        key={i}
+                        className="absolute top-1/2 w-[2px] h-2 bg-black dark:bg-white -translate-y-1/2 rounded-full"
+                        style={{ left: `${left}%` }}
+                      />
+                    );
+                  })}
+              </div>
+
               {/* Track fill */}
               <div
                 className={`absolute glow top-0 left-0 h-1 rounded-full ${
-                  disabled ? "bg-neutral-500" : "bg-purple-500"
+                  disabled ? "bg-neutral-400 dark:bg-neutral-500" : "bg-primary"
                 }`}
                 style={{ width: `${percent}%` }}
               />
-
-              {/* Step Markers */}
-              {showSteps &&
-                Array.from({
-                  length: Math.floor((max - min) / step) + 1,
-                }).map((_, i) => {
-                  const stepValue = min + i * step;
-                  const left = ((stepValue - min) / (max - min)) * 100;
-                  return (
-                    <div
-                      key={i}
-                      className="absolute top-1/2 w-[2px] h-2 bg-white/40 -translate-y-1/2 rounded-full"
-                      style={{ left: `${left}%` }}
-                    />
-                  );
-                })}
 
               {/* Slider Thumb */}
               <div
                 className={`absolute glow top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-0 ${
                   disabled
-                    ? "bg-neutral-500 border-neutral-500"
-                    : "bg-purple-500 border-purple-500 cursor-grab"
+                    ? "bg-neutral-400 border-neutral-400 dark:bg-neutral-500 dark:border-neutral-500"
+                    : "bg-primary border-primary cursor-grab"
                 } before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-10 before:h-10 before:bg-transparent before:rounded-full`}
                 style={{ left: `${percent}%` }}
               />
@@ -202,7 +211,9 @@ const CustomSlider = ({
           <div>
             <div
               className={`text-sm w-12 ${alignmentClassMap[unitTextAlign]} ${
-                disabled ? "text-neutral-600" : "text-white/80"
+                disabled
+                  ? "text-neutral-600 dark:text-white/80"
+                  : "text-black/80 dark:text-white/80"
               }`}
             >
               {value.toFixed(precision)}

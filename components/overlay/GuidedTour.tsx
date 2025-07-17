@@ -256,7 +256,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
         content: (
           <div>
             {welcome.description && (
-              <p className="text-sm text-gray-600 pb-6 text-center">
+              <p className="text-sm text-neutral-600 pb-6 text-center">
                 {welcome.description}
               </p>
             )}
@@ -448,7 +448,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
             <div className="bg-white p-4 rounded-md max-w-2xs md:max-w-xs relative z-10">
               {step.title && (
                 <div className="flex items-center justify-between -mr-2 ">
-                  <div className="text-sm font-bold text-gray-800 pb-1">
+                  <div className="text-sm font-bold text-neutral-800 pb-1">
                     {step.title}
                   </div>
                   <IconOnlyButton
@@ -464,7 +464,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={skip}
-                    className="flex justify-center items-center top-1/2 transform -translate-y-1/2 text-gray-500 bg-transparent hover:bg-gray-100 transition-colors duration-150 p-0 h-5 w-5 rounded cursor-pointer"
+                    className="flex justify-center items-center top-1/2 transform -translate-y-1/2 text-neutral-500 bg-transparent hover:bg-neutral-100 transition-colors duration-150 p-0 h-5 w-5 rounded cursor-pointer"
                     aria-label="Clear"
                   >
                     <Icon size="xs" iconClass="ti ti-x" />
@@ -472,12 +472,12 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
                 </div>
               )}
               {step.description && (
-                <p className="text-xs leading-4 text-gray-600 pb-3">
+                <p className="text-xs leading-4 text-neutral-600 pb-3">
                   {step.description}
                 </p>
               )}
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-neutral-400">
                   {current + 1} of {steps.length}
                 </span>
                 <div className="flex items-center space-x-2">
@@ -516,7 +516,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
           >
             {/* Spotlight */}
             <div
-              className={`fixed pointer-events-none transition-all duration-200 ease-in-out rounded-md ${
+              className={`fixed pointer-events-none transition-all duration-200 ease-in-out rounded-xl ${
                 isEntering ? "transition-none" : "transition-all"
               }`}
               style={{
@@ -525,6 +525,7 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
                 width: position.width,
                 height: position.height,
                 boxShadow: "0 0 0 max(150vh, 150vw) rgba(0, 0, 0, 0.5)",
+                border: "solid 2px white",
               }}
             />
           </div>

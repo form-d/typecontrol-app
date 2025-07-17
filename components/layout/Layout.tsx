@@ -54,11 +54,11 @@ const Layout: React.FC<LayoutProps> = ({
   // (isTop ? "flex flex-col" : "flex flex-row") + " h-screen";
 
   return (
-    <div ref={containerRef} className={containerClasses}>
+    <div ref={containerRef} className={`dark ${containerClasses}`}>
       {isTop ? (
         // Sticky top bar: transparent background, stays at top while content scrolls
-        <aside className="h-[50vh]  md:h-auto overflow-auto md:sticky top-0 w-full z-10">
-          <div className="p-4 bg-black/90 backdrop-blur-[32px] p-4 space-y-4 rounded-2xl m-3">
+        <aside className="h-[45vh] md:h-auto sticky top-0 w-full z-10">
+          <div className="p-4 h-full overflow-auto bg-white/60 dark:bg-black/90 backdrop-blur-[32px] p-4 space-y-4 rounded-2xl m-3 shadow-lg/20 dark:shadow-none">
             {bar}
           </div>
         </aside>

@@ -115,14 +115,14 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                     `${
                       item.disabled
                         ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-100"
+                        : "hover:bg-neutral-100"
                     } ` +
                     `${item.active ? "font-semibold" : ""}`
                   }
                 >
                   {item.label}
                   {item.helperText && (
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-neutral-500 mt-1">
                       {item.helperText}
                     </div>
                   )}

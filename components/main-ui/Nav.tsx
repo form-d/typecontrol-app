@@ -5,7 +5,7 @@ import { useGlobalState } from "../../context/GlobalStateContext";
 export const Nav: React.FC = () => {
   const { languages, language, setLanguage, t } = useGlobalState();
   return (
-    <nav className="p-4 bg-gray-100 flex items-center justify-between">
+    <nav className="p-4 bg-neutral-100 flex items-center justify-between">
       <div className="space-x-4">
         <Link href="/" className="text-blue-600 hover:underline">
           {t("home")}
@@ -20,7 +20,7 @@ export const Nav: React.FC = () => {
       <select
         value={language}
         onChange={(e) => setLanguage(e.target.value)}
-        className="border border-gray-300 rounded-sm p-1"
+        className="border border-neutral-300 rounded-sm p-1"
       >
         {languages.map((lng) => (
           <option key={lng} value={lng}>

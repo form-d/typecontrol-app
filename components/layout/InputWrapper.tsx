@@ -41,12 +41,12 @@ const InputWrapper: React.FC<InputWrapperProps> = ({
       >
         {isLeft ? (
           <label
-            className={`${minLabelWidthClass} pr-4 pt-1.5 text-xs font-semibold text-white/80`}
+            className={`${minLabelWidthClass} pr-4 pt-1.5 text-xs font-semibold text-black/80 dark:text-white/80`}
           >
             {label}
           </label>
         ) : (
-          <label className="mb-2 pt-1.5 text-xs font-semibold text-white/80">
+          <label className="mb-2 pt-1.5 text-xs font-semibold text-black/80 dark:text-white/80">
             {label}
           </label>
         )}

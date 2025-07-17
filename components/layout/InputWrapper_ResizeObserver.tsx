@@ -57,7 +57,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
         className={`flex items-start mb-2 ${className}`.trim()}
       >
         <label
-          className={`${labelWidthClass} pr-4 pt-1.5 text-xs md:text-[11px] lg:text-[11px] 3xl:text-[11px] font-bold text-gray-700 justify-start leading-tight`}
+          className={`${labelWidthClass} pr-4 pt-1.5 text-xs md:text-[11px] lg:text-[11px] 3xl:text-[11px] font-bold text-neutral-700 justify-start leading-tight`}
         >
           {label}
         </label>
@@ -71,7 +71,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
       ref={containerRef}
       className={`flex flex-col mb-2 ${className}`.trim()}
     >
-      <label className="mb-2 pt-1.5 text-xs font-bold text-gray-700">
+      <label className="mb-2 pt-1.5 text-xs font-bold text-neutral-700">
         {label}
       </label>
       {children}

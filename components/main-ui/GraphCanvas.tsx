@@ -151,7 +151,7 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
           width="100%"
           height={HEIGHT}
           viewBox={`0 0 ${effectiveWidth} ${HEIGHT}`}
-          className="w-full max-w-full border rounded-lg border-gray-200"
+          className="w-full max-w-full border rounded-lg border-neutral-200"
           style={{ display: "block" }}
         >
           {/* Horizontal mid-line */}
@@ -191,7 +191,7 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
             x2={sizeToX(selectedSize)}
             y2={HEIGHT}
             // stroke="#00dd00"
-            stroke="#9333ea"
+            stroke="var(--color-neutral-800)"
             strokeWidth={2}
           />
 
@@ -230,7 +230,12 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
           </text>
 
           {/* The Bezier curve */}
-          <path d={pathD} stroke="#00ddcc" strokeWidth={2} fill="none" />
+          <path
+            d={pathD}
+            stroke="var(--color-primary)"
+            strokeWidth={2}
+            fill="none"
+          />
           {/* <path d={pathD} stroke="#9333ea" strokeWidth={2} fill="none" /> */}
         </svg>
       )}

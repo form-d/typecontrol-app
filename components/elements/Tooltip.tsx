@@ -141,23 +141,43 @@ const Tooltip: React.FC<TooltipProps> = ({
               zIndex: 9999,
             }}
           >
-            <div className="relative bg-gray-700 text-white text-xs rounded-sm py-1 px-2 max-w-xs whitespace-normal break-words">
-              {content}
+            <div className="relative">
+              <div
+                className="bg-white text-black/80 text-xs rounded-sm py-1 px-2 max-w-xs whitespace-normal break-words"
+                style={{ boxShadow: "0 0 0 1px rgba(0, 0, 0, .15)" }}
+              >
+                {content}
+              </div>
               <div
                 ref={arrowRef}
+                className=""
                 style={{
                   position: "absolute",
-                  width: 8,
-                  height: 8,
-                  background: "#374151",
-                  transform: "rotate(45deg)",
+                  zIndex: 1,
+                  width: 10,
+                  height: 10,
+                  overflow: "hidden",
+                  // background: "red",
+                  // transform: "rotate(45deg)",
                   left: arrowX,
                   top: arrowY,
                   right: "",
                   bottom: "",
-                  [staticSide]: -4,
+                  [staticSide]: -9,
                 }}
-              />
+              >
+                <div
+                  className="bg-white shadow-xs"
+                  style={{
+                    position: "absolute",
+                    width: 10,
+                    height: 10,
+                    transform: "rotate(45deg)",
+                    [staticSide]: 6,
+                    boxShadow: "0 0 0 1px rgba(0, 0, 0, .15)",
+                  }}
+                />
+              </div>
             </div>
           </div>,
           document.body

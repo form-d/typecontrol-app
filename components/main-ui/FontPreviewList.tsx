@@ -50,7 +50,10 @@ const FontPreviewList: React.FC<Props> = ({
                     letterSpacing: `${spacing.toFixed(2)}px`,
                     fontWeight: settings.weight,
                     backgroundColor:
-                      size === selectedSize ? "#faf5ff" : "transparent",
+                      size === selectedSize
+                        ? "color-mix(in oklab, var(--color-primary) 15%, transparent)"
+                        : // ? "--alpha(var(--color-primary) / 50%)"
+                          "transparent",
                   }}
                 >
                   {settings.sampleText}{" "}
