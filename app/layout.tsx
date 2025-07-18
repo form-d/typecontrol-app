@@ -38,7 +38,6 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"
           rel="stylesheet"
         />
-        <meta name="theme-color" content="#9AE600"></meta>
       </head>
       <body>
         <GlobalStateProvider>
