@@ -14,6 +14,7 @@ import FontManager from "../font-manager/FontManager";
 import TextInputWithButton from "../form/TextInputWithButton";
 import Tooltip from "../elements/Tooltip";
 import { ShowInfoLayer } from "../content/ShowInfoLayer";
+import ScrollIndicatorWrapper from "../elements/ScrollIndicatorWrapper";
 
 interface ControlPanelProps {
   sizes: number[];
@@ -93,7 +94,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ sizes }) => {
   return (
     <div
       /* 1) Turn this <div> into a query container: */
-      className="w-full"
+      className="w-full p-4"
       style={{ containerType: "inline-size" }}
     >
       <div

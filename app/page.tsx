@@ -24,7 +24,8 @@ export default function Home() {
   return (
     <Layout orientation={settings.layout} bar={<ControlPanel sizes={sizes} />}>
       <div className="">
-        <div className="mx-auto h-[50vh] md:h-auto overflow-auto">
+        <div className="mx-auto">
+          {/* <div className="mx-auto h-[50vh] md:h-auto overflow-auto"> */}
           <FontPreviewList
             sizes={sizes}
             selectedSize={settings.selectedSize}
