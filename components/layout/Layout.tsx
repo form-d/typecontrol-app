@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect, useRef, useState } from "react";
+import ScrollIndicatorWrapper from "../elements/ScrollIndicatorWrapper";
 
 interface LayoutProps {
   /**
@@ -54,20 +55,25 @@ const Layout: React.FC<LayoutProps> = ({
   // (isTop ? "flex flex-col" : "flex flex-row") + " h-screen";
 
   return (
-    <div ref={containerRef} className={`dark ${containerClasses}`}>
+    <div ref={containerRef} className={`${containerClasses}`}>
+      {/* <div className="blurred-top-half" /> */}
       {isTop ? (
         // Sticky top bar: transparent background, stays at top while content scrolls
-        <aside className="h-[45vh] md:h-auto sticky top-0 w-full z-10">
-          <div className="p-4 h-full overflow-auto bg-white/60 dark:bg-black/90 backdrop-blur-[32px] p-4 space-y-4 rounded-2xl m-3 shadow-lg/20 dark:shadow-none">
+        <aside className="h-[45vh] md:h-auto sticky top-0 w-full z-10 dark">
+          <div className="blurred-top-half" />
+          {/* <div className="h-full overflow-auto bg-white/60 dark:bg-black/90 backdrop-blur-[32px] space-y-4 rounded-2xl m-3 shadow-lg/20 dark:shadow-none">
             {bar}
-          </div>
+          </div> */}
+          <ScrollIndicatorWrapper className="h-full overflow-auto bg-white/60 dark:bg-black/90 backdrop-blur-[32px] space-y-4 rounded-2xl m-3 shadow-lg/20 dark:shadow-none">
+            {bar}
+          </ScrollIndicatorWrapper>
         </aside>
       ) : (
         // Sidebar on left
-        <aside className="w-96 md:sticky  top-0 h-screen p-2">
-          <div className="bg-black/90 p-4 overflow-scroll rounded-2xl h-full">
+        <aside className="w-96 md:sticky  top-0 h-screen p-2 dark">
+          <ScrollIndicatorWrapper className="bg-black/90 overflow-scroll rounded-2xl h-full">
             {bar}
-          </div>
+          </ScrollIndicatorWrapper>
         </aside>
       )}
 
