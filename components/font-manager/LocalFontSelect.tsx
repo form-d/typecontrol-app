@@ -388,7 +388,8 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
                 referenceProps.ref(node);
               }}
               type="text"
-              className="w-full h-8 bg-white border border-neutral-300 rounded-lg py-2 px-4 text-neutral-900 text-md leading-tight hover:border-neutral-400 focus:outline-hidden focus:bg-white focus:border-purple-500"
+              className="block appearance-none w-full dark:bg-white/5 border-1 border-neutral-300 dark:border-neutral-700 text-black dark:text-white hover:border-neutral-400 dark:hover:border-neutral-400 px-4 py-1 pr-7 h-8 rounded-xl text-sm leading-tight focus:outline-hidden focus:shadow-outline disabled:border-neutral-200 disabled:bg-neutral-50 disabled:text-neutral-500 disabled:shadow-none"
+              // className="w-full h-8 bg-white border border-neutral-300 rounded-lg py-2 px-4 text-neutral-900 text-md leading-tight hover:border-neutral-400 focus:outline-hidden focus:bg-white focus:border-purple-500"
               placeholder="Select font…"
               value={searchMode ? filter : selectedFamily}
               disabled={disabled}
@@ -433,7 +434,7 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
               // </button>
             )}
 
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex justify-center items-center px-2 text-purple-500">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex justify-center items-center px-2 text-primary">
               {isLoading ? (
                 <span className="inline-flex items-center">
                   <svg
