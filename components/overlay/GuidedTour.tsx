@@ -297,9 +297,9 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
 
     const el = document.querySelector(step.target) as HTMLElement | null;
     if (el) {
-      // const offset = step.offset ?? 0;
-      const offset =
-        settings.layout === "top" && isAboveMd ? step.offset ?? 16 : 16;
+      const offset = step.offset ?? 16;
+      // const offset =
+      //   settings.layout === "top" && isAboveMd ? step.offset ?? 16 : 16;
       scrollElementIntoViewWithOffset(el, offset, PADDING, () => {
         if (cancelled) return;
         const rect2 = el.getBoundingClientRect();
@@ -481,9 +481,11 @@ export const GuidedTour: React.FC<GuidedTourProps> = ({
                   {current + 1} of {steps.length}
                 </span>
                 <div className="flex items-center space-x-2">
-                  <Button variant="tertiary" size="small" onClick={prev}>
-                    Previous
-                  </Button>
+                  {current > 0 && (
+                    <Button variant="tertiary" size="small" onClick={prev}>
+                      Previous
+                    </Button>
+                  )}
                   {/* <Button variant="text" size="small" onClick={skip}>
                     Skip Tour
                   </Button> */}

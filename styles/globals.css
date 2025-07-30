@@ -18,7 +18,7 @@
 @theme static {
   --color-primary: var(--color-lime-300);
   --color-primary-dark: var(--color-lime-400);
-  --color-primary-darker: var(--color-lime-500);
+  --color-primary-darker: var(--color-lime-700);
   --color-primary-light: var(--color-lime-200);
   --color-primary-lighter: var(--color-lime-100);
   --color-secondary: var(--color-blue-500);
