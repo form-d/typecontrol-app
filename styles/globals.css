@@ -16,9 +16,11 @@
   --breakpoint-3xl: 120rem;
 }
 @theme static {
-  --color-primary: var(--color-lime-400);
-  --color-primary-dark: var(--color-lime-500);
-  --color-primary-darker: var(--color-lime-600);
+  --color-primary: var(--color-lime-300);
+  --color-primary-dark: var(--color-lime-400);
+  --color-primary-darker: var(--color-lime-500);
+  --color-primary-light: var(--color-lime-200);
+  --color-primary-lighter: var(--color-lime-100);
   --color-secondary: var(--color-blue-500);
 }
 
@@ -98,11 +100,16 @@
 
 /* @media (max-width: 767px) { */
   .blurred-top-half {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 50vh;
+      right: 0;
+      bottom: 0;
+      height: calc(100%-16px);
+      /* width: 100%;
+      height: 50vh; */
+
+      /* background-color: red; */
 
       background-color: rgba(255, 255, 255, 0.65);
   

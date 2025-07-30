@@ -191,7 +191,7 @@ const CustomSlider = ({
 
               {/* Track fill */}
               <div
-                className={`absolute glow top-0 left-0 h-1 rounded-full ${
+                className={`absolute top-0 left-0 h-1 rounded-full ${
                   disabled ? "bg-neutral-400 dark:bg-neutral-500" : "bg-primary"
                 }`}
                 style={{ width: `${percent}%` }}
