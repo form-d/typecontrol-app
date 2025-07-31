@@ -65,6 +65,7 @@ export type UISettings = {
   currentViewMode: string;
   layout: "top" | "left";
   maxLetterSize: number;
+  isFilterActive: boolean;
 };
 
 export type GlobalState = {
@@ -208,6 +209,7 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
     currentViewMode: "google",
     layout: "top",
     maxLetterSize: 300,
+    isFilterActive: false,
   };
   const [settings, setSettings] = usePersistedState<UISettings>(
     "ui-settings",
@@ -217,25 +219,91 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({
   const resetSettings = () => setSettings(defaultSettings);
 
   // 1) Compute sizes once, memoized on exactly the settings that affect them
-  const sizes = useMemo<number[]>(() => {
+  // const sizes = useMemo<number[]>(() => {
+  //   if (settings.useCustom) {
+  //     return settings.customSizes
+  //       .split(",")
+  //       .map((n) => parseFloat(n.trim()))
+  //       .filter(
+  //         (n) => !isNaN(n) && n < settings.maxLetterSize // Only sizes smaller than maxLetterSize
+  //       );
+  //   }
+  //   return Array.from({ length: 12 }, (_, i) =>
+  //     Math.round(settings.baseSize * Math.pow(settings.ratio, i))
+  //   ).filter((n) => n < settings.maxLetterSize); // Only sizes smaller than maxLetterSize
+  // }, [
+  //   settings.useCustom,
+  //   settings.customSizes,
+  //   settings.baseSize,
+  //   settings.ratio,
+  //   settings.maxLetterSize, // Add this as a dependency since you use it
+  // ]);
+
+  // const sizes = useMemo<number[]>(() => {
+  //   let result: number[];
+
+  //   if (settings.useCustom) {
+  //     result = settings.customSizes
+  //       .split(",")
+  //       .map((n) => parseFloat(n.trim()))
+  //       .filter((n) => !isNaN(n) && n < settings.maxLetterSize);
+  //   } else {
+  //     result = Array.from({ length: 12 }, (_, i) =>
+  //       Math.round(settings.baseSize * Math.pow(settings.ratio, i))
+  //     ).filter((n) => n < settings.maxLetterSize);
+  //   }
+
+  //   // Set filter active if any values are filtered out
+  //   const expectedLength = settings.useCustom
+  //     ? settings.customSizes.split(",").length
+  //     : 12;
+  //   const isFiltered = result.length < expectedLength;
+
+  //   console.log("result.length :>> ", result.length);
+  //   console.log("expectedLength :>> ", expectedLength);
+  //   console.log("isFiltered :>> ", isFiltered);
+
+  //   // setIsFilterActive(isFiltered);
+  //   setSettings({
+  //     ...settings,
+  //     isFilterActive: isFiltered,
+  //   });
+
+  //   return result;
+  // }, [
+  //   settings.useCustom,
+  //   settings.customSizes,
+  //   settings.baseSize,
+  //   settings.ratio,
+  //   settings.maxLetterSize,
+  //   settings.isFilterActive,
+  // ]);
+
+  const rawSizes = useMemo<number[]>(() => {
     if (settings.useCustom) {
-      return settings.customSizes
-        .split(",")
-        .map((n) => parseFloat(n.trim()))
-        .filter(
-          (n) => !isNaN(n) && n < settings.maxLetterSize // Only sizes smaller than maxLetterSize
-        );
+      return settings.customSizes.split(",").map((n) => parseFloat(n.trim()));
     }
     return Array.from({ length: 12 }, (_, i) =>
       Math.round(settings.baseSize * Math.pow(settings.ratio, i))
-    ).filter((n) => n < settings.maxLetterSize); // Only sizes smaller than maxLetterSize
+    );
   }, [
     settings.useCustom,
     settings.customSizes,
     settings.baseSize,
     settings.ratio,
-    settings.maxLetterSize, // Add this as a dependency since you use it
   ]);
+
+  const sizes = useMemo<number[]>(() => {
+    return rawSizes.filter((n) => !isNaN(n) && n < settings.maxLetterSize);
+  }, [rawSizes, settings.maxLetterSize]);
+
+  useEffect(() => {
+    const isFiltered = sizes.length < rawSizes.length;
+    setSettings({
+      ...settings,
+      isFilterActive: isFiltered,
+    });
+  }, [sizes, rawSizes]);
 
   // 2) Memoize your bezier so it always sees the latest settings
   const bezier = useMemo(

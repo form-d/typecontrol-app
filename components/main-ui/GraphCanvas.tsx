@@ -169,7 +169,8 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
           {/* Gray lines for each target size */}
           {sizes.map((sizeValue, idx) => {
             if (idx === sizes.length - 1) return null; // Skip last element
-            const px = sizeToX(sizeValue);
+            // const px = sizeToX(sizeValue);
+            const px = !isNaN(sizeToX(sizeValue)) ? sizeToX(sizeValue) : 0;
             return (
               <line
                 key={idx}
