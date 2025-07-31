@@ -4,6 +4,7 @@ import InputWrapper, { InputWrapperProps } from "../layout/InputWrapper";
 import Tooltip from "../elements/Tooltip";
 import { useFloatingDropdown } from "../../hooks/useFloatingDropdown";
 import { Transition } from "@headlessui/react";
+import Icon from "../elements/Icon";
 
 interface Props {
   label?: string;
@@ -84,20 +85,21 @@ const TextInputWithDropdown: React.FC<Props> = ({
           >
             <button
               type="button"
-              className="flex-none px-2 py-2 border-l border-neutral-700 rounded-e-xl h-8 bg-white/5 hover:outline-neutral-400 hover:outline-1 hover:-outline-offset-1 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
+              className="flex-none px-0 py-2 border-l border-neutral-700 rounded-e-xl h-8 bg-white/5 hover:outline-neutral-400 hover:outline-1 hover:-outline-offset-1 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
               onClick={() => setOpen((open) => !open)}
               aria-haspopup="true"
               aria-expanded={open}
             >
               {/* <ChevronDown size={16} /> */}
-              <div className="pointer-events-none px-0 text-primary">
-                <svg
+              <div className="pointer-events-none px-4.5 text-primary">
+                {/* <svg
                   className="fill-current h-4 w-4"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                 >
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
+                </svg> */}
+                <Icon size="xs" iconClass="ti ti-chevron-down" />
               </div>
             </button>
           </Tooltip>

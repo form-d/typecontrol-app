@@ -434,10 +434,10 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
               // </button>
             )}
 
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex justify-center items-center px-2 text-primary">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex justify-center items-center px-3.5 text-primary">
               {isLoading ? (
                 <span className="inline-flex items-center">
-                  <svg
+                  {/* <svg
                     aria-hidden="true"
                     role="status"
                     className={"w-4 h-4 text-current animate-spin"}
@@ -473,16 +473,21 @@ const LocalFontSelect: React.FC<LocalFontSelectProps> = ({
                       38.2158 91.5421 39.6781 93.9676 39.0409Z"
                       fill="#ffffff"
                     />
-                  </svg>
+                  </svg> */}
+                  <Icon
+                    size="xs"
+                    iconClass="ti ti-loader-2 text-current animate-spin"
+                  />
                 </span>
               ) : (
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
+                // <svg
+                //   className="fill-current h-4 w-4"
+                //   xmlns="http://www.w3.org/2000/svg"
+                //   viewBox="0 0 20 20"
+                // >
+                //   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                // </svg>
+                <Icon size="xs" iconClass="ti ti-chevron-down" />
               )}
             </div>
           </div>

@@ -30,7 +30,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   secondary: "bg-neutral-300 text-neutral-800 hover:bg-neutral-400",
   tertiary:
     "border border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-white/80 hover:bg-neutral-100 dark:hover:bg-white/10",
-  text: "bg-transparent text-primary-dark hover:bg-black/5 dark:hover:bg-white/10",
+  text: "bg-transparent text-primary-darker hover:bg-black/5 dark:hover:bg-white/10",
   subtle:
     "bg-transparent dark:text-neutral-600 dark:hover:bg-white/10 text-neutral-500 hover:bg-neutral-100",
 };

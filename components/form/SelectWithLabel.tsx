@@ -1,5 +1,6 @@
 import React from "react";
 import InputWrapper, { InputWrapperProps } from "../layout/InputWrapper";
+import Icon from "../elements/Icon";
 
 type Option = {
   label: string;
@@ -67,26 +68,27 @@ const SelectWithLabel: React.FC<Props> = ({
             isGroup(opt) ? (
               <optgroup key={i} label={opt.label}>
                 {opt.options.map((o) => (
-                  <option key={o.value} value={o.value}>
+                  <option key={o.value + "_" + i} value={o.value}>
                     {o.label}
                   </option>
                 ))}
               </optgroup>
             ) : (
-              <option key={opt.value} value={opt.value}>
+              <option key={opt.value + "_" + i} value={opt.value}>
                 {opt.label}
               </option>
             )
           )}
         </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-primary">
-          <svg
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-primary-darker">
+          {/* <svg
             className="fill-current h-4 w-4"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
           >
             <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-          </svg>
+          </svg> */}
+          <Icon size="xs" iconClass="ti ti-chevron-down" />
         </div>
       </div>
     </Container>
