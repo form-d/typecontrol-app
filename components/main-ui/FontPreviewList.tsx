@@ -67,7 +67,7 @@ const FontPreviewList: React.FC<Props> = ({
       </div>
       {settings.isFilterActive && (
         <div className="pb-5">
-          <div className="inline-flex rounded-full bg-neutral-200 py-0 px-2 border border-transparent text-xs font-bold text-white">
+          <div className="inline-flex rounded-full bg-neutral-300 py-0 px-2 border border-transparent text-xs font-bold text-white">
             Some sizes got clipped due to max size
           </div>
         </div>

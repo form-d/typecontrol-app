@@ -70,7 +70,7 @@ const Layout: React.FC<LayoutProps> = ({
         </aside>
       ) : (
         // Sidebar on left
-        <aside className="w-96 md:sticky  top-0 h-screen p-2 dark">
+        <aside className="w-96 md:sticky  top-0 h-[100dvh] p-2 dark">
           <ScrollIndicatorWrapper className="bg-black/90 overflow-scroll rounded-2xl h-full">
             {bar}
           </ScrollIndicatorWrapper>
