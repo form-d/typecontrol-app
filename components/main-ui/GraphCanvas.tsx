@@ -101,8 +101,22 @@ const GraphCanvas = ({ sizes, selectedSize, bezier }: GraphCanvasProps) => {
   // Calculation logic
   const minSize = Math.min(...sizes);
   const maxSize = Math.max(...sizes);
-  const sizeToX = (size: number) =>
-    ((size - minSize) / (maxSize - minSize)) * effectiveWidth;
+  // const sizeToX = (size: number) =>
+  //   ((size - minSize) / (maxSize - minSize)) * effectiveWidth;
+  const sizeToX = (size: number | undefined): number => {
+    if (
+      typeof size !== "number" ||
+      isNaN(size) ||
+      typeof minSize !== "number" ||
+      typeof maxSize !== "number" ||
+      typeof effectiveWidth !== "number" ||
+      maxSize === minSize // Verhindert Division durch 0
+    ) {
+      return 0;
+    }
+
+    return ((size - minSize) / (maxSize - minSize)) * effectiveWidth;
+  };
 
   const diffHigh = maxSize - selectedSize;
   const diffLow = minSize - selectedSize;
