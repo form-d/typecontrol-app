@@ -34,19 +34,34 @@ const FontSizeTable: React.FC<Props> = ({
                 <th className="flex-1 px-2 py-3 text-start text-xs font-medium text-neutral-500 uppercase">
                   Letter Spacing (px)
                 </th>
+
+                {/* ✅ NEW EM COLUMN */}
+                <th className="flex-1 px-2 py-3 text-start text-xs font-medium text-neutral-500 uppercase">
+                  Letter Spacing (em)
+                </th>
+
                 <th className="flex-1 px-2 py-3 text-start text-xs font-medium text-neutral-500 uppercase">
                   Letter Spacing (%)
                 </th>
               </tr>
             </thead>
+
             <tbody className="flex flex-col divide-y divide-neutral-200">
               {sizes.map((size, i) => {
                 const diff = size - selectedSize;
+
+                // px spacing
                 const spacing =
                   (letterSpacingPercent
                     ? (letterSpacing / 100) * size
                     : letterSpacing) + bezier(diff);
+
+                // % spacing
                 const spacingPercent = ((spacing / size) * 100).toFixed(2);
+
+                // ✅ em spacing
+                const spacingEm = (spacing / size).toFixed(4);
+
                 return (
                   <tr
                     key={i}
@@ -56,12 +71,15 @@ const FontSizeTable: React.FC<Props> = ({
                         : "flex items-center"
                     }
                   >
-                    <td className="flex-1 px-4 py-4  whitespace-nowrap text-sm text-neutral-800">
+                    <td className="flex-1 px-4 py-4 whitespace-nowrap text-sm text-neutral-800">
                       {i + 1}
                     </td>
+
                     <td className="flex-1 px-2 py-4 whitespace-nowrap text-sm text-neutral-800">
                       {size}
                     </td>
+
+                    {/* px */}
                     <td className="flex-1 px-2 py-4 whitespace-nowrap text-sm text-neutral-800">
                       <CopyToClipboard
                         text={spacing.toFixed(2)}
@@ -72,6 +90,18 @@ const FontSizeTable: React.FC<Props> = ({
                         </span>
                       </CopyToClipboard>
                     </td>
+
+                    {/* ✅ em */}
+                    <td className="flex-1 px-2 py-4 whitespace-nowrap text-sm text-neutral-800">
+                      <CopyToClipboard
+                        text={`${spacingEm}em`}
+                        tooltip="Copy to clipboard"
+                      >
+                        <span className="inline-block">{spacingEm}em</span>
+                      </CopyToClipboard>
+                    </td>
+
+                    {/* % */}
                     <td className="flex-1 px-2 py-4 whitespace-nowrap text-sm text-neutral-800">
                       <CopyToClipboard
                         text={`${spacingPercent}%`}
