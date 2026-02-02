@@ -11,6 +11,11 @@ type Props = {
   letterSpacingPercent: boolean;
 };
 
+// Helper: "CSS-like" rounding (max decimals, no trailing zeros)
+function formatCssNumber(value: number, decimals = 3) {
+  return parseFloat(value.toFixed(decimals)).toString();
+}
+
 const FontSizeTable: React.FC<Props> = ({
   sizes,
   selectedSize,
@@ -34,12 +39,9 @@ const FontSizeTable: React.FC<Props> = ({
                 <th className="flex-1 px-2 py-3 text-start text-xs font-medium text-neutral-500 uppercase">
                   Letter Spacing (px)
                 </th>
-
-                {/* ✅ NEW EM COLUMN */}
                 <th className="flex-1 px-2 py-3 text-start text-xs font-medium text-neutral-500 uppercase">
                   Letter Spacing (em)
                 </th>
-
                 <th className="flex-1 px-2 py-3 text-start text-xs font-medium text-neutral-500 uppercase">
                   Letter Spacing (%)
                 </th>
@@ -59,8 +61,8 @@ const FontSizeTable: React.FC<Props> = ({
                 // % spacing
                 const spacingPercent = ((spacing / size) * 100).toFixed(2);
 
-                // ✅ em spacing
-                const spacingEm = (spacing / size).toFixed(4);
+                // em (CSS-like formatting)
+                const spacingEm = formatCssNumber(spacing / size, 3);
 
                 return (
                   <tr
@@ -91,7 +93,7 @@ const FontSizeTable: React.FC<Props> = ({
                       </CopyToClipboard>
                     </td>
 
-                    {/* ✅ em */}
+                    {/* em */}
                     <td className="flex-1 px-2 py-4 whitespace-nowrap text-sm text-neutral-800">
                       <CopyToClipboard
                         text={`${spacingEm}em`}
