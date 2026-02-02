@@ -85,13 +85,13 @@ const TextInputWithDropdown: React.FC<Props> = ({
           >
             <button
               type="button"
-              className="flex-none px-0 py-2 border-l border-neutral-700 rounded-e-xl h-8 bg-white/5 hover:outline-neutral-400 hover:outline-1 hover:-outline-offset-1 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
+              className="flex-none px-4.5 py-2 border-l border-neutral-700 rounded-e-xl h-8 bg-white/5 hover:outline-neutral-400 hover:outline-1 hover:-outline-offset-1 focus-visible:border-purple-500 focus-visible:ring-2 focus:outline-hidden"
               onClick={() => setOpen((open) => !open)}
               aria-haspopup="true"
               aria-expanded={open}
             >
               {/* <ChevronDown size={16} /> */}
-              <div className="pointer-events-none px-4.5 text-primary">
+              <div className="pointer-events-none px-0 text-primary">
                 {/* <svg
                   className="fill-current h-4 w-4"
                   xmlns="http://www.w3.org/2000/svg"
@@ -134,7 +134,7 @@ const TextInputWithDropdown: React.FC<Props> = ({
                 ))}
               </ul>
             </Transition>,
-            document.body
+            document.body,
           )}
         </div>
       </div>

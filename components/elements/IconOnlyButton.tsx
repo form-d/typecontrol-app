@@ -32,7 +32,7 @@ const variantClasses: Record<ButtonVariant, string> = {
     "border border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-white/80 hover:bg-neutral-100 dark:hover:bg-white/10",
   text: "bg-transparent text-primary-darker hover:bg-black/5 dark:hover:bg-white/10",
   subtle:
-    "bg-transparent dark:text-neutral-600 dark:hover:bg-white/10 text-neutral-500 hover:bg-neutral-100",
+    "bg-transparent dark:text-neutral-500 dark:hover:bg-white/10 text-neutral-500 hover:bg-neutral-100",
 };
 
 // Map sizes to width/height utilities
